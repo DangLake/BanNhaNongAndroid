@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "678374240847",
+    "project_id": "bannhanong-6988c",
+    "storage_bucket": "bannhanong-6988c.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:678374240847:android:621db2b0a3c230497ff03a",
+        "android_client_info": {
+          "package_name": "vn.edu.stu.bannhanong"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDGxmX4VvUI_CucSgYW36BnN81z7Ic-Tz4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
