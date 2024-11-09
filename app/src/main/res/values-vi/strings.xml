@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Bạn nhà nông</string>
+    <string name="signin_signin">Đăng ký</string>
+    <string name="signin_sdt">Số điện thoại</string>
+    <string name="signin_sdt_hint">Nhập số điện thoại</string>
+    <string name="signin_anwser">Đã có tài khoản?</string>
+    <string name="login_welcome">Chào mừng!</string>
+    <string name="login_pass">Mật khẩu</string>
+    <string name="login_pass_hint">Nhập mật khẩu</string>
+    <string name="login_forget">Quên mật khẩu?</string>
+    <string name="signin_login">Đăng nhập</string>
+    <string name="login_create">Chưa có tài khoản?</string>
+</resources>

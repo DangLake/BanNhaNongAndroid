@@ -1,3 +1,13 @@
 <resources>
-    <string name="app_name">Ban Nha Nong</string>
+    <string name="app_name">Famer Friend</string>
+    <string name="signin_signin">Sign in</string>
+    <string name="signin_sdt">Phone number</string>
+    <string name="signin_sdt_hint">Input phone number</string>
+    <string name="signin_anwser">Have account?</string>
+    <string name="signin_login">Log in</string>
+    <string name="login_welcome">Welcome!</string>
+    <string name="login_pass">Password</string>
+    <string name="login_pass_hint">Input password</string>
+    <string name="login_forget">Forget password?</string>
+    <string name="login_create">Create account?</string>
 </resources>

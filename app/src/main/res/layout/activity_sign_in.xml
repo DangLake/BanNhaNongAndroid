@@ -20,7 +20,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="Đăng ký"
+        android:text="@string/signin_signin"
         android:textSize="13pt"
         android:textStyle="bold" />
 
@@ -29,7 +29,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="15pt"
         android:layout_marginBottom="2pt"
-        android:text="Số điện thoại"
+        android:text="@string/signin_sdt"
         android:textSize="8pt" />
 
     <EditText
@@ -37,7 +37,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/edittext_border"
-        android:hint="Nhập số điện thoại"
+        android:hint="@string/signin_sdt_hint"
         android:padding="5pt"
         android:textSize="8pt" />
 
@@ -53,7 +53,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8pt"
             android:padding="5pt"
-            android:text="Đăng ký"
+            android:text="@string/signin_signin"
             android:backgroundTint="#006600"
             android:textSize="8pt"
             android:textStyle="bold" />
@@ -67,7 +67,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Đã có tài khoản?"
+                android:text="@string/signin_anwser"
                 android:textSize="8pt" />
 
             <Button
@@ -75,7 +75,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@android:color/transparent"
-                android:text="Đăng nhập"
+                android:text="@string/signin_login"
                 android:textColor="#008000"
                 android:textSize="8pt"
                 android:textStyle="bold" />
