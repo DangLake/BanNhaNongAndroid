@@ -10,4 +10,21 @@
     <string name="login_pass_hint">Input password</string>
     <string name="login_forget">Forget password?</string>
     <string name="login_create">Create account?</string>
+
+    <string name="enter_otp">Input OTP code</string>
+    <string name="resend_otp">Resend OTP</string>
+    <string name="verify_otp">Verify OTP</string>
+    <string name="permission_send_otp">You need permission to send OTP!</string>
+    <string name="sdt_error">Invalid phone number!</string>
+    <string name="opt_sent_success">OTP sent</string>
+    <string name="otp_sent_failed">Sending OTP failed: </string>
+    <string name="otp_you">Your OTP code is: </string>
+    <string name="otp_new_resend">New OTP code has been sent!</string>
+    <string name="otp_dont_new_resend">Unable to resend OTP: </string>
+    <string name="otp_find_sdt">Phone number not found!</string>
+    <string name="otp_input">Please enter the full OTP code</string>
+    <string name="otp_success">OTP verification successful!</string>
+    <string name="otp_failed">The OTP code is incorrect, please try again</string>
+
+
 </resources>

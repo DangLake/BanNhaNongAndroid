@@ -11,4 +11,22 @@
     <string name="login_forget">Quên mật khẩu?</string>
     <string name="signin_login">Đăng nhập</string>
     <string name="login_create">Chưa có tài khoản?</string>
+
+    <string name="enter_otp">Nhập mã OTP</string>
+    <string name="resend_otp">Gửi lại mã OTP</string>
+    <string name="verify_otp">Xác nhận OTP</string>
+    <string name="permission_send_otp">Bạn cần cấp quyền để gửi OTP!</string>
+    <string name="sdt_error">Số điện thoại không hợp lệ!</string>
+    <string name="opt_sent_success">Đã gửi OTP tới </string>
+    <string name="otp_sent_failed">Gửi OTP thất bại: </string>
+    <string name="otp_you">Mã OTP của bạn là: </string>
+    <string name="otp_new_resend">Mã OTP mới đã được gửi!</string>
+    <string name="otp_dont_new_resend">Không thể gửi lại OTP: </string>
+    <string name="otp_find_sdt">Không tìm thấy số điện thoại!</string>
+    <string name="otp_input">Vui lòng nhập đầy đủ mã OTP</string>
+    <string name="otp_success">Xác minh OTP thành công!</string>
+    <string name="otp_failed">Mã OTP không đúng, vui lòng thử lại</string>
+
+
+
 </resources>
