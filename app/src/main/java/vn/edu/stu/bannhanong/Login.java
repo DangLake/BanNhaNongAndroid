@@ -12,7 +12,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 public class Login extends AppCompatActivity {
-    Button btnDangky;
+    Button btnDangky,btnQuenmk;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,6 +34,17 @@ public class Login extends AppCompatActivity {
                 xulyDangKy();
             }
         });
+        btnQuenmk.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                xulyQuenMK();
+            }
+        });
+    }
+
+    private void xulyQuenMK() {
+        Intent intent=new Intent(Login.this, SignIn.class);
+        startActivity(intent);
     }
 
     private void xulyDangKy() {
@@ -43,5 +54,6 @@ public class Login extends AppCompatActivity {
 
     private void addControls() {
         btnDangky=findViewById(R.id.btnDangky);
+        btnQuenmk=findViewById(R.id.btnQuenmk);
     }
 }

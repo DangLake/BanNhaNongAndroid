@@ -19,6 +19,8 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import vn.edu.stu.bannhanong.dao.DBHelperUsers;
+
 public class SignIn extends AppCompatActivity {
 
     Button btnDangnhap2,btnDangky2;
@@ -54,10 +56,18 @@ public class SignIn extends AppCompatActivity {
 
     private void xulyDangky() {
         String phoneNumber = edtSDT.getText().toString().trim();
-        if (isValidPhoneNumber(phoneNumber)) {
-            sendOtp(phoneNumber);
-        } else {
+
+        if (!isValidPhoneNumber(phoneNumber)) {
             Toast.makeText(SignIn.this, getString(R.string.sdt_error), Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Tạo một đối tượng DBHelper để kiểm tra số điện thoại
+        DBHelperUsers dbHelper = new DBHelperUsers(this);
+        if (dbHelper.isPhoneNumberExists(phoneNumber)) {
+            Toast.makeText(SignIn.this, getString(R.string.sdt_exists), Toast.LENGTH_SHORT).show();
+        } else {
+            sendOtp(phoneNumber);
         }
     }
 

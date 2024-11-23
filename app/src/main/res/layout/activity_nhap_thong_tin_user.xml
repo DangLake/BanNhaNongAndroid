@@ -6,11 +6,101 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginHorizontal="16dp"
+    android:layout_marginBottom="16dp"
     tools:context=".NhapThongTinUser">
+    <ImageView
+        android:layout_width="130pt"
+        android:layout_height="110pt"
+        android:layout_gravity="center"
+        android:src="@drawable/logo" />
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textStyle="bold"
-        android:text="Nhap thong tin"/>
+        android:text="@string/dk_ten"
+        android:layout_marginBottom="2pt"
+        android:textSize="8pt"
+        />
+    <EditText
+        android:padding="5pt"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/edtSDT"
+        android:textSize="8pt"
+        android:background="@drawable/edittext_border"
+        android:hint="@string/signin_sdt_hint"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/login_pass"
+        android:layout_marginBottom="2pt"
+        android:textSize="8pt"
+        android:layout_marginTop="8pt"
+        />
+    <EditText
+        android:padding="5pt"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/edtMatkhau"
+        android:textSize="8pt"
+        android:background="@drawable/edittext_border"
+        android:hint="@string/login_pass_hint"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/dk_check_mk"
+        android:layout_marginBottom="2pt"
+        android:textSize="8pt"
+        android:layout_marginTop="8pt"
+        />
+    <EditText
+        android:padding="5pt"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/edtCheckMatkhau"
+        android:textSize="8pt"
+        android:background="@drawable/edittext_border"
+        android:hint="@string/dk_check_mk"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/dk_loai"
+        android:textSize="8pt"
+        android:layout_marginTop="8pt"/>
+    <RadioGroup
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_height="wrap_content">
+        <RadioButton
+            android:id="@+id/rdoNguoimua"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="7pt"
+            android:text="@string/dk_loai_le"/>
+        <RadioButton
+            android:id="@+id/rdoDoanhnghiep"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="7pt"
+            android:text="@string/dk_loai_doanh"/>
+        <RadioButton
+            android:id="@+id/rdoNongdan"
+            android:textSize="7pt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/dk_loai_nong"/>
+
+    </RadioGroup>
+    <Button
+        android:id="@+id/btnDangky2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8pt"
+        android:padding="5pt"
+        android:text="@string/signin_signin"
+        android:backgroundTint="#006600"
+        android:textSize="8pt"
+        android:textStyle="bold" />
 
 </LinearLayout>

@@ -25,6 +25,15 @@
     <string name="otp_input">Please enter the full OTP code</string>
     <string name="otp_success">OTP verification successful!</string>
     <string name="otp_failed">The OTP code is incorrect, please try again</string>
+    <string name="dk_ten">Input name</string>
+    <string name="dk_check_mk">Confirm password</string>
+
+
+    <string name="dk_loai">You is</string>
+    <string name="dk_loai_le">Customers</string>
+    <string name="dk_loai_doanh">Enterprise</string>
+    <string name="dk_loai_nong">Farmer</string>
+    <string name="sdt_exists">Số điện thoại đã tồn tại!</string>
 
 
 </resources>
