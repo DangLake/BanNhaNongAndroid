@@ -3,6 +3,7 @@ package vn.edu.stu.bannhanong;
 import android.content.Intent;
 import android.os.Bundle;
 import android.telephony.SmsManager;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -20,6 +21,7 @@ public class OTP extends AppCompatActivity {
     EditText otp_1,otp_2,otp_3,otp_4,otp_5,otp_6;
     TextView resend_otp;
     Button btn_submit;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,6 +68,7 @@ public class OTP extends AppCompatActivity {
                 SmsManager smsManager = SmsManager.getDefault();
                 smsManager.sendTextMessage(phoneNumber, null, getString(R.string.otp_you) + otp, null, null);
                 Toast.makeText(this, getString(R.string.otp_new_resend), Toast.LENGTH_SHORT).show();
+                Log.d("SignIn", getString(R.string.otp_you) + otp);
                 getIntent().putExtra("otp", otp);
             } catch (Exception e) {
                 Toast.makeText(this, getString(R.string.otp_dont_new_resend) + e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -77,6 +80,7 @@ public class OTP extends AppCompatActivity {
 
     private void verifyOtp() {
         String enteredOtp = getEnteredOtp();
+        String phoneNumber = getIntent().getStringExtra("phone_number");
         int sentOtp = getIntent().getIntExtra("otp", -1);
         if (enteredOtp.isEmpty() || enteredOtp.length() < 6) {
             Toast.makeText(this, getString(R.string.otp_input), Toast.LENGTH_SHORT).show();
@@ -86,6 +90,7 @@ public class OTP extends AppCompatActivity {
         if (String.valueOf(sentOtp).equals(enteredOtp)) {
             Toast.makeText(this, getString(R.string.otp_success), Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(OTP.this, NhapThongTinUser.class);
+            intent.putExtra("phone_number", phoneNumber);
             startActivity(intent);
             finish();
         } else {

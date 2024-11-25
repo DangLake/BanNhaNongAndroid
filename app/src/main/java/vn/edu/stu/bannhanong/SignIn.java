@@ -59,15 +59,15 @@ public class SignIn extends AppCompatActivity {
 
         if (!isValidPhoneNumber(phoneNumber)) {
             Toast.makeText(SignIn.this, getString(R.string.sdt_error), Toast.LENGTH_SHORT).show();
-            return;
-        }
+        }else {
 
-        // Tạo một đối tượng DBHelper để kiểm tra số điện thoại
-        DBHelperUsers dbHelper = new DBHelperUsers(this);
-        if (dbHelper.isPhoneNumberExists(phoneNumber)) {
-            Toast.makeText(SignIn.this, getString(R.string.sdt_exists), Toast.LENGTH_SHORT).show();
-        } else {
-            sendOtp(phoneNumber);
+            // Tạo một đối tượng DBHelper để kiểm tra số điện thoại
+            DBHelperUsers dbHelper = new DBHelperUsers(this);
+            if (dbHelper.isPhoneNumberExists(phoneNumber)) {
+                Toast.makeText(SignIn.this, getString(R.string.sdt_exists), Toast.LENGTH_SHORT).show();
+            } else {
+                sendOtp(phoneNumber);
+            }
         }
     }
 

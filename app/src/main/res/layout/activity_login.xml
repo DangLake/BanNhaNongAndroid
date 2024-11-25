@@ -51,6 +51,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/edtMatkhau"
         android:textSize="8pt"
+        android:inputType="textPassword"
         android:background="@drawable/edittext_border"
         android:hint="@string/login_pass_hint"/>
     <LinearLayout

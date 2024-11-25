@@ -28,12 +28,21 @@
     <string name="otp_failed">Mã OTP không đúng, vui lòng thử lại</string>
 
     <string name="dk_ten">Nhập tên người dùng</string>
+    <string name="dk_ten_null">Tên không được để trống</string>
+    <string name="dk_mk_null">Mật khẩu không được để trống</string>
     <string name="dk_check_mk">Xác nhận mật khẩu</string>
+    <string name="dk_mk_khop">Mật khẩu không khớp</string>
 
     <string name="dk_loai">Bạn là</string>
     <string name="dk_loai_le">Khách mua lẻ</string>
     <string name="dk_loai_doanh">Doanh nghiệp</string>
     <string name="dk_loai_nong">Nông dân</string>
     <string name="sdt_exists">Số điện thoại đã tồn tại!</string>
+    <string name="signin_success">Đăng ký thành công</string>
+    <string name="signin_failed">Đăng ký thất bại. Thử lại sau!</string>
+
+    <string name="login_success">Đăng nhập thành công</string>
+    <string name="login_failed">Số điện thoại hoặc mật khẩu không đúng</string>
+    <string name="login_null">Vui lòng nhập đầy đủ thông tin</string>
 
 </resources>
