@@ -2,6 +2,8 @@
 <resources>
     <string name="app_name">Bạn nhà nông</string>
     <string name="signin_signin">Đăng ký</string>
+    <string name="signin_capnhat">Cập nhật</string>
+    <string name="signin_quen">Gửi OTP</string>
     <string name="signin_sdt">Số điện thoại</string>
     <string name="signin_sdt_hint">Nhập số điện thoại</string>
     <string name="signin_anwser">Đã có tài khoản?</string>
@@ -38,8 +40,11 @@
     <string name="dk_loai_doanh">Doanh nghiệp</string>
     <string name="dk_loai_nong">Nông dân</string>
     <string name="sdt_exists">Số điện thoại đã tồn tại!</string>
+    <string name="sdt_noexists">Số điện thoại không tồn tại!</string>
     <string name="signin_success">Đăng ký thành công</string>
+    <string name="update_success">Cập nhật thành công</string>
     <string name="signin_failed">Đăng ký thất bại. Thử lại sau!</string>
+    <string name="update_failed">Cập nhật thất bại. Thử lại sau!</string>
 
     <string name="login_success">Đăng nhập thành công</string>
     <string name="login_failed">Số điện thoại hoặc mật khẩu không đúng</string>

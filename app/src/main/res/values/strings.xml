@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">Famer Friend</string>
     <string name="signin_signin">Sign in</string>
+    <string name="signin_quen">Send OTP</string>
+    <string name="signin_capnhat">Update</string>
     <string name="signin_sdt">Phone number</string>
     <string name="signin_sdt_hint">Input phone number</string>
     <string name="signin_anwser">Have account?</string>
@@ -16,6 +18,7 @@
     <string name="verify_otp">Verify OTP</string>
     <string name="permission_send_otp">You need permission to send OTP!</string>
     <string name="sdt_error">Invalid phone number!</string>
+    <string name="sdt_noexists">Phone number does not exist</string>
     <string name="opt_sent_success">OTP sent</string>
     <string name="otp_sent_failed">Sending OTP failed: </string>
     <string name="otp_you">Your OTP code is: </string>
@@ -31,6 +34,8 @@
     <string name="dk_mk_null">Password cannot be blank</string>
     <string name="dk_check_mk">Confirm password</string>
     <string name="dk_mk_khop">Passwords do not match</string>
+    <string name="update_success">Update success</string>
+    <string name="update_failed">Update failed. Try again later!</string>
 
     <string name="dk_loai">You is</string>
     <string name="dk_loai_le">Customers</string>

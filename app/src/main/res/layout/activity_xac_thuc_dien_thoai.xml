@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_marginHorizontal="10pt"
+    android:orientation="vertical"
+    android:layout_marginBottom="5pt"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".XacThucDienThoai">
+    <ImageView
+        android:layout_width="130pt"
+        android:layout_height="110pt"
+        android:layout_gravity="center"
+        android:src="@drawable/logo" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15pt"
+        android:layout_marginBottom="2pt"
+        android:text="@string/signin_sdt"
+        android:textSize="8pt" />
+
+    <EditText
+        android:id="@+id/edtSDT"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/edittext_border"
+        android:hint="@string/signin_sdt_hint"
+        android:padding="5pt"
+        android:inputType="phone"
+        android:textSize="8pt" />
+
+    <Button
+        android:id="@+id/btnSendOTP"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15pt"
+        android:padding="5pt"
+        android:text="@string/signin_quen"
+        android:backgroundTint="#006600"
+        android:textSize="8pt"
+        android:textStyle="bold" />
+</LinearLayout>

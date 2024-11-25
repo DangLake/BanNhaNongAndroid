@@ -21,7 +21,13 @@
         android:theme="@style/Theme.BanNhaNong"
         tools:targetApi="31">
         <activity
-            android:name=".QuenMatKhau"
+            android:name=".OTP2"
+            android:exported="false" />
+        <activity
+            android:name=".XacThucDienThoai"
+            android:exported="false" />
+        <activity
+            android:name=".DoiMatKhau"
             android:exported="false" />
         <activity
             android:name=".NhapThongTinUser"

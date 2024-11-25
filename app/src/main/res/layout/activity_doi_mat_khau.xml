@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:orientation="vertical"
+    android:layout_marginHorizontal="16dp"
+    android:layout_marginBottom="16dp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".DoiMatKhau">
+    <ImageView
+        android:layout_width="130pt"
+        android:layout_height="110pt"
+        android:layout_gravity="center"
+        android:src="@drawable/logo" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/login_pass"
+        android:layout_marginBottom="2pt"
+        android:textSize="8pt"
+        android:layout_marginTop="8pt"
+        />
+    <EditText
+        android:padding="5pt"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/edtMatkhau"
+        android:inputType="textPassword"
+        android:textSize="8pt"
+        android:background="@drawable/edittext_border"
+        android:hint="@string/login_pass_hint"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/dk_check_mk"
+        android:layout_marginBottom="2pt"
+        android:textSize="8pt"
+        android:layout_marginTop="8pt"
+        />
+    <EditText
+        android:padding="5pt"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/edtCheckMatkhau"
+        android:textSize="8pt"
+        android:inputType="textPassword"
+        android:background="@drawable/edittext_border"
+        android:hint="@string/dk_check_mk"/>
+    <Button
+        android:id="@+id/btnCapnhat"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15pt"
+        android:padding="5pt"
+        android:text="@string/signin_capnhat"
+        android:backgroundTint="#006600"
+        android:textSize="8pt"
+        android:textStyle="bold" />
+
+</LinearLayout>

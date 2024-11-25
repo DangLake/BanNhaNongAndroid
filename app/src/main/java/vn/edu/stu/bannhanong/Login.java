@@ -78,7 +78,7 @@ public class Login extends AppCompatActivity {
         }
         if (dbHelperUsers.isValidLogin(phoneNumber, password)) {
             Toast.makeText(Login.this, getString(R.string.login_success), Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(Login.this, Trangchu.class); // Chuyển đến màn hình chính
+            Intent intent = new Intent(Login.this, Trangchu.class);
             startActivity(intent);
             finish();
         } else {
@@ -87,7 +87,7 @@ public class Login extends AppCompatActivity {
     }
 
     private void xulyQuenMK() {
-        Intent intent=new Intent(Login.this, SignIn.class);
+        Intent intent=new Intent(Login.this, XacThucDienThoai.class);
         startActivity(intent);
     }
 

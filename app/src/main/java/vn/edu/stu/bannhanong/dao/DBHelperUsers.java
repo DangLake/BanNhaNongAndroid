@@ -47,6 +47,27 @@ public class DBHelperUsers extends SQLiteOpenHelper {
         db.close();
         return result != -1;
     }
+    public boolean doiMatKhau(String phoneNumber, String newPassword) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "SELECT * FROM " + TABLE.TABLE_NAME + " WHERE " + TABLE.COL_SDT + " = ?";
+        Cursor cursor = db.rawQuery(query, new String[]{phoneNumber});
+        if (cursor.moveToFirst()) {
+            ContentValues values = new ContentValues();
+            values.put(TABLE.COL_MATKHAU, newPassword);
+            int rowsAffected = db.update(TABLE.TABLE_NAME, values,
+                    TABLE.COL_SDT + " = ?",
+                    new String[]{phoneNumber});
+            cursor.close();
+            db.close();
+
+            return rowsAffected > 0;
+        } else {
+            cursor.close();
+            db.close();
+            return false;
+        }
+    }
+
     public boolean isValidLogin(String phoneNumber, String password) {
         SQLiteDatabase db = this.getReadableDatabase();
         String query = "SELECT * FROM " + TABLE.TABLE_NAME + " WHERE " +
