@@ -48,6 +48,11 @@
     <string name="login_success">Successful login</string>
     <string name="login_failed">Incorrect phone number or password</string>
     <string name="login_null">Please enter complete information</string>
+    <string name="location_failed">Unable to get location, try again later</string>
+    <string name="location_failed_mess">Error getting location: </string>
+    <string name="location_failed_per">Please grant location permission to continue.</string>
+    <string name="nav_open">Open</string>
+    <string name="nav_close">Close</string>
 
 
 </resources>

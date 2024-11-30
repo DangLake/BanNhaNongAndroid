@@ -6,4 +6,17 @@
     </style>
 
     <style name="Theme.BanNhaNong" parent="Base.Theme.BanNhaNong" />
+
+    <style name="Theme.BanNhaNong.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:fitsSystemWindows">false</item>
+        <item name="android:statusBarColor">@android:color/transparent</item> <!-- Status Bar trong suốt -->
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+
+    <style name="Theme.BanNhaNong.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="Theme.BanNhaNong.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 </resources>

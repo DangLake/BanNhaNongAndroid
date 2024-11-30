@@ -31,6 +31,9 @@ android {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
+    buildFeatures {
+        viewBinding = true
+    }
 }
 
 dependencies {
@@ -46,8 +49,13 @@ dependencies {
     implementation(libs.firebase.messaging)
     implementation(libs.firebase.functions)
     implementation(libs.firebase.crashlytics)
+    implementation(libs.lifecycle.livedata.ktx)
+    implementation(libs.lifecycle.viewmodel.ktx)
+    implementation(libs.navigation.fragment)
+    implementation(libs.navigation.ui)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
+    implementation (libs.play.services.location)
     androidTestImplementation(libs.espresso.core)
     implementation(kotlin("script-runtime"))
 }

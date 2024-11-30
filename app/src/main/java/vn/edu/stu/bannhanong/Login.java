@@ -1,18 +1,27 @@
 package vn.edu.stu.bannhanong;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -29,6 +38,8 @@ public class Login extends AppCompatActivity {
     String DATABASE_NAME = "bannhanong.sqlite";
     EditText edtSDT, edtMatkhau;
     DBHelperUsers dbHelperUsers;
+    FusedLocationProviderClient fusedLocationClient;
+    static final int LOCATION_PERMISSION_REQUEST_CODE = 100;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,12 +89,57 @@ public class Login extends AppCompatActivity {
         }
         if (dbHelperUsers.isValidLogin(phoneNumber, password)) {
             Toast.makeText(Login.this, getString(R.string.login_success), Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(Login.this, Trangchu.class);
-            startActivity(intent);
-            finish();
+
+            SharedPreferences sharedPreferences = getSharedPreferences("AppPrefs", MODE_PRIVATE);
+            boolean isPermissionGranted = sharedPreferences.getBoolean("location_permission_granted", false);
+
+            if (isPermissionGranted) {
+                fetchLocationAndProceed();
+            } else {
+                checkAndRequestLocationPermission();
+            }
         } else {
             Toast.makeText(Login.this, getString(R.string.login_failed), Toast.LENGTH_SHORT).show();
         }
+    }
+    private void checkAndRequestLocationPermission() {
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
+        } else {
+            fetchLocationAndProceed();
+        }
+    }
+
+    private void fetchLocationAndProceed() {
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION},
+                    LOCATION_PERMISSION_REQUEST_CODE);
+            return;
+        }
+        fusedLocationClient.getLastLocation().addOnSuccessListener(location -> {
+            if (location != null) {
+                double latitude = location.getLatitude();
+                double longitude = location.getLongitude();
+                Log.d("LoginActivity", "Latitude: " + latitude + ", Longitude: " + longitude);
+                SharedPreferences sharedPreferences = getSharedPreferences("AppPrefs", MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putBoolean("location_permission_granted", true);
+                editor.putFloat("last_latitude", (float) latitude);
+                editor.putFloat("last_longitude", (float) longitude);
+                editor.apply();
+                Intent intent = new Intent(Login.this, TrangchuNongDan.class);
+                startActivity(intent);
+                finish();
+            } else {
+                Toast.makeText(this, getString(R.string.location_failed), Toast.LENGTH_SHORT).show();
+            }
+        }).addOnFailureListener(e -> {
+            Toast.makeText(this,  getString(R.string.location_failed_mess) + e.getMessage(), Toast.LENGTH_SHORT).show();
+        });
     }
 
     private void xulyQuenMK() {
@@ -136,6 +192,18 @@ public class Login extends AppCompatActivity {
             myInput.close();
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                fetchLocationAndProceed();
+            } else {
+                Toast.makeText(this,  getString(R.string.location_failed_per), Toast.LENGTH_SHORT).show();
+            }
         }
     }
 }

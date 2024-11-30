@@ -49,5 +49,9 @@
     <string name="login_success">Đăng nhập thành công</string>
     <string name="login_failed">Số điện thoại hoặc mật khẩu không đúng</string>
     <string name="login_null">Vui lòng nhập đầy đủ thông tin</string>
-
+    <string name="location_failed">Không thể lấy vị trí, thử lại sau</string>
+    <string name="location_failed_mess">Lỗi khi lấy vị trí: </string>
+    <string name="location_failed_per">Vui lòng cấp quyền vị trí để tiếp tục.</string>
+    <string name="nav_open">Open</string>
+    <string name="nav_close">Close</string>
 </resources>
