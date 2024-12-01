@@ -53,6 +53,13 @@
     <string name="location_failed_per">Please grant location permission to continue.</string>
     <string name="nav_open">Open</string>
     <string name="nav_close">Close</string>
+    <string name="app_name_ud">Farmer Friend Application</string>
+    <string name="tieu_de">Platform to support Vietnamese farmers</string>
+    <string name="market">Farmers market</string>
+    <string name="weather">Agricultural weather</string>
+    <string name="news">News and events</string>
+    <string name="forum">Farmers forum</string>
+
 
 
 </resources>

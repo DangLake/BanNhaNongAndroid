@@ -12,8 +12,12 @@
         <item name="windowNoTitle">true</item>
         <item name="android:windowFullscreen">true</item>
         <item name="android:fitsSystemWindows">false</item>
-        <item name="android:statusBarColor">@android:color/transparent</item> <!-- Status Bar trong suốt -->
+        <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:windowLightStatusBar">true</item>
+    </style>
+    <style name="CustomButtonStyle" parent="Widget.MaterialComponents.Button">
+        <item name="android:background">@drawable/custom_button</item>
+        <item name="backgroundTint">@null</item> <!-- Vô hiệu hóa backgroundTint -->
     </style>
 
     <style name="Theme.BanNhaNong.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
