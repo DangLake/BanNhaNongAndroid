@@ -27,6 +27,4 @@
         app:menu="@menu/bottom_menu"
         app:itemIconTint="@null"
         android:layout_height="wrap_content" />
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>
