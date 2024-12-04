@@ -1,18 +1,29 @@
 package vn.edu.stu.bannhanong;
 
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.transition.FragmentTransitionSupport;
+
+import com.google.android.material.navigation.NavigationBarView;
+
+import vn.edu.stu.bannhanong.databinding.ActivityChoNongSanBinding;
 
 public class ChoNongSan extends AppCompatActivity {
 
+    ActivityChoNongSanBinding binding;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,5 +39,39 @@ public class ChoNongSan extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        addControls();
+        replaceFrag(new ProductFragment());
+        addEvents();
+    }
+
+    private void addEvents() {
+        binding.bottomNavView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                int id = item.getItemId();
+                if (id == R.id.sanpham) {
+                    replaceFrag(new ProductFragment());
+                } else if (id == R.id.donhang) {
+                    replaceFrag(new OrderFragment());
+                } else if (id == R.id.doanhthu) {
+                    replaceFrag(new ThongkeFragment());
+                } else if (id == R.id.taikhoan) {
+                    replaceFrag(new AccountFragment());
+                }
+                return true;
+            }
+        });
+    }
+    private void replaceFrag(Fragment fragment){
+        FragmentManager fragmentManager=getSupportFragmentManager();
+        FragmentTransaction fragmentTransition=fragmentManager.beginTransaction();
+        fragmentTransition.replace(R.id.frmMain,fragment);
+        fragmentTransition.commit();
+    }
+
+    private void addControls() {
+        binding=ActivityChoNongSanBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
     }
 }

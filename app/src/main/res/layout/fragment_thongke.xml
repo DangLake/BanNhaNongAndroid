@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ThongkeFragment">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Doanh thu"
+            android:gravity="center"
+            android:textSize="12pt"
+            android:textStyle="bold"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:textSize="15pt"
+            android:layout_gravity="center"
+            android:textColor="#FF0000"
+            android:textStyle="bold"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+            <EditText
+                android:id="@+id/startDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="Ngày bắt đầu"
+                android:inputType="date"
+                android:focusable="false"
+                android:layout_marginBottom="8dp"
+                android:padding="8dp"
+                android:background="@drawable/edittext_border" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="-"
+                android:padding="10dp"
+                android:textSize="20pt"/>
+            <EditText
+                android:id="@+id/endDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="Ngày kết thúc"
+                android:inputType="date"
+                android:focusable="false"
+                android:layout_marginBottom="8dp"
+                android:padding="8dp"
+                android:background="@drawable/edittext_border" />
+        </LinearLayout>
+        <Button
+            android:id="@+id/viewRevenueButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Xem Doanh Thu"
+            android:textColor="@color/black"
+            style="@style/CustomButtonStyle"
+            android:layout_gravity="center"
+            android:textSize="6pt"/>
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/lvDoanhthu"
+            android:layout_marginTop="10dp"/>
+    </LinearLayout>
+
+</FrameLayout>
