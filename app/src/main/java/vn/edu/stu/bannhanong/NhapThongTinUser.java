@@ -67,7 +67,7 @@ public class NhapThongTinUser extends AppCompatActivity {
         }
 
         // Xác định loại người dùng
-        int userType = 2; // Giá trị mặc định là 0 cho Nông dân
+        int userType = 2; // Giá trị mặc định cho Nông dân
         if (rdoNguoimua.isChecked()) {
             userType = 0; // Người mua
         } else if (rdoDoanhnghiep.isChecked()) {

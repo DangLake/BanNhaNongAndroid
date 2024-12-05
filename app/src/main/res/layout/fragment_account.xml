@@ -5,10 +5,88 @@
     android:layout_height="match_parent"
     tools:context=".AccountFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="Acount" />
+        android:background="#00CC66"
+        android:orientation="vertical"
+        android:padding="10dp">
 
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/icon_farmer"
+            android:layout_gravity="center"
+            android:layout_marginBottom="20dp"
+            android:layout_marginTop="20dp" />
+
+        <EditText
+            android:id="@+id/edtTen"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Tên"
+            android:layout_marginBottom="20dp"
+            android:padding="15dp"
+            android:backgroundTint="@color/white"
+            android:background="@drawable/edittext_border" />
+
+        <EditText
+            android:id="@+id/edtSDT"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Số điện thoại"
+            android:layout_marginBottom="20dp"
+            android:padding="15dp"
+            android:backgroundTint="@color/white"
+            android:background="@drawable/edittext_border" />
+
+        <EditText
+            android:id="@+id/edtDiachi"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Địa chỉ cụ thể"
+            android:layout_marginBottom="20dp"
+            android:padding="15dp"
+            android:backgroundTint="@color/white"
+            android:background="@drawable/edittext_border" />
+        <EditText
+            android:id="@+id/edtTinhthanh"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Tỉnh/thành phố"
+            android:layout_marginBottom="20dp"
+            android:padding="15dp"
+            android:backgroundTint="@color/white"
+            android:background="@drawable/edittext_border"
+            android:focusable="false"
+            android:clickable="true" />
+
+        <EditText
+            android:id="@+id/edtQuanhuyen"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Quận/huyện"
+            android:layout_marginBottom="20dp"
+            android:padding="15dp"
+            android:backgroundTint="@color/white"
+            android:background="@drawable/edittext_border"
+            android:focusable="false"
+            android:clickable="true" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center|bottom"
+            android:orientation="vertical">
+        <Button
+            android:id="@+id/btnCapNhatuser"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cập nhật thông tin"
+            android:textColor="@color/black"
+            style="@style/CustomButtonStyle"
+            android:layout_gravity="center"
+            android:layout_marginBottom="10dp"
+            android:textSize="6pt"/>
+        </LinearLayout>
+    </LinearLayout>
 </FrameLayout>

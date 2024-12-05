@@ -1,10 +1,13 @@
 package vn.edu.stu.bannhanong;
 
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -24,6 +27,8 @@ import com.google.android.material.navigation.NavigationView;
         DrawerLayout drawerLayout;
         NavigationView navigationView;
         Toolbar toolbar;
+        TextView tvTenUser;
+        View headerView;
         @Override
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
@@ -36,6 +41,7 @@ import com.google.android.material.navigation.NavigationView;
             toolbar.getNavigationIcon().setTint(Color.WHITE);
             drawerLayout = findViewById(R.id.main);
             navigationView = findViewById(R.id.nav_view);
+            headerView = navigationView.getHeaderView(0);
             navigationView.bringToFront();
             ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                     this, drawerLayout, toolbar,
@@ -52,12 +58,21 @@ import com.google.android.material.navigation.NavigationView;
             });
             addControls();
             addEvents();
+            loadUser();
+        }
+
+        private void loadUser() {
+            SharedPreferences sharedPreferences = getSharedPreferences("AppPrefs", MODE_PRIVATE);
+            String userName = sharedPreferences.getString("user_name", "Guest");
+            tvTenUser.setText(userName);
         }
 
         private void addEvents() {
         }
 
         private void addControls() {
+
+            tvTenUser=headerView.findViewById(R.id.tvTenUser);
         }
 
         @Override
