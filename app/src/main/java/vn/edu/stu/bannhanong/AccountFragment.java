@@ -1,6 +1,9 @@
 package vn.edu.stu.bannhanong;
 
+import static android.content.Context.MODE_PRIVATE;
+
 import android.app.AlertDialog;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -11,11 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.Spinner;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,7 +30,7 @@ import vn.edu.stu.bannhanong.retrofit.RetrofitClient;
 public class AccountFragment extends Fragment {
     ApiService apiService;
     Retrofit retrofit;
-    EditText edtTinhThanh, edtQuanHuyen;
+    EditText edtTinhThanh, edtQuanHuyen,edtTen,edtSDT,edtDiachi;
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     private String mParam1;
@@ -39,7 +38,6 @@ public class AccountFragment extends Fragment {
     private List<Province> provinces;
     private List<District> districts;
     public AccountFragment() {
-        // Required empty public constructor
     }
 
     public static AccountFragment newInstance(String param1, String param2) {
@@ -150,6 +148,18 @@ public class AccountFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         edtTinhThanh = view.findViewById(R.id.edtTinhthanh);
         edtQuanHuyen = view.findViewById(R.id.edtQuanhuyen);
+        edtTen=view.findViewById(R.id.edtTen);
+        edtSDT=view.findViewById(R.id.edtSDT);
+        edtDiachi=view.findViewById(R.id.edtDiachi);
+        loadUserInfo();
         loadProvinces();
+    }
+
+    private void loadUserInfo() {
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("AppPrefs", MODE_PRIVATE);
+        String userName = sharedPreferences.getString("user_name", "");
+        String userPhone = sharedPreferences.getString("user_phone", "");
+        edtTen.setText(userName);
+        edtSDT.setText(userPhone);
     }
 }

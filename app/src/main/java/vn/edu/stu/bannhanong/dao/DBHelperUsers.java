@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.BaseColumns;
+import android.util.Log;
 
 import vn.edu.stu.bannhanong.model.LoaiUSers;
 import vn.edu.stu.bannhanong.model.Users;
@@ -115,17 +116,29 @@ public class DBHelperUsers extends SQLiteOpenHelper {
             String address = cursor.getString(cursor.getColumnIndexOrThrow(TABLE.COL_DIACHI));
             int userType = cursor.getInt(cursor.getColumnIndexOrThrow(TABLE.COL_LOAI));
             String userTypeName = cursor.getString(cursor.getColumnIndexOrThrow("tenloai"));
-
-            // Khởi tạo đối tượng LoaiUSers
             LoaiUSers loaiUSers = new LoaiUSers(userType, userTypeName);
-
-            // Khởi tạo đối tượng Users
             user = new Users(id, name, phone, password, address, loaiUSers);
         }
         cursor.close();
         db.close();
         return user;
     }
+    public void updateUser(int userId, String userName, String userPhone, String userAddress) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(TABLE.COL_TEN, userName);
+        values.put(TABLE.COL_DIACHI, userAddress);
+        int rowsUpdated = db.update(TABLE.TABLE_NAME, values, TABLE.COL_MA + " = ?", new String[]{String.valueOf(userId)});
+        if (rowsUpdated > 0) {
+            Log.d("SQLite", "Cập nhật thông tin thành công");
+        } else {
+            Log.d("SQLite", "Cập nhật thông tin thất bại");
+        }
+
+        db.close();
+    }
+
+
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {

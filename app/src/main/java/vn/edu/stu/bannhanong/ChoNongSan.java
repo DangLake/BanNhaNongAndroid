@@ -43,7 +43,6 @@ public class ChoNongSan extends AppCompatActivity {
             }
         });
 
-        // Thiết lập ẩn thanh điều hướng và làm cho giao diện toàn màn hình
         View decorView = getWindow().getDecorView();
         int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
         decorView.setSystemUiVisibility(uiOptions);
@@ -54,8 +53,6 @@ public class ChoNongSan extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-
-        // Thay đổi giao diện bằng các fragment
         addControls();
         replaceFrag(new ProductFragment());
         addEvents();
