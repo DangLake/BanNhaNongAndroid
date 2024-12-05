@@ -113,6 +113,8 @@ public class Login extends AppCompatActivity {
             } else {
                 Toast.makeText(Login.this, getString(R.string.login_failed), Toast.LENGTH_SHORT).show();
             }
+        }else{
+            Toast.makeText(this, "Sai thông tin đăng nhập", Toast.LENGTH_SHORT).show();
         }
     }
 

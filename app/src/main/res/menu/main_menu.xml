@@ -5,13 +5,13 @@
         android:title="Bài viết của tôi"
         android:icon="@drawable/baseline_view_baiviet_24"
         />
-    <item android:id="@+id/nav_sanpham"
-        android:title="Danh sách sản phẩm"
+    <item android:id="@+id/nav_hopdong"
+        android:title="Hợp đồng"
         android:icon="@drawable/baseline_list_sp_24"
         />
-    <item android:id="@+id/nav_donhang"
-        android:title="Đơn hàng của tôi"
-        android:icon="@drawable/baseline_donhang_24"
+    <item android:id="@+id/nav_lienhe"
+        android:title="Thông tin liên hệ"
+        android:icon="@drawable/baseline_local_phone_24"
         />
     <item android:id="@+id/nav_caidat"
         android:title="Cài đặt"
