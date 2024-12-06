@@ -2,6 +2,7 @@ package vn.edu.stu.bannhanong.dao;
 
 import android.app.Activity;
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -16,7 +17,7 @@ public class DBHelperUsers extends SQLiteOpenHelper {
     private static final String DB_NAME="bannhanong.sqlite";
     private static final int DB_VERSION=1;
 
-    public DBHelperUsers(Activity context){
+    public DBHelperUsers(Context context){
         super(context,DB_NAME,null,DB_VERSION);
     }
 
@@ -127,6 +128,7 @@ public class DBHelperUsers extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(TABLE.COL_TEN, userName);
+        values.put(TABLE.COL_SDT, userPhone);
         values.put(TABLE.COL_DIACHI, userAddress);
         int rowsUpdated = db.update(TABLE.TABLE_NAME, values, TABLE.COL_MA + " = ?", new String[]{String.valueOf(userId)});
         if (rowsUpdated > 0) {

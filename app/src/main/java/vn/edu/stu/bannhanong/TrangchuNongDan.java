@@ -117,4 +117,10 @@ public class TrangchuNongDan extends AppCompatActivity implements NavigationView
         }
         return true;
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadUser();
+    }
 }

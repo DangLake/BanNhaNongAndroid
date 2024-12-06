@@ -2,7 +2,10 @@ package vn.edu.stu.bannhanong;
 
 import static android.content.Context.MODE_PRIVATE;
 
+import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
@@ -14,7 +17,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,20 +28,24 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
+import vn.edu.stu.bannhanong.dao.DBHelperUsers;
 import vn.edu.stu.bannhanong.model.District;
 import vn.edu.stu.bannhanong.model.Province;
+import vn.edu.stu.bannhanong.model.Users;
 import vn.edu.stu.bannhanong.retrofit.ApiService;
 import vn.edu.stu.bannhanong.retrofit.RetrofitClient;
 
 public class AccountFragment extends Fragment {
     ApiService apiService;
     Retrofit retrofit;
+    Button btnCapNhatuser;
     EditText edtTinhThanh, edtQuanHuyen,edtTen,edtSDT,edtDiachi;
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     private String mParam1;
     private String mParam2;
     private List<Province> provinces;
+    DBHelperUsers dbHelperUsers;
     private List<District> districts;
     public AccountFragment() {
     }
@@ -151,15 +161,80 @@ public class AccountFragment extends Fragment {
         edtTen=view.findViewById(R.id.edtTen);
         edtSDT=view.findViewById(R.id.edtSDT);
         edtDiachi=view.findViewById(R.id.edtDiachi);
+        btnCapNhatuser=view.findViewById(R.id.btnCapNhatuser);
         loadUserInfo();
         loadProvinces();
+        addEvents();
+        dbHelperUsers=new DBHelperUsers(getContext());
     }
 
+    private void addEvents() {
+        btnCapNhatuser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String ten = edtTen.getText().toString();
+                String sdt = edtSDT.getText().toString();
+                String diachi = edtDiachi.getText().toString() + " " + edtQuanHuyen.getText().toString() + " " + edtTinhThanh.getText().toString();
+
+                SharedPreferences sharedPreferences = getActivity().getSharedPreferences("AppPrefs", MODE_PRIVATE);
+                int userId = sharedPreferences.getInt("user_id", -1);
+                String oldPhone = sharedPreferences.getString("user_phone", "");
+
+                if (userId == -1) {
+                    Toast.makeText(getContext(), "Lỗi: Không tìm thấy thông tin người dùng.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if (!sdt.equals(oldPhone)) { // Số điện thoại thay đổi
+                    Intent intent = new Intent(getActivity(), OTPCapNhat.class);
+                    intent.putExtra("phone_number", sdt); // Gửi số điện thoại mới
+                    intent.putExtra("userId", userId);
+                    intent.putExtra("ten", ten);
+                    intent.putExtra("diachi", diachi);
+                    startActivityForResult(intent, 100);
+                } else {
+                    // Nếu số điện thoại không thay đổi, cập nhật trực tiếp
+                    dbHelperUsers.updateUser(userId, ten, sdt, diachi);
+                    sharedPreferences = getActivity().getSharedPreferences("AppPrefs", Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putString("user_name", ten);
+                    editor.apply();
+                    Toast.makeText(getContext(), "Cập nhật thông tin thành công", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
     private void loadUserInfo() {
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences("AppPrefs", MODE_PRIVATE);
         String userName = sharedPreferences.getString("user_name", "");
         String userPhone = sharedPreferences.getString("user_phone", "");
         edtTen.setText(userName);
         edtSDT.setText(userPhone);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 100 && resultCode == Activity.RESULT_OK && data != null) {
+            int userId = data.getIntExtra("userId", -1);
+            String newPhone = data.getStringExtra("newPhone");
+            String ten = data.getStringExtra("ten");
+            String diachi = data.getStringExtra("diachi");
+            if (userId != -1) {
+                dbHelperUsers.updateUser(userId, ten, newPhone, diachi);
+                Toast.makeText(getContext(), "Cập nhật thông tin thành công", Toast.LENGTH_SHORT).show();
+                SharedPreferences sharedPreferences = getActivity().getSharedPreferences("AppPrefs", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putString("user_phone", newPhone);
+                editor.putString("user_name", ten);
+                editor.apply();
+            }
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        loadUserInfo();
     }
 }
