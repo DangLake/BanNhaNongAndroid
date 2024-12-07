@@ -174,7 +174,9 @@ public class AccountFragment extends Fragment {
             public void onClick(View view) {
                 String ten = edtTen.getText().toString();
                 String sdt = edtSDT.getText().toString();
-                String diachi = edtDiachi.getText().toString() + " " + edtQuanHuyen.getText().toString() + " " + edtTinhThanh.getText().toString();
+                String diachi = edtDiachi.getText().toString();
+                String quan=edtQuanHuyen.getText().toString();
+                String tinh=edtTinhThanh.getText().toString();
 
                 SharedPreferences sharedPreferences = getActivity().getSharedPreferences("AppPrefs", MODE_PRIVATE);
                 int userId = sharedPreferences.getInt("user_id", -1);
@@ -191,13 +193,18 @@ public class AccountFragment extends Fragment {
                     intent.putExtra("userId", userId);
                     intent.putExtra("ten", ten);
                     intent.putExtra("diachi", diachi);
+                    intent.putExtra("quan", quan);
+                    intent.putExtra("tinh", tinh);
                     startActivityForResult(intent, 100);
                 } else {
                     // Nếu số điện thoại không thay đổi, cập nhật trực tiếp
-                    dbHelperUsers.updateUser(userId, ten, sdt, diachi);
+                    dbHelperUsers.updateUser(userId, ten, sdt, diachi,quan,tinh);
                     sharedPreferences = getActivity().getSharedPreferences("AppPrefs", Context.MODE_PRIVATE);
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     editor.putString("user_name", ten);
+                    editor.putString("diachi",diachi);
+                    editor.putString("quan",quan);
+                    editor.putString("tinh",tinh);
                     editor.apply();
                     Toast.makeText(getContext(), "Cập nhật thông tin thành công", Toast.LENGTH_SHORT).show();
                 }
@@ -208,8 +215,14 @@ public class AccountFragment extends Fragment {
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences("AppPrefs", MODE_PRIVATE);
         String userName = sharedPreferences.getString("user_name", "");
         String userPhone = sharedPreferences.getString("user_phone", "");
+        String diachi = sharedPreferences.getString("diachi", "");
+        String quan = sharedPreferences.getString("quan", "");
+        String tinh = sharedPreferences.getString("tinh", "");
         edtTen.setText(userName);
         edtSDT.setText(userPhone);
+        edtDiachi.setText(diachi);
+        edtQuanHuyen.setText(quan);
+        edtTinhThanh.setText(tinh);
     }
 
     @Override
@@ -220,13 +233,18 @@ public class AccountFragment extends Fragment {
             String newPhone = data.getStringExtra("newPhone");
             String ten = data.getStringExtra("ten");
             String diachi = data.getStringExtra("diachi");
+            String quan = data.getStringExtra("quan");
+            String tinh = data.getStringExtra("tinh");
             if (userId != -1) {
-                dbHelperUsers.updateUser(userId, ten, newPhone, diachi);
+                dbHelperUsers.updateUser(userId, ten, newPhone, diachi,quan,tinh);
                 Toast.makeText(getContext(), "Cập nhật thông tin thành công", Toast.LENGTH_SHORT).show();
                 SharedPreferences sharedPreferences = getActivity().getSharedPreferences("AppPrefs", Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putString("user_phone", newPhone);
                 editor.putString("user_name", ten);
+                editor.putString("diachi",diachi);
+                editor.putString("quan",quan);
+                editor.putString("tinh",tinh);
                 editor.apply();
             }
         }

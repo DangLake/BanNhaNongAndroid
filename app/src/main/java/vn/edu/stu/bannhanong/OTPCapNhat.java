@@ -89,6 +89,8 @@ public class OTPCapNhat extends AppCompatActivity {
         String phoneNumber = getIntent().getStringExtra("phone_number"); // Số mới
         String userName = getIntent().getStringExtra("ten");
         String userAddress = getIntent().getStringExtra("diachi");
+        String quan = getIntent().getStringExtra("quan");
+        String tinh = getIntent().getStringExtra("tinh");
         int userId = getIntent().getIntExtra("userId", -1);
 
         if (enteredOtp.isEmpty() || enteredOtp.length() < 6) {
@@ -101,7 +103,7 @@ public class OTPCapNhat extends AppCompatActivity {
 
             // Cập nhật thông tin người dùng với số mới
             DBHelperUsers dbHelperUsers = new DBHelperUsers(this);
-            dbHelperUsers.updateUser(userId, userName, phoneNumber, userAddress);
+            dbHelperUsers.updateUser(userId, userName, phoneNumber, userAddress,quan,tinh);
 
             // Gửi kết quả về Fragment
             Intent resultIntent = new Intent();
@@ -109,6 +111,8 @@ public class OTPCapNhat extends AppCompatActivity {
             resultIntent.putExtra("newPhone", phoneNumber);
             resultIntent.putExtra("ten", userName);
             resultIntent.putExtra("diachi", userAddress);
+            resultIntent.putExtra("quan", quan);
+            resultIntent.putExtra("tinh", tinh);
             setResult(Activity.RESULT_OK, resultIntent);
             finish();
         } else {

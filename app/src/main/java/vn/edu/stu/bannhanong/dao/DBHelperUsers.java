@@ -28,6 +28,8 @@ public class DBHelperUsers extends SQLiteOpenHelper {
         private static final String COL_SDT="sdt";
         private static final String COL_MATKHAU="matkhau";
         private static final String COL_DIACHI="diachi";
+        private static final String COL_QUAN="quanhuyen";
+        private static final String COL_TINH="tinh";
         private static final String COL_LOAI="maloai";
 
     }
@@ -93,6 +95,8 @@ public class DBHelperUsers extends SQLiteOpenHelper {
                 TABLE.COL_SDT + " TEXT, " +
                 TABLE.COL_MATKHAU + " TEXT, " +
                 TABLE.COL_DIACHI + " TEXT, " +
+                TABLE.COL_QUAN + " TEXT, " +
+                TABLE.COL_TINH + " TEXT, " +
                 TABLE.COL_LOAI + " INTEGER)";
         sqLiteDatabase.execSQL(CREATE_USERS_TABLE);
     }
@@ -101,6 +105,8 @@ public class DBHelperUsers extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         String query = "SELECT u." + TABLE.COL_MA + ", u." + TABLE.COL_TEN + ", u." + TABLE.COL_SDT +
                 ", u." + TABLE.COL_MATKHAU + ", u." + TABLE.COL_DIACHI +
+                ", u." + TABLE.COL_QUAN +
+                ", u." + TABLE.COL_TINH +
                 ", u." + TABLE.COL_LOAI + ", l.tenloai " +
                 "FROM " + TABLE.TABLE_NAME + " u " +
                 "LEFT JOIN " + "loaiusers" + " l " +
@@ -115,21 +121,25 @@ public class DBHelperUsers extends SQLiteOpenHelper {
             String phone = cursor.getString(cursor.getColumnIndexOrThrow(TABLE.COL_SDT));
             String password = cursor.getString(cursor.getColumnIndexOrThrow(TABLE.COL_MATKHAU));
             String address = cursor.getString(cursor.getColumnIndexOrThrow(TABLE.COL_DIACHI));
+            String quan = cursor.getString(cursor.getColumnIndexOrThrow(TABLE.COL_QUAN));
+            String tinh = cursor.getString(cursor.getColumnIndexOrThrow(TABLE.COL_TINH));
             int userType = cursor.getInt(cursor.getColumnIndexOrThrow(TABLE.COL_LOAI));
             String userTypeName = cursor.getString(cursor.getColumnIndexOrThrow("tenloai"));
             LoaiUSers loaiUSers = new LoaiUSers(userType, userTypeName);
-            user = new Users(id, name, phone, password, address, loaiUSers);
+            user = new Users(id, name, phone, password, address,quan,tinh, loaiUSers);
         }
         cursor.close();
         db.close();
         return user;
     }
-    public void updateUser(int userId, String userName, String userPhone, String userAddress) {
+    public void updateUser(int userId, String userName, String userPhone, String userAddress,String quan,String tinh) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(TABLE.COL_TEN, userName);
         values.put(TABLE.COL_SDT, userPhone);
         values.put(TABLE.COL_DIACHI, userAddress);
+        values.put(TABLE.COL_QUAN, quan);
+        values.put(TABLE.COL_TINH, tinh);
         int rowsUpdated = db.update(TABLE.TABLE_NAME, values, TABLE.COL_MA + " = ?", new String[]{String.valueOf(userId)});
         if (rowsUpdated > 0) {
             Log.d("SQLite", "Cập nhật thông tin thành công");

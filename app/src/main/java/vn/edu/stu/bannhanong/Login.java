@@ -154,7 +154,7 @@ public class Login extends AppCompatActivity {
                         editor.putBoolean("location_permission_granted", true);
                         editor.putFloat("last_latitude", (float) latitude);
                         editor.putFloat("last_longitude", (float) longitude);
-                        editor.putString("user_address", fullAddress); // Lưu địa chỉ
+                        editor.putString("user_address", fullAddress);
                         editor.apply();
 
                         // Tiến hành điều hướng dựa trên loại người dùng

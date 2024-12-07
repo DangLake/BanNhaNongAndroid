@@ -8,25 +8,31 @@ public class Users implements Serializable {
     private String sdt;
     private String matkhau;
     private String diachi;
+    private String quanhuyen;
+    private String tinh;
     private LoaiUSers loaiUSers;
 
     public Users() {
     }
 
-    public Users(int id, String tenuser, String sdt, String matkhau, String diachi, LoaiUSers loaiUSers) {
+    public Users(int id, String tenuser, String sdt, String matkhau, String diachi, String quanhuyen, String tinh, LoaiUSers loaiUSers) {
         this.id = id;
         this.tenuser = tenuser;
         this.sdt = sdt;
         this.matkhau = matkhau;
         this.diachi = diachi;
+        this.quanhuyen = quanhuyen;
+        this.tinh = tinh;
         this.loaiUSers = loaiUSers;
     }
 
-    public Users(String tenuser, String sdt, String matkhau, String diachi, LoaiUSers loaiUSers) {
+    public Users(String tenuser, String sdt, String matkhau, String diachi, String quanhuyen, String tinh, LoaiUSers loaiUSers) {
         this.tenuser = tenuser;
         this.sdt = sdt;
         this.matkhau = matkhau;
         this.diachi = diachi;
+        this.quanhuyen = quanhuyen;
+        this.tinh = tinh;
         this.loaiUSers = loaiUSers;
     }
 
@@ -76,5 +82,21 @@ public class Users implements Serializable {
 
     public void setLoaiUSers(LoaiUSers loaiUSers) {
         this.loaiUSers = loaiUSers;
+    }
+
+    public String getQuanhuyen() {
+        return quanhuyen;
+    }
+
+    public void setQuanhuyen(String quanhuyen) {
+        this.quanhuyen = quanhuyen;
+    }
+
+    public String getTinh() {
+        return tinh;
+    }
+
+    public void setTinh(String tinh) {
+        this.tinh = tinh;
     }
 }
