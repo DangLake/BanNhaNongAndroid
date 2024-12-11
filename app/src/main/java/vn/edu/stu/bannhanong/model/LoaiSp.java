@@ -5,15 +5,13 @@ import java.util.List;
 public class LoaiSp {
     private int maloai;
     private String tenloai;
-    private List<Sanpham> dsSP;
 
     public LoaiSp() {
     }
 
-    public LoaiSp(int maloai, String tenloai, List<Sanpham> dsSP) {
+    public LoaiSp(int maloai, String tenloai) {
         this.maloai = maloai;
         this.tenloai = tenloai;
-        this.dsSP = dsSP;
     }
 
     public int getMaloai() {
@@ -30,13 +28,5 @@ public class LoaiSp {
 
     public void setTenloai(String tenloai) {
         this.tenloai = tenloai;
-    }
-
-    public List<Sanpham> getDsSP() {
-        return dsSP;
-    }
-
-    public void setDsSP(List<Sanpham> dsSP) {
-        this.dsSP = dsSP;
     }
 }

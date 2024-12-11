@@ -1,24 +1,40 @@
 package vn.edu.stu.bannhanong.model;
 
-public class Sanpham {
+import java.io.Serializable;
+import java.util.List;
+
+public class Sanpham implements Serializable {
     private int ma;
     private String ten;
-    private String anh;
-    private double gia;
     private String mota;
-
+    private double gia;
+    private String donvitinh;
+    private int soluong;
     private LoaiSp loaiSp;
+    private Users mauser;
 
     public Sanpham() {
     }
 
-    public Sanpham(int ma, String ten, String anh, double gia, String mota, LoaiSp loaiSp) {
+    public Sanpham(int ma, String ten, String mota, double gia, String donvitinh, int soluong, LoaiSp loaiSp, Users mauser) {
         this.ma = ma;
         this.ten = ten;
-        this.anh = anh;
-        this.gia = gia;
         this.mota = mota;
+        this.gia = gia;
+        this.donvitinh = donvitinh;
+        this.soluong = soluong;
         this.loaiSp = loaiSp;
+        this.mauser = mauser;
+    }
+
+    public Sanpham(String ten, String mota, double gia, String donvitinh, int soluong, LoaiSp loaiSp, Users mauser) {
+        this.ten = ten;
+        this.mota = mota;
+        this.gia = gia;
+        this.donvitinh = donvitinh;
+        this.soluong = soluong;
+        this.loaiSp = loaiSp;
+        this.mauser = mauser;
     }
 
     public int getMa() {
@@ -37,12 +53,12 @@ public class Sanpham {
         this.ten = ten;
     }
 
-    public String getAnh() {
-        return anh;
+    public String getMota() {
+        return mota;
     }
 
-    public void setAnh(String anh) {
-        this.anh = anh;
+    public void setMota(String mota) {
+        this.mota = mota;
     }
 
     public double getGia() {
@@ -53,12 +69,20 @@ public class Sanpham {
         this.gia = gia;
     }
 
-    public String getMota() {
-        return mota;
+    public String getDonvitinh() {
+        return donvitinh;
     }
 
-    public void setMota(String mota) {
-        this.mota = mota;
+    public void setDonvitinh(String donvitinh) {
+        this.donvitinh = donvitinh;
+    }
+
+    public int getSoluong() {
+        return soluong;
+    }
+
+    public void setSoluong(int soluong) {
+        this.soluong = soluong;
     }
 
     public LoaiSp getLoaiSp() {
@@ -67,5 +91,13 @@ public class Sanpham {
 
     public void setLoaiSp(LoaiSp loaiSp) {
         this.loaiSp = loaiSp;
+    }
+
+    public Users getMauser() {
+        return mauser;
+    }
+
+    public void setMauser(Users mauser) {
+        this.mauser = mauser;
     }
 }
