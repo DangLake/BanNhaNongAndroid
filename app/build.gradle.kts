@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.google.gms.google.services)
     alias(libs.plugins.google.firebase.crashlytics)
+
 }
 
 android {
@@ -34,6 +35,12 @@ android {
     buildFeatures {
         viewBinding = true
     }
+
+}
+buildscript {
+    dependencies {
+        classpath ("com.google.gms:google-services:4.3.10") // Phiên bản mới nhất
+    }
 }
 
 dependencies {
@@ -57,8 +64,10 @@ dependencies {
     androidTestImplementation(libs.ext.junit)
     implementation (libs.play.services.location)
     androidTestImplementation(libs.espresso.core)
-    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
-    implementation ("com.google.android.material:material:1.5.0")
+    implementation (libs.retrofit)
+    implementation (libs.converter.gson)
+    implementation (libs.material.v150)
+    implementation (libs.firebase.firestore)
+    implementation ("com.google.android.gms:play-services-auth:20.1.0")
     implementation(kotlin("script-runtime"))
 }

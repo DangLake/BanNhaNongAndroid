@@ -21,6 +21,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,6 +39,7 @@ import vn.edu.stu.bannhanong.retrofit.ApiService;
 import vn.edu.stu.bannhanong.retrofit.RetrofitClient;
 
 public class AccountFragment extends Fragment {
+    FirebaseFirestore firestore;
     ApiService apiService;
     Retrofit retrofit;
     Button btnCapNhatuser;
@@ -66,6 +70,7 @@ public class AccountFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        firestore = FirebaseFirestore.getInstance();
         retrofit = RetrofitClient.getClient("https://provinces.open-api.vn/api/");
         apiService = retrofit.create(ApiService.class);
     }
@@ -165,31 +170,35 @@ public class AccountFragment extends Fragment {
         loadUserInfo();
         loadProvinces();
         addEvents();
-        dbHelperUsers=new DBHelperUsers(getContext());
+        dbHelperUsers=new DBHelperUsers();
     }
 
     private void addEvents() {
         btnCapNhatuser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // Lấy dữ liệu từ các trường nhập
                 String ten = edtTen.getText().toString();
                 String sdt = edtSDT.getText().toString();
                 String diachi = edtDiachi.getText().toString();
-                String quan=edtQuanHuyen.getText().toString();
-                String tinh=edtTinhThanh.getText().toString();
+                String quan = edtQuanHuyen.getText().toString();
+                String tinh = edtTinhThanh.getText().toString();
 
+                // Lấy thông tin người dùng từ SharedPreferences
                 SharedPreferences sharedPreferences = getActivity().getSharedPreferences("AppPrefs", MODE_PRIVATE);
-                int userId = sharedPreferences.getInt("user_id", -1);
+                String userId = sharedPreferences.getString("user_id", "");
                 String oldPhone = sharedPreferences.getString("user_phone", "");
 
-                if (userId == -1) {
+                // Kiểm tra nếu không có thông tin người dùng
+                if (userId.isEmpty()) {  // Kiểm tra nếu userId là chuỗi rỗng
                     Toast.makeText(getContext(), "Lỗi: Không tìm thấy thông tin người dùng.", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                if (!sdt.equals(oldPhone)) { // Số điện thoại thay đổi
+                // Kiểm tra nếu số điện thoại thay đổi
+                if (!sdt.equals(oldPhone)) {
                     Intent intent = new Intent(getActivity(), OTPCapNhat.class);
-                    intent.putExtra("phone_number", sdt); // Gửi số điện thoại mới
+                    intent.putExtra("phone_number", sdt);
                     intent.putExtra("userId", userId);
                     intent.putExtra("ten", ten);
                     intent.putExtra("diachi", diachi);
@@ -197,15 +206,18 @@ public class AccountFragment extends Fragment {
                     intent.putExtra("tinh", tinh);
                     startActivityForResult(intent, 100);
                 } else {
-                    // Nếu số điện thoại không thay đổi, cập nhật trực tiếp
-                    dbHelperUsers.updateUser(userId, ten, sdt, diachi,quan,tinh);
+                    // Nếu số điện thoại không thay đổi, cập nhật trực tiếp vào cơ sở dữ liệu
+                    dbHelperUsers.updateUser(userId, ten, sdt, diachi, quan, tinh);
+
+                    // Cập nhật SharedPreferences
                     sharedPreferences = getActivity().getSharedPreferences("AppPrefs", Context.MODE_PRIVATE);
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     editor.putString("user_name", ten);
-                    editor.putString("diachi",diachi);
-                    editor.putString("quan",quan);
-                    editor.putString("tinh",tinh);
+                    editor.putString("diachi", diachi);
+                    editor.putString("quan", quan);
+                    editor.putString("tinh", tinh);
                     editor.apply();
+
                     Toast.makeText(getContext(), "Cập nhật thông tin thành công", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -213,38 +225,57 @@ public class AccountFragment extends Fragment {
     }
     private void loadUserInfo() {
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences("AppPrefs", MODE_PRIVATE);
-        String userName = sharedPreferences.getString("user_name", "");
         String userPhone = sharedPreferences.getString("user_phone", "");
-        String diachi = sharedPreferences.getString("diachi", "");
-        String quan = sharedPreferences.getString("quan", "");
-        String tinh = sharedPreferences.getString("tinh", "");
-        edtTen.setText(userName);
-        edtSDT.setText(userPhone);
-        edtDiachi.setText(diachi);
-        edtQuanHuyen.setText(quan);
-        edtTinhThanh.setText(tinh);
+
+        if (!userPhone.isEmpty()) {
+            firestore.collection("users")
+                    .whereEqualTo("sdt", userPhone)
+                    .get()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful() && !task.getResult().isEmpty()) {
+                            DocumentSnapshot document = task.getResult().getDocuments().get(0);
+                            String userName = document.getString("ten");
+                            String diachi = document.getString("diachi");
+                            String quan = document.getString("quanhuyen");
+                            String tinh = document.getString("tinh");
+
+                            edtTen.setText(userName);
+                            edtSDT.setText(userPhone);
+                            edtDiachi.setText(diachi);
+                            edtQuanHuyen.setText(quan);
+                            edtTinhThanh.setText(tinh);
+                        } else {
+                            Toast.makeText(getContext(), "Không tìm thấy thông tin người dùng", Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .addOnFailureListener(e -> Log.e("FirestoreError", "Error loading user info", e));
+        }
     }
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 100 && resultCode == Activity.RESULT_OK && data != null) {
-            int userId = data.getIntExtra("userId", -1);
+            String userId = data.getStringExtra("userId");
             String newPhone = data.getStringExtra("newPhone");
             String ten = data.getStringExtra("ten");
             String diachi = data.getStringExtra("diachi");
             String quan = data.getStringExtra("quan");
             String tinh = data.getStringExtra("tinh");
-            if (userId != -1) {
-                dbHelperUsers.updateUser(userId, ten, newPhone, diachi,quan,tinh);
+
+            if (userId.isEmpty()) {
+                dbHelperUsers.updateUser(userId, ten, newPhone, diachi, quan, tinh);
                 Toast.makeText(getContext(), "Cập nhật thông tin thành công", Toast.LENGTH_SHORT).show();
+
+                // Cập nhật lại SharedPreferences với thông tin mới
                 SharedPreferences sharedPreferences = getActivity().getSharedPreferences("AppPrefs", Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putString("user_phone", newPhone);
                 editor.putString("user_name", ten);
-                editor.putString("diachi",diachi);
-                editor.putString("quan",quan);
-                editor.putString("tinh",tinh);
+                editor.putString("diachi", diachi);
+                editor.putString("quan", quan);
+                editor.putString("tinh", tinh);
                 editor.apply();
             }
         }

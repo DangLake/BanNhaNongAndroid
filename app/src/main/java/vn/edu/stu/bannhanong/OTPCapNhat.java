@@ -24,6 +24,7 @@ public class OTPCapNhat extends AppCompatActivity {
     EditText otp_1, otp_2, otp_3, otp_4, otp_5, otp_6;
     TextView resend_otp;
     Button btn_submit;
+    DBHelperUsers dbHelperUsers;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,7 +92,7 @@ public class OTPCapNhat extends AppCompatActivity {
         String userAddress = getIntent().getStringExtra("diachi");
         String quan = getIntent().getStringExtra("quan");
         String tinh = getIntent().getStringExtra("tinh");
-        int userId = getIntent().getIntExtra("userId", -1);
+        String userId = getIntent().getStringExtra("userId");
 
         if (enteredOtp.isEmpty() || enteredOtp.length() < 6) {
             Toast.makeText(this, getString(R.string.otp_input), Toast.LENGTH_SHORT).show();
@@ -101,24 +102,31 @@ public class OTPCapNhat extends AppCompatActivity {
         if (String.valueOf(sentOtp).equals(enteredOtp)) {
             Toast.makeText(this, getString(R.string.otp_success), Toast.LENGTH_SHORT).show();
 
-            // Cập nhật thông tin người dùng với số mới
-            DBHelperUsers dbHelperUsers = new DBHelperUsers(this);
-            dbHelperUsers.updateUser(userId, userName, phoneNumber, userAddress,quan,tinh);
+            dbHelperUsers=new DBHelperUsers();
+            // Cập nhật thông tin người dùng
+            dbHelperUsers.updateUser(userId, userName, phoneNumber, userAddress, quan, tinh)
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            // Gửi kết quả về Fragment
+                            Intent resultIntent = new Intent();
+                            resultIntent.putExtra("userId", userId);
+                            resultIntent.putExtra("newPhone", phoneNumber);
+                            resultIntent.putExtra("ten", userName);
+                            resultIntent.putExtra("diachi", userAddress);
+                            resultIntent.putExtra("quan", quan);
+                            resultIntent.putExtra("tinh", tinh);
+                            setResult(Activity.RESULT_OK, resultIntent);
+                            finish();
+                        } else {
+                            Toast.makeText(this,"Cập nhật thất bại", Toast.LENGTH_SHORT).show();
+                        }
+                    });
 
-            // Gửi kết quả về Fragment
-            Intent resultIntent = new Intent();
-            resultIntent.putExtra("userId", userId);
-            resultIntent.putExtra("newPhone", phoneNumber);
-            resultIntent.putExtra("ten", userName);
-            resultIntent.putExtra("diachi", userAddress);
-            resultIntent.putExtra("quan", quan);
-            resultIntent.putExtra("tinh", tinh);
-            setResult(Activity.RESULT_OK, resultIntent);
-            finish();
         } else {
             Toast.makeText(this, getString(R.string.otp_failed), Toast.LENGTH_SHORT).show();
         }
     }
+
 
 
     private void addControls() {

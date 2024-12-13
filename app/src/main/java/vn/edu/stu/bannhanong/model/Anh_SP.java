@@ -1,11 +1,11 @@
 package vn.edu.stu.bannhanong.model;
 
 public class Anh_SP {
-    private int id;
+    private String id;
     private byte[] hinhAnh;
     private Sanpham idSP;
 
-    public Anh_SP(int id, byte[] hinhAnh, Sanpham idSP) {
+    public Anh_SP(String id, byte[] hinhAnh, Sanpham idSP) {
         this.id = id;
         this.hinhAnh = hinhAnh;
         this.idSP = idSP;
@@ -19,11 +19,11 @@ public class Anh_SP {
     public Anh_SP() {
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 

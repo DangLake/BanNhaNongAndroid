@@ -3,19 +3,19 @@ package vn.edu.stu.bannhanong.model;
 import java.io.Serializable;
 
 public class Users implements Serializable {
-    private int id;
+    private String id;
     private String tenuser;
     private String sdt;
     private String matkhau;
     private String diachi;
     private String quanhuyen;
     private String tinh;
-    private LoaiUSers loaiUSers;
+    private int loaiUSers;
 
     public Users() {
     }
 
-    public Users(int id, String tenuser, String sdt, String matkhau, String diachi, String quanhuyen, String tinh, LoaiUSers loaiUSers) {
+    public Users(String id, String tenuser, String sdt, String matkhau, String diachi, String quanhuyen, String tinh, int loaiUSers) {
         this.id = id;
         this.tenuser = tenuser;
         this.sdt = sdt;
@@ -26,7 +26,7 @@ public class Users implements Serializable {
         this.loaiUSers = loaiUSers;
     }
 
-    public Users(String tenuser, String sdt, String matkhau, String diachi, String quanhuyen, String tinh, LoaiUSers loaiUSers) {
+    public Users(String tenuser, String sdt, String matkhau, String diachi, String quanhuyen, String tinh, int loaiUSers) {
         this.tenuser = tenuser;
         this.sdt = sdt;
         this.matkhau = matkhau;
@@ -36,11 +36,11 @@ public class Users implements Serializable {
         this.loaiUSers = loaiUSers;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -76,11 +76,11 @@ public class Users implements Serializable {
         this.diachi = diachi;
     }
 
-    public LoaiUSers getLoaiUSers() {
+    public int getLoaiUSers() {
         return loaiUSers;
     }
 
-    public void setLoaiUSers(LoaiUSers loaiUSers) {
+    public void setLoaiUSers(int loaiUSers) {
         this.loaiUSers = loaiUSers;
     }
 

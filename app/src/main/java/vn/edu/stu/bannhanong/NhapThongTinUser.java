@@ -9,10 +9,15 @@ import android.widget.RadioButton;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentReference;
 
 import vn.edu.stu.bannhanong.dao.DBHelperUsers;
 
@@ -67,24 +72,45 @@ public class NhapThongTinUser extends AppCompatActivity {
         }
 
         // Xác định loại người dùng
-        int userType = 2; // Giá trị mặc định cho Nông dân
+        int userType; // Giá trị mặc định cho Nông dân
         if (rdoNguoimua.isChecked()) {
             userType = 0; // Người mua
         } else if (rdoDoanhnghiep.isChecked()) {
             userType = 1; // Doanh nghiệp
+        } else {
+            userType = 2;
         }
 
-        // Kiểm tra nếu số điện thoại đã tồn tại trong cơ sở dữ liệu
-        DBHelperUsers dbHelper = new DBHelperUsers(this);
-        boolean success = dbHelper.insertUser(name, phoneNumber, password, userType);
-        if (success) {
-            Toast.makeText(this, getString(R.string.signin_success), Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(NhapThongTinUser.this, Login.class);
-            startActivity(intent);
-            finish();
-        } else {
-            Toast.makeText(this, getString(R.string.signin_failed), Toast.LENGTH_SHORT).show();
-        }
+        // Kiểm tra nếu số điện thoại đã tồn tại trong Firestore
+        DBHelperUsers dbHelper = new DBHelperUsers();
+        dbHelper.isPhoneNumberExists(phoneNumber)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && task.getResult()) {
+                        // Nếu số điện thoại đã tồn tại, thông báo lỗi
+                        Toast.makeText(this, "Số điện thoại đã tồn tại", Toast.LENGTH_SHORT).show();
+                    } else {
+                        // Nếu số điện thoại chưa tồn tại, thêm người dùng vào Firestore
+                        dbHelper.insertUser(name, phoneNumber, password, userType, new OnCompleteListener<DocumentReference>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentReference> task) {
+                                if (task.isSuccessful()) {
+                                    // Đăng ký thành công
+                                    Toast.makeText(NhapThongTinUser.this, getString(R.string.signin_success), Toast.LENGTH_SHORT).show();
+                                    Intent intent = new Intent(NhapThongTinUser.this, Login.class);
+                                    startActivity(intent);
+                                    finish();
+                                } else {
+                                    // Thêm người dùng thất bại
+                                    Toast.makeText(NhapThongTinUser.this, getString(R.string.signin_failed), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    // Lỗi khi kiểm tra số điện thoại
+                    Toast.makeText(this, "Kiểm tra số điện thoại lỗi", Toast.LENGTH_SHORT).show();
+                });
     }
 
     private void addControls() {

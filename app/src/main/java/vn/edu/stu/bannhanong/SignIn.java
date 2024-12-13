@@ -59,17 +59,26 @@ public class SignIn extends AppCompatActivity {
 
         if (!isValidPhoneNumber(phoneNumber)) {
             Toast.makeText(SignIn.this, getString(R.string.sdt_error), Toast.LENGTH_SHORT).show();
-        }else {
-
-            // Tạo một đối tượng DBHelper để kiểm tra số điện thoại
-            DBHelperUsers dbHelper = new DBHelperUsers(this);
-            if (dbHelper.isPhoneNumberExists(phoneNumber)) {
-                Toast.makeText(SignIn.this, getString(R.string.sdt_exists), Toast.LENGTH_SHORT).show();
-            } else {
-                sendOtp(phoneNumber);
-            }
+        } else {
+            // Kiểm tra số điện thoại trong Firestore một cách bất đồng bộ
+            DBHelperUsers dbHelper = new DBHelperUsers();
+            dbHelper.isPhoneNumberExists(phoneNumber).addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    boolean exists = task.getResult();
+                    if (exists) {
+                        Toast.makeText(SignIn.this, getString(R.string.sdt_exists), Toast.LENGTH_SHORT).show();
+                    } else {
+                        sendOtp(phoneNumber);
+                    }
+                } else {
+                    // Xử lý lỗi khi không thể kiểm tra số điện thoại
+                    Toast.makeText(SignIn.this, "Lỗi khi kiểm tra số điện thoại: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
         }
     }
+
+
 
     private void sendOtp(String phoneNumber) {
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {

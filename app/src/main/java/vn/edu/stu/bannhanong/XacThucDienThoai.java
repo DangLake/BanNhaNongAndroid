@@ -53,13 +53,21 @@ public class XacThucDienThoai extends AppCompatActivity {
 
         if (!isValidPhoneNumber(phoneNumber)) {
             Toast.makeText(XacThucDienThoai.this, getString(R.string.sdt_error), Toast.LENGTH_SHORT).show();
-        }else {
-            DBHelperUsers dbHelper = new DBHelperUsers(this);
-            if (!dbHelper.isPhoneNumberExists(phoneNumber)) {
-                Toast.makeText(XacThucDienThoai.this, getString(R.string.sdt_noexists), Toast.LENGTH_SHORT).show();
-            } else {
-                sendOtp(phoneNumber);
-            }
+        } else {
+            // Kiểm tra số điện thoại trong Firestore
+            DBHelperUsers dbHelper = new DBHelperUsers();
+            dbHelper.isPhoneNumberExists(phoneNumber).addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    boolean exists = task.getResult();
+                    if (!exists) {
+                        Toast.makeText(XacThucDienThoai.this, getString(R.string.sdt_noexists), Toast.LENGTH_SHORT).show();
+                    } else {
+                        sendOtp(phoneNumber);
+                    }
+                } else {
+                    Toast.makeText(XacThucDienThoai.this, "Lỗi khi kiểm tra số điện thoại: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
         }
     }
     private boolean isValidPhoneNumber(String phoneNumber) {

@@ -46,24 +46,32 @@ public class DoiMatKhau extends AppCompatActivity {
         String password = edtMatkhau.getText().toString().trim();
         String checkPassword = edtCheckMatkhau.getText().toString().trim();
         String phoneNumber = getIntent().getStringExtra("phone_number");
+
+        // Kiểm tra các trường thông tin
         if (password.isEmpty() || checkPassword.isEmpty()) {
             Toast.makeText(this, getString(R.string.dk_mk_null), Toast.LENGTH_SHORT).show();
             return;
         }
+
         if (!password.equals(checkPassword)) {
             Toast.makeText(this, getString(R.string.dk_mk_khop), Toast.LENGTH_SHORT).show();
             return;
         }
-        DBHelperUsers dbHelper = new DBHelperUsers(this);
-        boolean success=dbHelper.doiMatKhau(phoneNumber,password);
-        if (success) {
-            Toast.makeText(this, getString(R.string.update_success), Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(DoiMatKhau.this, Login.class);
-            startActivity(intent);
-            finish();
-        } else {
-            Toast.makeText(this, getString(R.string.update_failed), Toast.LENGTH_SHORT).show();
-        }
+
+        // Gọi hàm doiMatKhau từ DBHelperUsers
+        DBHelperUsers dbHelper = new DBHelperUsers();
+        dbHelper.doiMatKhau(phoneNumber, password)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Toast.makeText(DoiMatKhau.this, getString(R.string.update_success), Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(DoiMatKhau.this, Login.class);
+                        startActivity(intent);
+                        finish();
+                    } else {
+                        Toast.makeText(DoiMatKhau.this, getString(R.string.update_failed), Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addOnFailureListener(e -> Toast.makeText(DoiMatKhau.this, getString(R.string.update_failed), Toast.LENGTH_SHORT).show());
     }
 
     private void addControls() {

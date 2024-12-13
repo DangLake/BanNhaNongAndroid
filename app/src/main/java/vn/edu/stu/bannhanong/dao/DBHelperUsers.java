@@ -1,159 +1,165 @@
 package vn.edu.stu.bannhanong.dao;
 
-import android.app.Activity;
-import android.content.ContentValues;
-import android.content.Context;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
-import android.provider.BaseColumns;
-import android.util.Log;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.TaskCompletionSource;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.android.gms.tasks.Task;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import vn.edu.stu.bannhanong.model.LoaiUSers;
 import vn.edu.stu.bannhanong.model.Users;
 
-public class DBHelperUsers extends SQLiteOpenHelper {
+public class DBHelperUsers {
+    private FirebaseFirestore firestore;
 
-    private static final String DB_NAME="bannhanong.sqlite";
-    private static final int DB_VERSION=1;
-
-    public DBHelperUsers(Context context){
-        super(context,DB_NAME,null,DB_VERSION);
+    public DBHelperUsers() {
+        firestore = FirebaseFirestore.getInstance();
     }
 
-    public class TABLE implements BaseColumns {
-        private static final String TABLE_NAME="users";
-        private static final String COL_MA="id";
-        private static final String COL_TEN="tenuser";
-        private static final String COL_SDT="sdt";
-        private static final String COL_MATKHAU="matkhau";
-        private static final String COL_DIACHI="diachi";
-        private static final String COL_QUAN="quanhuyen";
-        private static final String COL_TINH="tinh";
-        private static final String COL_LOAI="maloai";
+    public Task<Boolean> isPhoneNumberExists(String phoneNumber) {
+        TaskCompletionSource<Boolean> taskCompletionSource = new TaskCompletionSource<>();
 
-    }
-    public boolean isPhoneNumberExists(String phoneNumber) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        String query = "SELECT * FROM " + TABLE.TABLE_NAME + " WHERE " + TABLE.COL_SDT + " = ?";
-        Cursor cursor = db.rawQuery(query, new String[]{phoneNumber});
-        boolean exists = cursor.getCount() > 0;
-        cursor.close();
-        db.close();
-        return exists;
-    }
-    public boolean insertUser(String name, String phoneNumber, String password, int userType) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(TABLE.COL_TEN, name);
-        values.put(TABLE.COL_SDT, phoneNumber);
-        values.put(TABLE.COL_MATKHAU, password);
-        values.put(TABLE.COL_LOAI, userType);
+        firestore.collection("users")
+                .whereEqualTo("sdt", phoneNumber)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        boolean exists = !task.getResult().isEmpty();
+                        taskCompletionSource.setResult(exists);
+                    } else {
+                        taskCompletionSource.setException(task.getException());
+                    }
+                });
 
-        long result = db.insert(TABLE.TABLE_NAME, null, values);
-        db.close();
-        return result != -1;
-    }
-    public boolean doiMatKhau(String phoneNumber, String newPassword) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        String query = "SELECT * FROM " + TABLE.TABLE_NAME + " WHERE " + TABLE.COL_SDT + " = ?";
-        Cursor cursor = db.rawQuery(query, new String[]{phoneNumber});
-        if (cursor.moveToFirst()) {
-            ContentValues values = new ContentValues();
-            values.put(TABLE.COL_MATKHAU, newPassword);
-            int rowsAffected = db.update(TABLE.TABLE_NAME, values,
-                    TABLE.COL_SDT + " = ?",
-                    new String[]{phoneNumber});
-            cursor.close();
-            db.close();
-
-            return rowsAffected > 0;
-        } else {
-            cursor.close();
-            db.close();
-            return false;
-        }
-    }
-
-    public boolean isValidLogin(String phoneNumber, String password) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        String query = "SELECT * FROM " + TABLE.TABLE_NAME + " WHERE " +
-                TABLE.COL_SDT + " = ? AND " + TABLE.COL_MATKHAU + " = ?";
-        Cursor cursor = db.rawQuery(query, new String[]{phoneNumber, password});
-
-        boolean valid = cursor.moveToFirst();
-        cursor.close();
-        db.close();
-        return valid;
-    }
-
-    @Override
-    public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        String CREATE_USERS_TABLE = "CREATE TABLE IF NOT EXISTS " + TABLE.TABLE_NAME + " (" +
-                TABLE.COL_MA + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                TABLE.COL_TEN + " TEXT, " +
-                TABLE.COL_SDT + " TEXT, " +
-                TABLE.COL_MATKHAU + " TEXT, " +
-                TABLE.COL_DIACHI + " TEXT, " +
-                TABLE.COL_QUAN + " TEXT, " +
-                TABLE.COL_TINH + " TEXT, " +
-                TABLE.COL_LOAI + " INTEGER)";
-        sqLiteDatabase.execSQL(CREATE_USERS_TABLE);
-    }
-
-    public Users getUserByPhoneNumber(String phoneNumber) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        String query = "SELECT u." + TABLE.COL_MA + ", u." + TABLE.COL_TEN + ", u." + TABLE.COL_SDT +
-                ", u." + TABLE.COL_MATKHAU + ", u." + TABLE.COL_DIACHI +
-                ", u." + TABLE.COL_QUAN +
-                ", u." + TABLE.COL_TINH +
-                ", u." + TABLE.COL_LOAI + ", l.tenloai " +
-                "FROM " + TABLE.TABLE_NAME + " u " +
-                "LEFT JOIN " + "loaiusers" + " l " +
-                "ON u." + TABLE.COL_LOAI + " = l.maloai " +
-                "WHERE u." + TABLE.COL_SDT + " = ?";
-        Cursor cursor = db.rawQuery(query, new String[]{phoneNumber});
-
-        Users user = null;
-        if (cursor.moveToFirst()) {
-            int id = cursor.getInt(cursor.getColumnIndexOrThrow(TABLE.COL_MA));
-            String name = cursor.getString(cursor.getColumnIndexOrThrow(TABLE.COL_TEN));
-            String phone = cursor.getString(cursor.getColumnIndexOrThrow(TABLE.COL_SDT));
-            String password = cursor.getString(cursor.getColumnIndexOrThrow(TABLE.COL_MATKHAU));
-            String address = cursor.getString(cursor.getColumnIndexOrThrow(TABLE.COL_DIACHI));
-            String quan = cursor.getString(cursor.getColumnIndexOrThrow(TABLE.COL_QUAN));
-            String tinh = cursor.getString(cursor.getColumnIndexOrThrow(TABLE.COL_TINH));
-            int userType = cursor.getInt(cursor.getColumnIndexOrThrow(TABLE.COL_LOAI));
-            String userTypeName = cursor.getString(cursor.getColumnIndexOrThrow("tenloai"));
-            LoaiUSers loaiUSers = new LoaiUSers(userType, userTypeName);
-            user = new Users(id, name, phone, password, address,quan,tinh, loaiUSers);
-        }
-        cursor.close();
-        db.close();
-        return user;
-    }
-    public void updateUser(int userId, String userName, String userPhone, String userAddress,String quan,String tinh) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(TABLE.COL_TEN, userName);
-        values.put(TABLE.COL_SDT, userPhone);
-        values.put(TABLE.COL_DIACHI, userAddress);
-        values.put(TABLE.COL_QUAN, quan);
-        values.put(TABLE.COL_TINH, tinh);
-        int rowsUpdated = db.update(TABLE.TABLE_NAME, values, TABLE.COL_MA + " = ?", new String[]{String.valueOf(userId)});
-        if (rowsUpdated > 0) {
-            Log.d("SQLite", "Cập nhật thông tin thành công");
-        } else {
-            Log.d("SQLite", "Cập nhật thông tin thất bại");
-        }
-
-        db.close();
+        return taskCompletionSource.getTask();
     }
 
 
+    public void insertUser(String name, String phoneNumber, String password, int userType, OnCompleteListener<DocumentReference> listener) {
+        Map<String, Object> user = new HashMap<>();
+        user.put("tenuser", name);
+        user.put("sdt", phoneNumber);
+        user.put("matkhau", password);
+        user.put("maloai", userType);
 
-    @Override
-    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
-
+        // Thêm người dùng vào Firestore và lấy tài liệu đã thêm
+        firestore.collection("users").add(user).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                DocumentReference documentReference = task.getResult();
+                // Lấy Document ID sau khi thêm người dùng
+                String userId = documentReference.getId();
+                listener.onComplete(task);  // Gọi listener với task đã hoàn thành
+            } else {
+                listener.onComplete(task);  // Gọi listener nếu có lỗi
+            }
+        });
     }
+
+    public Task<Void> doiMatKhau(String phoneNumber, String newPassword) {
+        TaskCompletionSource<Void> taskCompletionSource = new TaskCompletionSource<>();
+
+        firestore.collection("users")
+                .whereEqualTo("sdt", phoneNumber)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && !task.getResult().isEmpty()) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            firestore.collection("users").document(document.getId())
+                                    .update("matkhau", newPassword)
+                                    .addOnCompleteListener(updateTask -> {
+                                        if (updateTask.isSuccessful()) {
+                                            taskCompletionSource.setResult(null);
+                                        } else {
+                                            taskCompletionSource.setException(updateTask.getException());
+                                        }
+                                    });
+                        }
+                    } else {
+                        taskCompletionSource.setException(task.getException());
+                    }
+                });
+
+        return taskCompletionSource.getTask();
+    }
+
+
+    public Task<Boolean> isValidLogin(String phoneNumber, String password) {
+        TaskCompletionSource<Boolean> taskCompletionSource = new TaskCompletionSource<>();
+
+        firestore.collection("users")
+                .whereEqualTo("sdt", phoneNumber)
+                .whereEqualTo("matkhau", password)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        boolean valid = !task.getResult().isEmpty();
+                        taskCompletionSource.setResult(valid);
+                    } else {
+                        taskCompletionSource.setException(task.getException());
+                    }
+                });
+
+        return taskCompletionSource.getTask();
+    }
+
+
+    public Task<Users> getUserByPhoneNumber(String phoneNumber) {
+        TaskCompletionSource<Users> taskCompletionSource = new TaskCompletionSource<>();
+
+        firestore.collection("users")
+                .whereEqualTo("sdt", phoneNumber)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && !task.getResult().isEmpty()) {
+                        QueryDocumentSnapshot doc = task.getResult().iterator().next();
+                        Users user = new Users(
+                                doc.getId(),  // Lấy ID của Document thay vì trường "id"
+                                doc.getString("tenuser"),
+                                doc.getString("sdt"),
+                                doc.getString("matkhau"),
+                                doc.getString("diachi"),
+                                doc.getString("quanhuyen"),
+                                doc.getString("tinh"),
+                                doc.getLong("maloai").intValue()
+                        );
+                        taskCompletionSource.setResult(user);
+                    } else {
+                        taskCompletionSource.setException(task.getException());
+                    }
+                });
+
+        return taskCompletionSource.getTask();
+    }
+
+
+    public Task<Void> updateUser(String documentId, String userName, String userPhone, String userAddress, String quan, String tinh) {
+        TaskCompletionSource<Void> taskCompletionSource = new TaskCompletionSource<>();
+
+        firestore.collection("users")
+                .document(documentId)  // Sử dụng Document ID trực tiếp
+                .update(
+                        "tenuser", userName,
+                        "sdt", userPhone,
+                        "diachi", userAddress,
+                        "quanhuyen", quan,
+                        "tinh", tinh
+                )
+                .addOnCompleteListener(updateTask -> {
+                    if (updateTask.isSuccessful()) {
+                        taskCompletionSource.setResult(null);
+                    } else {
+                        taskCompletionSource.setException(updateTask.getException());
+                    }
+                });
+
+        return taskCompletionSource.getTask();
+    }
+
+
+
+
 }

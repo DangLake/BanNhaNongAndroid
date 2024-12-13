@@ -24,6 +24,8 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -38,11 +40,8 @@ import vn.edu.stu.bannhanong.model.Users;
 
 public class Login extends AppCompatActivity {
     Button btnDangky, btnQuenmk, btnDangnhap;
-    String DB_PATH_SUFFIX = "/databases/";
-    SQLiteDatabase database = null;
-    String DATABASE_NAME = "bannhanong.sqlite";
     EditText edtSDT, edtMatkhau;
-    DBHelperUsers dbHelperUsers;
+    FirebaseFirestore firestore;
     FusedLocationProviderClient fusedLocationClient;
     static final int LOCATION_PERMISSION_REQUEST_CODE = 100;
 
@@ -56,10 +55,9 @@ public class Login extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        firestore = FirebaseFirestore.getInstance();
         addControls();
         addEvents();
-        processCopy();
-        dbHelperUsers = new DBHelperUsers(this);
     }
 
     private void addEvents() {
@@ -89,33 +87,46 @@ public class Login extends AppCompatActivity {
         String password = edtMatkhau.getText().toString().trim();
 
         if (phoneNumber.isEmpty() || password.isEmpty()) {
-            Toast.makeText(Login.this, getString(R.string.login_null), Toast.LENGTH_SHORT).show();
+            Toast.makeText(Login.this, "Vui lòng nhập đủ thông tin", Toast.LENGTH_SHORT).show();
             return;
         }
-        if (dbHelperUsers.isValidLogin(phoneNumber, password)) {
-            Toast.makeText(Login.this, getString(R.string.login_success), Toast.LENGTH_SHORT).show();
-            Users user = dbHelperUsers.getUserByPhoneNumber(phoneNumber);
-            if (user != null) {
-                SharedPreferences sharedPreferences = getSharedPreferences("AppPrefs", MODE_PRIVATE);
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putBoolean("location_permission_granted", false);
-                editor.putInt("user_id", user.getId());
-                editor.putString("user_name", user.getTenuser());
-                editor.putString("user_phone", user.getSdt());
-                editor.putInt("user_type", user.getLoaiUSers().getMaloai());
-                editor.apply();
 
-                if (sharedPreferences.getBoolean("location_permission_granted", false)) {
-                    fetchLocationAndProceed();
-                } else {
-                    checkAndRequestLocationPermission();
-                }
-            } else {
-                Toast.makeText(Login.this, getString(R.string.login_failed), Toast.LENGTH_SHORT).show();
-            }
-        }else{
-            Toast.makeText(this, "Sai thông tin đăng nhập", Toast.LENGTH_SHORT).show();
-        }
+        DBHelperUsers dbHelper = new DBHelperUsers();
+        dbHelper.isValidLogin(phoneNumber, password)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && task.getResult()) {
+                        // Nếu đăng nhập thành công
+                        firestore.collection("users")
+                                .whereEqualTo("sdt", phoneNumber)
+                                .whereEqualTo("matkhau", password)
+                                .get()
+                                .addOnCompleteListener(innerTask -> {
+                                    if (innerTask.isSuccessful() && !innerTask.getResult().isEmpty()) {
+                                        for (QueryDocumentSnapshot document : innerTask.getResult()) {
+                                            Users user = document.toObject(Users.class);
+                                            saveUserInfoToPreferences(user);
+                                            checkAndRequestLocationPermission();
+                                        }
+                                    } else {
+                                        Toast.makeText(Login.this, getString(R.string.login_failed), Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                    } else {
+                        Toast.makeText(Login.this, getString(R.string.login_failed), Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addOnFailureListener(e -> Toast.makeText(Login.this, getString(R.string.login_failed), Toast.LENGTH_SHORT).show());
+    }
+
+    private void saveUserInfoToPreferences(Users user) {
+        SharedPreferences sharedPreferences = getSharedPreferences("AppPrefs", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean("location_permission_granted", false);
+        editor.putString("user_id", user.getId());
+        editor.putString("user_name", user.getTenuser());
+        editor.putString("user_phone", user.getSdt());
+        editor.putInt("user_type", user.getLoaiUSers());
+        editor.apply();
     }
 
     private void checkAndRequestLocationPermission() {
@@ -136,19 +147,20 @@ public class Login extends AppCompatActivity {
                     LOCATION_PERMISSION_REQUEST_CODE);
             return;
         }
+
         fusedLocationClient.getLastLocation().addOnSuccessListener(location -> {
             if (location != null) {
                 double latitude = location.getLatitude();
                 double longitude = location.getLongitude();
                 Log.d("LoginActivity", "Latitude: " + latitude + ", Longitude: " + longitude);
+
                 Geocoder geocoder = new Geocoder(Login.this, Locale.getDefault());
                 try {
                     List<Address> addresses = geocoder.getFromLocation(latitude, longitude, 1);
                     if (addresses != null && !addresses.isEmpty()) {
                         Address address = addresses.get(0);
-                        String fullAddress = address.getAddressLine(0); // Lấy địa chỉ đầy đủ
+                        String fullAddress = address.getAddressLine(0);
 
-                        // Lưu thông tin địa chỉ vào SharedPreferences
                         SharedPreferences sharedPreferences = getSharedPreferences("AppPrefs", MODE_PRIVATE);
                         SharedPreferences.Editor editor = sharedPreferences.edit();
                         editor.putBoolean("location_permission_granted", true);
@@ -157,14 +169,8 @@ public class Login extends AppCompatActivity {
                         editor.putString("user_address", fullAddress);
                         editor.apply();
 
-                        // Tiến hành điều hướng dựa trên loại người dùng
                         int userType = sharedPreferences.getInt("user_type", -1);
-                        Intent intent;
-                        if (userType == 2) {
-                            intent = new Intent(Login.this, TrangchuNongDan.class);
-                        } else {
-                            intent = new Intent(Login.this, TrangChuDoanhNghiep.class);
-                        }
+                        Intent intent = userType == 2 ? new Intent(Login.this, TrangchuNongDan.class) : new Intent(Login.this, TrangChuDoanhNghiep.class);
                         startActivity(intent);
                         finish();
                     } else {
@@ -199,41 +205,6 @@ public class Login extends AppCompatActivity {
         edtMatkhau = findViewById(R.id.edtMatkhau);
     }
 
-    private void processCopy() {
-        File dbFile = getDatabasePath(DATABASE_NAME);
-        if (!dbFile.exists()) {
-            try {
-                CopyDataBaseFromAsset();
-            } catch (Exception e) {
-                Toast.makeText(this, e.toString(), Toast.LENGTH_LONG).show();
-            }
-        }
-    }
-
-    private String getDatabasePath() {
-        return getApplicationInfo().dataDir + DB_PATH_SUFFIX + DATABASE_NAME;
-    }
-
-    public void CopyDataBaseFromAsset() {
-        try {
-            InputStream myInput;
-            myInput = getAssets().open(DATABASE_NAME);
-            String outFileName = getDatabasePath();
-            File f = new File(getApplicationInfo().dataDir + DB_PATH_SUFFIX);
-            if (!f.exists())
-                f.mkdir();
-            OutputStream myOutput = new FileOutputStream(outFileName);
-            int size = myInput.available();
-            byte[] buffer = new byte[size];
-            myInput.read(buffer);
-            myOutput.write(buffer);
-            myOutput.flush();
-            myOutput.close();
-            myInput.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,

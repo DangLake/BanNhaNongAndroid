@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 
 public class Sanpham implements Serializable {
-    private int ma;
+    private String ma;
     private String ten;
     private String mota;
     private double gia;
@@ -16,7 +16,7 @@ public class Sanpham implements Serializable {
     public Sanpham() {
     }
 
-    public Sanpham(int ma, String ten, String mota, double gia, String donvitinh, int soluong, LoaiSp loaiSp, Users mauser) {
+    public Sanpham(String ma, String ten, String mota, double gia, String donvitinh, int soluong, LoaiSp loaiSp, Users mauser) {
         this.ma = ma;
         this.ten = ten;
         this.mota = mota;
@@ -37,11 +37,11 @@ public class Sanpham implements Serializable {
         this.mauser = mauser;
     }
 
-    public int getMa() {
+    public String getMa() {
         return ma;
     }
 
-    public void setMa(int ma) {
+    public void setMa(String ma) {
         this.ma = ma;
     }
 
