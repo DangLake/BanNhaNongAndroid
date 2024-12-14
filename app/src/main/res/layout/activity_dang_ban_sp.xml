@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginHorizontal="5pt"
+    android:layout_marginTop="5pt"
+    android:orientation="vertical"
+    tools:context=".DangBanSP">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="7dp"
+        android:weightSum="1">
+
+        <TextView
+            android:id="@+id/tvTen"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight=".15"
+            android:text="Tên sản phẩm:"
+            android:textSize="8pt" />
+
+        <EditText
+            android:id="@+id/edtTen"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight=".85"
+            android:paddingVertical="5dp"
+            android:background="@drawable/edittext_border"
+            android:textSize="9pt" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="7dp"
+        android:weightSum="1">
+
+        <TextView
+            android:id="@+id/tvAnh"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight=".45"
+            android:text="Thêm ảnh"
+            android:textSize="8pt" />
+
+        <Button
+            android:id="@+id/btnChonanh"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight=".55"
+            android:textColor="@android:color/black"
+            style="@style/CustomButtonStyle"
+            android:text="Chọn ảnh"
+            android:textSize="8pt" />
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_marginBottom="7dp"
+        android:layout_height="150dp"
+        android:orientation="horizontal" />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="7dp"
+        android:weightSum="1">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight=".1"
+            android:text="Giá sản phẩm:"
+            android:textSize="8pt" />
+
+        <EditText
+            android:id="@+id/edtGia"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight=".9"
+            android:background="@drawable/edittext_border"
+            android:inputType="numberDecimal"
+            android:paddingVertical="5dp"
+            android:textSize="9pt" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="7dp"
+        android:weightSum="1">
+
+        <TextView
+            android:id="@+id/tvLoai"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight=".1"
+            android:gravity="center|left"
+            android:text="Loại sản phẩm"
+            android:textSize="8pt" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/inputLayout"
+            style="@style/Widget.Material3.TextInputLayout.FilledBox.Dense.ExposedDropdownMenu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight=".9"
+            android:hint="Chọn loại"
+            app:boxCornerRadiusBottomEnd="10sp"
+            app:boxCornerRadiusBottomStart="10sp"
+            app:boxStrokeWidth="0sp"
+            app:boxStrokeWidthFocused="0sp">
+
+            <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                android:id="@+id/inputLoai"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="none"
+                android:textSize="8pt" />
+        </com.google.android.material.textfield.TextInputLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="7dp"
+        android:orientation="horizontal"
+        android:weightSum="1">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight=".2"
+            android:text="Đơn vị tính"
+            android:textSize="8pt" />
+
+        <EditText
+            android:id="@+id/edtDVT"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight=".8"
+            android:background="@drawable/edittext_border"
+            android:paddingVertical="5dp"
+            android:textSize="9pt" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="7dp"
+        android:weightSum="1">
+
+        <TextView
+            android:id="@+id/tvMota"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="top"
+            android:paddingEnd="10pt"
+            android:text="Mô tả:"
+            android:layout_weight=".23"
+            android:textSize="8pt" />
+
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/scrView"
+            android:layout_width="wrap_content"
+            android:layout_height="100pt"
+            android:layout_weight=".77"
+
+          >
+            <EditText
+                android:id="@+id/edtMota"
+                android:layout_width="match_parent"
+                android:background="@drawable/edittext_border"
+                android:layout_height="wrap_content"
+                android:paddingVertical="5dp"
+                android:textSize="9pt" />
+        </androidx.core.widget.NestedScrollView>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:gravity="bottom"
+        android:weightSum="1">
+    <Button
+        android:id="@+id/btnLuu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Lưu"
+        android:layout_weight=".5"
+        android:textColor="@android:color/black"
+        style="@style/CustomButtonStyle"
+        android:textSize="10pt"
+     />
+
+    <Button
+        android:id="@+id/btnThoat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Thoát"
+        android:layout_weight=".5"
+        android:textColor="@android:color/black"
+        style="@style/CustomButtonStyle"
+        android:textSize="10pt" />
+    </LinearLayout>
+</LinearLayout>
