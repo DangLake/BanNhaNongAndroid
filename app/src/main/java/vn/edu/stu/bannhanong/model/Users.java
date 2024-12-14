@@ -3,7 +3,6 @@ package vn.edu.stu.bannhanong.model;
 import java.io.Serializable;
 
 public class Users implements Serializable {
-    private String id;
     private String tenuser;
     private String sdt;
     private String matkhau;
@@ -15,16 +14,6 @@ public class Users implements Serializable {
     public Users() {
     }
 
-    public Users(String id, String tenuser, String sdt, String matkhau, String diachi, String quanhuyen, String tinh, int loaiUSers) {
-        this.id = id;
-        this.tenuser = tenuser;
-        this.sdt = sdt;
-        this.matkhau = matkhau;
-        this.diachi = diachi;
-        this.quanhuyen = quanhuyen;
-        this.tinh = tinh;
-        this.loaiUSers = loaiUSers;
-    }
 
     public Users(String tenuser, String sdt, String matkhau, String diachi, String quanhuyen, String tinh, int loaiUSers) {
         this.tenuser = tenuser;
@@ -34,14 +23,6 @@ public class Users implements Serializable {
         this.quanhuyen = quanhuyen;
         this.tinh = tinh;
         this.loaiUSers = loaiUSers;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public String getTenuser() {

@@ -92,7 +92,7 @@ public class OTPCapNhat extends AppCompatActivity {
         String userAddress = getIntent().getStringExtra("diachi");
         String quan = getIntent().getStringExtra("quan");
         String tinh = getIntent().getStringExtra("tinh");
-        String userId = getIntent().getStringExtra("userId");
+        String userId = getIntent().getStringExtra("documentId");
 
         if (enteredOtp.isEmpty() || enteredOtp.length() < 6) {
             Toast.makeText(this, getString(R.string.otp_input), Toast.LENGTH_SHORT).show();
@@ -109,7 +109,7 @@ public class OTPCapNhat extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             // Gửi kết quả về Fragment
                             Intent resultIntent = new Intent();
-                            resultIntent.putExtra("userId", userId);
+                            resultIntent.putExtra("documentId", userId);
                             resultIntent.putExtra("newPhone", phoneNumber);
                             resultIntent.putExtra("ten", userName);
                             resultIntent.putExtra("diachi", userAddress);

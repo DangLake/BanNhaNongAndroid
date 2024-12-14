@@ -1,13 +1,14 @@
 {
   "project_info": {
-    "project_number": "678374240847",
-    "project_id": "bannhanong-6988c",
-    "storage_bucket": "bannhanong-6988c.firebasestorage.app"
+    "project_number": "132598390778",
+    "firebase_url": "https://doanchuyennganh-49ac8-default-rtdb.firebaseio.com",
+    "project_id": "doanchuyennganh-49ac8",
+    "storage_bucket": "doanchuyennganh-49ac8.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:678374240847:android:621db2b0a3c230497ff03a",
+        "mobilesdk_app_id": "1:132598390778:android:496a98da1b0ef4618d0e43",
         "android_client_info": {
           "package_name": "vn.edu.stu.bannhanong"
         }
@@ -15,7 +16,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDGxmX4VvUI_CucSgYW36BnN81z7Ic-Tz4"
+          "current_key": "AIzaSyB9ikKa1rsvTxnFeLgh63aX6PqFKj9-ZA8"
         }
       ],
       "services": {

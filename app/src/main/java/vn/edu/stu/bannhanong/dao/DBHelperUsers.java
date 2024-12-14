@@ -1,5 +1,7 @@
 package vn.edu.stu.bannhanong.dao;
 
+import android.content.SharedPreferences;
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.firebase.firestore.DocumentReference;
@@ -9,8 +11,6 @@ import com.google.android.gms.tasks.Task;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import vn.edu.stu.bannhanong.model.LoaiUSers;
 import vn.edu.stu.bannhanong.model.Users;
 
 public class DBHelperUsers {
@@ -39,25 +39,45 @@ public class DBHelperUsers {
     }
 
 
-    public void insertUser(String name, String phoneNumber, String password, int userType, OnCompleteListener<DocumentReference> listener) {
+    public void insertUser(String name, String phoneNumber, String password,String diachi,String quanhuyen,String tinh, int userType, OnCompleteListener<DocumentReference> listener) {
         Map<String, Object> user = new HashMap<>();
         user.put("tenuser", name);
         user.put("sdt", phoneNumber);
         user.put("matkhau", password);
         user.put("maloai", userType);
+        user.put("diachi", diachi);
+        user.put("tinh", tinh);
+        user.put("quanhuyen", quanhuyen);
 
         // Thêm người dùng vào Firestore và lấy tài liệu đã thêm
         firestore.collection("users").add(user).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 DocumentReference documentReference = task.getResult();
-                // Lấy Document ID sau khi thêm người dùng
-                String userId = documentReference.getId();
                 listener.onComplete(task);  // Gọi listener với task đã hoàn thành
             } else {
                 listener.onComplete(task);  // Gọi listener nếu có lỗi
             }
         });
     }
+    public Task<String> getDocumentIdByPhoneNumber(String phoneNumber) {
+        TaskCompletionSource<String> taskCompletionSource = new TaskCompletionSource<>();
+
+        firestore.collection("users")
+                .whereEqualTo("sdt", phoneNumber)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && !task.getResult().isEmpty()) {
+                        String documentId = task.getResult().getDocuments().get(0).getId();
+                        taskCompletionSource.setResult(documentId);
+                    } else {
+                        taskCompletionSource.setException(task.getException());
+                    }
+                });
+
+        return taskCompletionSource.getTask();
+    }
+
+
 
     public Task<Void> doiMatKhau(String phoneNumber, String newPassword) {
         TaskCompletionSource<Void> taskCompletionSource = new TaskCompletionSource<>();
@@ -105,8 +125,6 @@ public class DBHelperUsers {
 
         return taskCompletionSource.getTask();
     }
-
-
     public Task<Users> getUserByPhoneNumber(String phoneNumber) {
         TaskCompletionSource<Users> taskCompletionSource = new TaskCompletionSource<>();
 
@@ -117,7 +135,6 @@ public class DBHelperUsers {
                     if (task.isSuccessful() && !task.getResult().isEmpty()) {
                         QueryDocumentSnapshot doc = task.getResult().iterator().next();
                         Users user = new Users(
-                                doc.getId(),  // Lấy ID của Document thay vì trường "id"
                                 doc.getString("tenuser"),
                                 doc.getString("sdt"),
                                 doc.getString("matkhau"),
@@ -140,7 +157,7 @@ public class DBHelperUsers {
         TaskCompletionSource<Void> taskCompletionSource = new TaskCompletionSource<>();
 
         firestore.collection("users")
-                .document(documentId)  // Sử dụng Document ID trực tiếp
+                .document(documentId)
                 .update(
                         "tenuser", userName,
                         "sdt", userPhone,

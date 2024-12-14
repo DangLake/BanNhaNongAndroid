@@ -90,7 +90,7 @@ public class NhapThongTinUser extends AppCompatActivity {
                         Toast.makeText(this, "Số điện thoại đã tồn tại", Toast.LENGTH_SHORT).show();
                     } else {
                         // Nếu số điện thoại chưa tồn tại, thêm người dùng vào Firestore
-                        dbHelper.insertUser(name, phoneNumber, password, userType, new OnCompleteListener<DocumentReference>() {
+                        dbHelper.insertUser(name, phoneNumber, password,null,null,null, userType, new OnCompleteListener<DocumentReference>() {
                             @Override
                             public void onComplete(@NonNull Task<DocumentReference> task) {
                                 if (task.isSuccessful()) {

@@ -186,43 +186,73 @@ public class AccountFragment extends Fragment {
 
                 // Lấy thông tin người dùng từ SharedPreferences
                 SharedPreferences sharedPreferences = getActivity().getSharedPreferences("AppPrefs", MODE_PRIVATE);
-                String userId = sharedPreferences.getString("user_id", "");
                 String oldPhone = sharedPreferences.getString("user_phone", "");
+                String documentid = sharedPreferences.getString("documentId", "");
+                Log.d("Document ID", documentid);
+
 
                 // Kiểm tra nếu không có thông tin người dùng
-                if (userId.isEmpty()) {  // Kiểm tra nếu userId là chuỗi rỗng
+                if (oldPhone.isEmpty()) {
                     Toast.makeText(getContext(), "Lỗi: Không tìm thấy thông tin người dùng.", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                // Kiểm tra nếu số điện thoại thay đổi
-                if (!sdt.equals(oldPhone)) {
-                    Intent intent = new Intent(getActivity(), OTPCapNhat.class);
-                    intent.putExtra("phone_number", sdt);
-                    intent.putExtra("userId", userId);
-                    intent.putExtra("ten", ten);
-                    intent.putExtra("diachi", diachi);
-                    intent.putExtra("quan", quan);
-                    intent.putExtra("tinh", tinh);
-                    startActivityForResult(intent, 100);
-                } else {
-                    // Nếu số điện thoại không thay đổi, cập nhật trực tiếp vào cơ sở dữ liệu
-                    dbHelperUsers.updateUser(userId, ten, sdt, diachi, quan, tinh);
+                // Kiểm tra xem số điện thoại mới có thay đổi không
+                if (sdt.equals(oldPhone)) {
+                    // Nếu số điện thoại không thay đổi, cập nhật thông tin người dùng trực tiếp
+                    dbHelperUsers.updateUser(oldPhone, ten, sdt, diachi, quan, tinh);
 
                     // Cập nhật SharedPreferences
-                    sharedPreferences = getActivity().getSharedPreferences("AppPrefs", Context.MODE_PRIVATE);
                     SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putString("documentId",documentid);
                     editor.putString("user_name", ten);
                     editor.putString("diachi", diachi);
                     editor.putString("quan", quan);
                     editor.putString("tinh", tinh);
                     editor.apply();
-
+                    Log.d("Document ID", documentid);
                     Toast.makeText(getContext(), "Cập nhật thông tin thành công", Toast.LENGTH_SHORT).show();
+                } else {
+                    // Nếu số điện thoại thay đổi, kiểm tra sự tồn tại của số điện thoại mới trong cơ sở dữ liệu
+                    firestore.collection("users")
+                            .whereEqualTo("sdt", sdt) // Kiểm tra số điện thoại mới
+                            .get()
+                            .addOnCompleteListener(task -> {
+                                if (task.isSuccessful() && !task.getResult().isEmpty()) {
+                                    // Nếu số điện thoại đã tồn tại
+                                    Toast.makeText(getContext(), "Số điện thoại này đã được đăng ký.", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    // Tiến hành xử lý cập nhật thông tin người dùng
+                                    // Lấy DocumentId từ Firestore
+                                    firestore.collection("users")
+                                            .whereEqualTo("documentId", documentid) // Tìm theo số điện thoại cũ
+                                            .get()
+                                            .addOnCompleteListener(task1 -> {
+                                                if (task1.isSuccessful() && !task1.getResult().isEmpty()) {
+                                                    // Lấy DocumentId từ kết quả
+                                                    String documentId = task1.getResult().getDocuments().get(0).getId();
+
+                                                    // Gửi Intent để xử lý OTP
+                                                    Intent intent = new Intent(getActivity(), OTPCapNhat.class);
+                                                    intent.putExtra("phone_number", sdt);
+                                                    intent.putExtra("documentId", documentId);
+                                                    intent.putExtra("ten", ten);
+                                                    intent.putExtra("diachi", diachi);
+                                                    intent.putExtra("quan", quan);
+                                                    intent.putExtra("tinh", tinh);
+                                                    startActivityForResult(intent, 100);
+                                                } else {
+                                                    Toast.makeText(getContext(), "Lỗi: Không tìm thấy người dùng trong cơ sở dữ liệu.", Toast.LENGTH_SHORT).show();
+                                                }
+                                            });
+                                }
+                            });
                 }
             }
         });
     }
+
+
     private void loadUserInfo() {
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences("AppPrefs", MODE_PRIVATE);
         String userPhone = sharedPreferences.getString("user_phone", "");
@@ -234,7 +264,7 @@ public class AccountFragment extends Fragment {
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful() && !task.getResult().isEmpty()) {
                             DocumentSnapshot document = task.getResult().getDocuments().get(0);
-                            String userName = document.getString("ten");
+                            String userName = document.getString("tenuser");
                             String diachi = document.getString("diachi");
                             String quan = document.getString("quanhuyen");
                             String tinh = document.getString("tinh");
@@ -257,7 +287,7 @@ public class AccountFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 100 && resultCode == Activity.RESULT_OK && data != null) {
-            String userId = data.getStringExtra("userId");
+            String userId = data.getStringExtra("documentId");
             String newPhone = data.getStringExtra("newPhone");
             String ten = data.getStringExtra("ten");
             String diachi = data.getStringExtra("diachi");
