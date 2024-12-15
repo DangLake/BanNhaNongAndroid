@@ -47,6 +47,7 @@ buildscript {
     }
 }
 
+
 dependencies {
 
     implementation(libs.appcompat)
@@ -72,11 +73,13 @@ dependencies {
     implementation (libs.converter.gson)
     implementation (libs.material.v150)
     implementation (libs.firebase.firestore)
-    implementation ("com.google.firebase:firebase-firestore:24.7.1")  // Cập nhật phiên bản mới nhất của Firebase Firestore
-    implementation ("com.google.firebase:firebase-auth:21.1.0")  // Nếu sử dụng Firebase Authentication
+    implementation ("com.google.firebase:firebase-firestore:24.7.1")
+    implementation ("com.google.firebase:firebase-auth:21.1.0")
     implementation ("com.google.firebase:firebase-core:20.1.0")
     implementation ("com.google.android.gms:play-services-auth:20.1.0")
     implementation(platform("com.google.firebase:firebase-bom:33.7.0"))
     implementation ("com.google.android.gms:play-services-location:20.1.0")
+    implementation ("com.github.bumptech.glide:glide:4.16.0")
+    annotationProcessor ("com.github.bumptech.glide:compiler:4.16.0")
     implementation(kotlin("script-runtime"))
 }

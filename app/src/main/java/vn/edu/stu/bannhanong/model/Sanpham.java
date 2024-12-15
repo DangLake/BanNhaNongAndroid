@@ -1,40 +1,52 @@
 package vn.edu.stu.bannhanong.model;
 
 import java.io.Serializable;
+import java.sql.Array;
 import java.util.List;
+import com.google.firebase.firestore.PropertyName;
 
 public class Sanpham implements Serializable {
     private String documentID;
-    private String ten;
+    @PropertyName("tensp")
+    private String tensp;
+
+    @PropertyName("mota")
     private String mota;
+
     private double gia;
     private String donvitinh;
-    private int soluong;
-    private LoaiSp loaiSp;
-    private Users mauser;
+
+    @PropertyName("anh")
+    private List<String> anh;
+
+    @PropertyName("idloaisp")
+    private int idloaisp;
+
+    @PropertyName("iduser")
+    private String maDocumentuser;
+
+    public Sanpham(String documentID, String tensp, String mota, double gia, String donvitinh, List<String> anh, int idloaisp, String maDocumentuser) {
+        this.documentID = documentID;
+        this.tensp = tensp;
+        this.mota = mota;
+        this.gia = gia;
+        this.donvitinh = donvitinh;
+        this.anh = anh;
+        this.idloaisp = idloaisp;
+        this.maDocumentuser = maDocumentuser;
+    }
+
+    public Sanpham(String tensp, String mota, double gia, String donvitinh, List<String> anh, int idloaisp, String maDocumentuser) {
+        this.tensp = tensp;
+        this.mota = mota;
+        this.gia = gia;
+        this.donvitinh = donvitinh;
+        this.anh = anh;
+        this.idloaisp = idloaisp;
+        this.maDocumentuser = maDocumentuser;
+    }
 
     public Sanpham() {
-    }
-
-    public Sanpham(String documentID, String ten, String mota, double gia, String donvitinh, int soluong, LoaiSp loaiSp, Users mauser) {
-        this.documentID = documentID;
-        this.ten = ten;
-        this.mota = mota;
-        this.gia = gia;
-        this.donvitinh = donvitinh;
-        this.soluong = soluong;
-        this.loaiSp = loaiSp;
-        this.mauser = mauser;
-    }
-
-    public Sanpham(String ten, String mota, double gia, String donvitinh, int soluong, LoaiSp loaiSp, Users mauser) {
-        this.ten = ten;
-        this.mota = mota;
-        this.gia = gia;
-        this.donvitinh = donvitinh;
-        this.soluong = soluong;
-        this.loaiSp = loaiSp;
-        this.mauser = mauser;
     }
 
     public String getDocumentID() {
@@ -45,12 +57,12 @@ public class Sanpham implements Serializable {
         this.documentID = documentID;
     }
 
-    public String getTen() {
-        return ten;
+    public String getTensp() {
+        return tensp;
     }
 
-    public void setTen(String ten) {
-        this.ten = ten;
+    public void setTensp(String tensp) {
+        this.tensp = tensp;
     }
 
     public String getMota() {
@@ -77,27 +89,27 @@ public class Sanpham implements Serializable {
         this.donvitinh = donvitinh;
     }
 
-    public int getSoluong() {
-        return soluong;
+    public List<String> getAnh() {
+        return anh;
     }
 
-    public void setSoluong(int soluong) {
-        this.soluong = soluong;
+    public void setAnh(List<String> anh) {
+        this.anh = anh;
     }
 
-    public LoaiSp getLoaiSp() {
-        return loaiSp;
+    public int getIdloaisp() {
+        return idloaisp;
     }
 
-    public void setLoaiSp(LoaiSp loaiSp) {
-        this.loaiSp = loaiSp;
+    public void setIdloaisp(int idloaisp) {
+        this.idloaisp = idloaisp;
     }
 
-    public Users getMauser() {
-        return mauser;
+    public String getMaDocumentuser() {
+        return maDocumentuser;
     }
 
-    public void setMauser(Users mauser) {
-        this.mauser = mauser;
+    public void setMaDocumentuser(String maDocumentuser) {
+        this.maDocumentuser = maDocumentuser;
     }
 }

@@ -10,7 +10,7 @@ public class Users implements Serializable {
     private String diachi;
     private String quanhuyen;
     private String tinh;
-    private int loaiUSers;
+    private int maloai;
 
     public Users() {
     }
@@ -24,7 +24,7 @@ public class Users implements Serializable {
         this.diachi = diachi;
         this.quanhuyen = quanhuyen;
         this.tinh = tinh;
-        this.loaiUSers = loaiUSers;
+        this.maloai = loaiUSers;
     }
 
     public Users(String tenuser, String sdt, String matkhau, String diachi, String quanhuyen, String tinh, int loaiUSers) {
@@ -34,7 +34,7 @@ public class Users implements Serializable {
         this.diachi = diachi;
         this.quanhuyen = quanhuyen;
         this.tinh = tinh;
-        this.loaiUSers = loaiUSers;
+        this.maloai = loaiUSers;
     }
 
     public String getDocumentID() {
@@ -78,11 +78,11 @@ public class Users implements Serializable {
     }
 
     public int getLoaiUSers() {
-        return loaiUSers;
+        return maloai;
     }
 
     public void setLoaiUSers(int loaiUSers) {
-        this.loaiUSers = loaiUSers;
+        this.maloai = loaiUSers;
     }
 
     public String getQuanhuyen() {

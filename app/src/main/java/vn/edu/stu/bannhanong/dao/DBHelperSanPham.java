@@ -1,4 +1,6 @@
 package vn.edu.stu.bannhanong.dao;
+import android.util.Log;
+
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -19,22 +21,29 @@ public class DBHelperSanPham {
         db = FirebaseFirestore.getInstance();
     }
     public interface FirestoreCallback {
-        void onCallback(List<Sanpham> sanphamList);
-        void onCallback(Sanpham sanpham);
-        void onFailure(Exception e);
+        void onCallback(List<Sanpham> sanphamList);  // Callback với danh sách sản phẩm
+        void onFailure(Exception e);  // Callback lỗi
     }
-    public void getSanphamByDocumentID(String documentID, FirestoreCallback callback) {
-        db.collection("sanpham") // Tên collection trong Firestore
-                .document(documentID)  // Truy cập document theo ID
+
+    public void getSanphamByUserID(String documentuserID, FirestoreCallback callback) {
+        db.collection("sanpham")
+                .whereEqualTo("iduser", documentuserID)
                 .get()
-                .addOnSuccessListener(documentSnapshot -> {
-                    if (documentSnapshot.exists()) {
-                        // Chuyển đổi dữ liệu Firestore thành đối tượng Sanpham
-                        Sanpham sanpham = documentSnapshot.toObject(Sanpham.class);
-                        sanpham.setDocumentID(documentSnapshot.getId());
-                        callback.onCallback(sanpham);
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    if (!queryDocumentSnapshots.isEmpty()) {
+                        List<Sanpham> sanphamList = new ArrayList<>();
+                        for (DocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+                            Sanpham sanpham = documentSnapshot.toObject(Sanpham.class);
+                            sanpham.setDocumentID(documentSnapshot.getId());
+
+                            // Log dữ liệu để kiểm tra
+                            Log.d("Sanpham", "Sản phẩm: " + sanpham.getTensp() + ", Giá: " + sanpham.getGia() + ", Ảnh: " + sanpham.getAnh() + ", DVT: " + sanpham.getDonvitinh());
+
+                            sanphamList.add(sanpham);
+                        }
+                        callback.onCallback(sanphamList);
                     } else {
-                        callback.onFailure(new Exception("Document không tồn tại"));
+                        callback.onFailure(new Exception("Không có sản phẩm nào cho người dùng này"));
                     }
                 })
                 .addOnFailureListener(e -> callback.onFailure(e));
