@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 
 public class Sanpham implements Serializable {
-    private String ma;
+    private String documentID;
     private String ten;
     private String mota;
     private double gia;
@@ -16,8 +16,8 @@ public class Sanpham implements Serializable {
     public Sanpham() {
     }
 
-    public Sanpham(String ma, String ten, String mota, double gia, String donvitinh, int soluong, LoaiSp loaiSp, Users mauser) {
-        this.ma = ma;
+    public Sanpham(String documentID, String ten, String mota, double gia, String donvitinh, int soluong, LoaiSp loaiSp, Users mauser) {
+        this.documentID = documentID;
         this.ten = ten;
         this.mota = mota;
         this.gia = gia;
@@ -37,12 +37,12 @@ public class Sanpham implements Serializable {
         this.mauser = mauser;
     }
 
-    public String getMa() {
-        return ma;
+    public String getDocumentID() {
+        return documentID;
     }
 
-    public void setMa(String ma) {
-        this.ma = ma;
+    public void setDocumentID(String documentID) {
+        this.documentID = documentID;
     }
 
     public String getTen() {

@@ -7,12 +7,16 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import android.telephony.SmsManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -43,7 +47,7 @@ public class AccountFragment extends Fragment {
     ApiService apiService;
     Retrofit retrofit;
     Button btnCapNhatuser;
-    EditText edtTinhThanh, edtQuanHuyen,edtTen,edtSDT,edtDiachi;
+    EditText edtTinhThanh, edtQuanHuyen, edtTen, edtSDT, edtDiachi;
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     private String mParam1;
@@ -51,6 +55,7 @@ public class AccountFragment extends Fragment {
     private List<Province> provinces;
     DBHelperUsers dbHelperUsers;
     private List<District> districts;
+
     public AccountFragment() {
     }
 
@@ -81,6 +86,7 @@ public class AccountFragment extends Fragment {
                              Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_account, container, false);
     }
+
     private void loadProvinces() {
         apiService.getProvinces().enqueue(new Callback<List<Province>>() {
             @Override
@@ -163,14 +169,14 @@ public class AccountFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         edtTinhThanh = view.findViewById(R.id.edtTinhthanh);
         edtQuanHuyen = view.findViewById(R.id.edtQuanhuyen);
-        edtTen=view.findViewById(R.id.edtTen);
-        edtSDT=view.findViewById(R.id.edtSDT);
-        edtDiachi=view.findViewById(R.id.edtDiachi);
-        btnCapNhatuser=view.findViewById(R.id.btnCapNhatuser);
+        edtTen = view.findViewById(R.id.edtTen);
+        edtSDT = view.findViewById(R.id.edtSDT);
+        edtDiachi = view.findViewById(R.id.edtDiachi);
+        btnCapNhatuser = view.findViewById(R.id.btnCapNhatuser);
         loadUserInfo();
         loadProvinces();
         addEvents();
-        dbHelperUsers=new DBHelperUsers();
+        dbHelperUsers = new DBHelperUsers();
     }
 
     private void addEvents() {
@@ -187,12 +193,10 @@ public class AccountFragment extends Fragment {
                 // Lấy thông tin người dùng từ SharedPreferences
                 SharedPreferences sharedPreferences = getActivity().getSharedPreferences("AppPrefs", MODE_PRIVATE);
                 String oldPhone = sharedPreferences.getString("user_phone", "");
-                String documentid = sharedPreferences.getString("documentId", "");
-                Log.d("Document ID", documentid);
-
+                String documentId = sharedPreferences.getString("documentID", "");
 
                 // Kiểm tra nếu không có thông tin người dùng
-                if (oldPhone.isEmpty()) {
+                if (oldPhone.isEmpty() || documentId.isEmpty()) {
                     Toast.makeText(getContext(), "Lỗi: Không tìm thấy thông tin người dùng.", Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -200,18 +204,22 @@ public class AccountFragment extends Fragment {
                 // Kiểm tra xem số điện thoại mới có thay đổi không
                 if (sdt.equals(oldPhone)) {
                     // Nếu số điện thoại không thay đổi, cập nhật thông tin người dùng trực tiếp
-                    dbHelperUsers.updateUser(oldPhone, ten, sdt, diachi, quan, tinh);
+                    dbHelperUsers.updateUser(documentId, ten, sdt, diachi, quan, tinh)
+                            .addOnCompleteListener(task -> {
+                                if (task.isSuccessful()) {
+                                    // Cập nhật SharedPreferences
+                                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                                    editor.putString("user_name", ten);
+                                    editor.putString("diachi", diachi);
+                                    editor.putString("quan", quan);
+                                    editor.putString("tinh", tinh);
+                                    editor.apply();
 
-                    // Cập nhật SharedPreferences
-                    SharedPreferences.Editor editor = sharedPreferences.edit();
-                    editor.putString("documentId",documentid);
-                    editor.putString("user_name", ten);
-                    editor.putString("diachi", diachi);
-                    editor.putString("quan", quan);
-                    editor.putString("tinh", tinh);
-                    editor.apply();
-                    Log.d("Document ID", documentid);
-                    Toast.makeText(getContext(), "Cập nhật thông tin thành công", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getContext(), "Cập nhật thông tin thành công", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(getContext(), "Cập nhật thất bại", Toast.LENGTH_SHORT).show();
+                                }
+                            });
                 } else {
                     // Nếu số điện thoại thay đổi, kiểm tra sự tồn tại của số điện thoại mới trong cơ sở dữ liệu
                     firestore.collection("users")
@@ -222,36 +230,37 @@ public class AccountFragment extends Fragment {
                                     // Nếu số điện thoại đã tồn tại
                                     Toast.makeText(getContext(), "Số điện thoại này đã được đăng ký.", Toast.LENGTH_SHORT).show();
                                 } else {
-                                    // Tiến hành xử lý cập nhật thông tin người dùng
-                                    // Lấy DocumentId từ Firestore
-                                    firestore.collection("users")
-                                            .whereEqualTo("documentId", documentid) // Tìm theo số điện thoại cũ
-                                            .get()
-                                            .addOnCompleteListener(task1 -> {
-                                                if (task1.isSuccessful() && !task1.getResult().isEmpty()) {
-                                                    // Lấy DocumentId từ kết quả
-                                                    String documentId = task1.getResult().getDocuments().get(0).getId();
+                                    if (ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
+                                        ActivityCompat.requestPermissions(getActivity(), new String[]{android.Manifest.permission.SEND_SMS}, 1);
+                                    } else {
+                                        int otp = (int) (Math.random() * 900000) + 100000;
+                                        String message = getString(R.string.otp_you) + otp;
+                                        Log.d("Cap Nhat: OTP ", getString(R.string.otp_you) + otp);
+                                        try {
+                                            SmsManager smsManager = SmsManager.getDefault();
+                                            smsManager.sendTextMessage(sdt, null, message, null, null);
+                                            Toast.makeText(getContext(), getString(R.string.opt_sent_success) + sdt, Toast.LENGTH_SHORT).show();
+                                            Intent intent = new Intent(getActivity(), OTPCapNhat.class);
+                                            intent.putExtra("otp", otp);
+                                            intent.putExtra("phone_number", sdt);
+                                            intent.putExtra("documentID", documentId);
+                                            intent.putExtra("ten", ten);
+                                            intent.putExtra("diachi", diachi);
+                                            intent.putExtra("quan", quan);
+                                            intent.putExtra("tinh", tinh);
+                                            startActivityForResult(intent, 100);
+                                        } catch (Exception e) {
+                                            Toast.makeText(getActivity(), getString(R.string.otp_sent_failed) + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
 
-                                                    // Gửi Intent để xử lý OTP
-                                                    Intent intent = new Intent(getActivity(), OTPCapNhat.class);
-                                                    intent.putExtra("phone_number", sdt);
-                                                    intent.putExtra("documentId", documentId);
-                                                    intent.putExtra("ten", ten);
-                                                    intent.putExtra("diachi", diachi);
-                                                    intent.putExtra("quan", quan);
-                                                    intent.putExtra("tinh", tinh);
-                                                    startActivityForResult(intent, 100);
-                                                } else {
-                                                    Toast.makeText(getContext(), "Lỗi: Không tìm thấy người dùng trong cơ sở dữ liệu.", Toast.LENGTH_SHORT).show();
-                                                }
-                                            });
                                 }
                             });
                 }
             }
         });
-    }
 
+    }
 
     private void loadUserInfo() {
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences("AppPrefs", MODE_PRIVATE);
@@ -274,8 +283,6 @@ public class AccountFragment extends Fragment {
                             edtDiachi.setText(diachi);
                             edtQuanHuyen.setText(quan);
                             edtTinhThanh.setText(tinh);
-                        } else {
-                            Toast.makeText(getContext(), "Không tìm thấy thông tin người dùng", Toast.LENGTH_SHORT).show();
                         }
                     })
                     .addOnFailureListener(e -> Log.e("FirestoreError", "Error loading user info", e));
@@ -287,27 +294,31 @@ public class AccountFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 100 && resultCode == Activity.RESULT_OK && data != null) {
-            String userId = data.getStringExtra("documentId");
+            String userId = data.getStringExtra("documentID");
             String newPhone = data.getStringExtra("newPhone");
             String ten = data.getStringExtra("ten");
             String diachi = data.getStringExtra("diachi");
             String quan = data.getStringExtra("quan");
             String tinh = data.getStringExtra("tinh");
 
-            if (userId.isEmpty()) {
-                dbHelperUsers.updateUser(userId, ten, newPhone, diachi, quan, tinh);
-                Toast.makeText(getContext(), "Cập nhật thông tin thành công", Toast.LENGTH_SHORT).show();
+            dbHelperUsers.updateUser(userId, ten, newPhone, diachi, quan, tinh)
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            Toast.makeText(getContext(), "Cập nhật thông tin thành công", Toast.LENGTH_SHORT).show();
 
-                // Cập nhật lại SharedPreferences với thông tin mới
-                SharedPreferences sharedPreferences = getActivity().getSharedPreferences("AppPrefs", Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putString("user_phone", newPhone);
-                editor.putString("user_name", ten);
-                editor.putString("diachi", diachi);
-                editor.putString("quan", quan);
-                editor.putString("tinh", tinh);
-                editor.apply();
-            }
+                            // Cập nhật lại SharedPreferences với thông tin mới
+                            SharedPreferences sharedPreferences = getActivity().getSharedPreferences("AppPrefs", Context.MODE_PRIVATE);
+                            SharedPreferences.Editor editor = sharedPreferences.edit();
+                            editor.putString("user_phone", newPhone);
+                            editor.putString("user_name", ten);
+                            editor.putString("diachi", diachi);
+                            editor.putString("quan", quan);
+                            editor.putString("tinh", tinh);
+                            editor.apply();
+                        } else {
+                            Toast.makeText(getContext(), "Cập nhật thất bại", Toast.LENGTH_SHORT).show();
+                        }
+                    });
         }
     }
 

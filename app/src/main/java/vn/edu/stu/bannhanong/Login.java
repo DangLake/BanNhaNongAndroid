@@ -50,31 +50,38 @@ public class Login extends AppCompatActivity {
         dbHelper.isValidLogin(phoneNumber, password)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful() && task.getResult()) {
-                        firestore.collection("users")
-                                .whereEqualTo("sdt", phoneNumber)
-                                .whereEqualTo("matkhau", password)
-                                .get()
-                                .addOnCompleteListener(innerTask -> {
-                                    if (innerTask.isSuccessful() && !innerTask.getResult().isEmpty()) {
-                                        for (QueryDocumentSnapshot document : innerTask.getResult()) {
-                                            Users user = document.toObject(Users.class);
+                        // Gọi hàm lấy documentId theo số điện thoại
+                        dbHelper.getUserDocumentIdByPhoneNumber(phoneNumber)
+                                .addOnCompleteListener(idTask -> {
+                                    if (idTask.isSuccessful()) {
+                                        String documentId = idTask.getResult();
 
-                                            String documentId = String.valueOf(dbHelper.getDocumentIdByPhoneNumber(phoneNumber));
-                                            saveUserInfoToPreferences(user, documentId);
+                                        // Truy vấn thông tin người dùng từ Firestore
+                                        firestore.collection("users")
+                                                .document(documentId)
+                                                .get()
+                                                .addOnCompleteListener(innerTask -> {
+                                                    if (innerTask.isSuccessful() && innerTask.getResult().exists()) {
+                                                        Users user = innerTask.getResult().toObject(Users.class);
 
-                                            int userType = user.getLoaiUSers();
-                                            if (userType == 0 || userType == 1) {
-                                                Intent intent = new Intent(Login.this, TrangchuNongDan.class);
-                                                startActivity(intent);
-                                                finish();
-                                            } else {
-                                                Intent intent = new Intent(Login.this, TrangChuDoanhNghiep.class);
-                                                startActivity(intent);
-                                                finish();
-                                            }
-                                        }
+                                                        saveUserInfoToPreferences(user, documentId);
+
+                                                        int userType = user.getLoaiUSers();
+                                                        if (userType == 0 || userType == 1) {
+                                                            Intent intent = new Intent(Login.this, TrangchuNongDan.class);
+                                                            startActivity(intent);
+                                                            finish();
+                                                        } else {
+                                                            Intent intent = new Intent(Login.this, TrangChuDoanhNghiep.class);
+                                                            startActivity(intent);
+                                                            finish();
+                                                        }
+                                                    } else {
+                                                        Toast.makeText(Login.this, getString(R.string.login_failed), Toast.LENGTH_SHORT).show();
+                                                    }
+                                                });
                                     } else {
-                                        Toast.makeText(Login.this, getString(R.string.login_failed), Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(Login.this, "Lỗi khi lấy document ID: " + idTask.getException().getMessage(), Toast.LENGTH_SHORT).show();
                                     }
                                 });
                     } else {
@@ -84,10 +91,10 @@ public class Login extends AppCompatActivity {
                 .addOnFailureListener(e -> Toast.makeText(Login.this, getString(R.string.login_failed), Toast.LENGTH_SHORT).show());
     }
 
+
     private void saveUserInfoToPreferences(Users user, String documentId) {
         SharedPreferences sharedPreferences = getSharedPreferences("AppPrefs", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-
         editor.putString("documentID", documentId);
         editor.putString("user_name", user.getTenuser());
         editor.putString("user_phone", user.getSdt());

@@ -92,24 +92,35 @@ public class OTPCapNhat extends AppCompatActivity {
         String userAddress = getIntent().getStringExtra("diachi");
         String quan = getIntent().getStringExtra("quan");
         String tinh = getIntent().getStringExtra("tinh");
-        String userId = getIntent().getStringExtra("documentId");
+        String userId = getIntent().getStringExtra("documentID");
 
+        // Kiểm tra nếu OTP được nhập không hợp lệ
         if (enteredOtp.isEmpty() || enteredOtp.length() < 6) {
             Toast.makeText(this, getString(R.string.otp_input), Toast.LENGTH_SHORT).show();
             return;
         }
 
+        // Kiểm tra nếu sentOtp không hợp lệ
+        if (sentOtp == -1) {
+            Toast.makeText(this, getString(R.string.otp_sent_failed), Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // So sánh OTP
         if (String.valueOf(sentOtp).equals(enteredOtp)) {
             Toast.makeText(this, getString(R.string.otp_success), Toast.LENGTH_SHORT).show();
 
-            dbHelperUsers=new DBHelperUsers();
+            if (dbHelperUsers == null) {
+                dbHelperUsers = new DBHelperUsers();
+            }
+
             // Cập nhật thông tin người dùng
             dbHelperUsers.updateUser(userId, userName, phoneNumber, userAddress, quan, tinh)
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
                             // Gửi kết quả về Fragment
                             Intent resultIntent = new Intent();
-                            resultIntent.putExtra("documentId", userId);
+                            resultIntent.putExtra("documentID", userId);
                             resultIntent.putExtra("newPhone", phoneNumber);
                             resultIntent.putExtra("ten", userName);
                             resultIntent.putExtra("diachi", userAddress);
@@ -118,10 +129,11 @@ public class OTPCapNhat extends AppCompatActivity {
                             setResult(Activity.RESULT_OK, resultIntent);
                             finish();
                         } else {
-                            Toast.makeText(this,"Cập nhật thất bại", Toast.LENGTH_SHORT).show();
+                            // Hiển thị lỗi chi tiết
+                            String errorMessage = task.getException() != null ? task.getException().getMessage() : "Cập nhật thất bại";
+                            Toast.makeText(this, "Cập nhật thất bại: " + errorMessage, Toast.LENGTH_SHORT).show();
                         }
                     });
-
         } else {
             Toast.makeText(this, getString(R.string.otp_failed), Toast.LENGTH_SHORT).show();
         }

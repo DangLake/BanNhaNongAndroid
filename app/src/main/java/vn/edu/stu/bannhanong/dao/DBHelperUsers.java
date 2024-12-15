@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.android.gms.tasks.Task;
@@ -59,23 +60,27 @@ public class DBHelperUsers {
             }
         });
     }
-    public Task<String> getDocumentIdByPhoneNumber(String phoneNumber) {
+    public Task<String> getUserDocumentIdByPhoneNumber(String phoneNumber) {
         TaskCompletionSource<String> taskCompletionSource = new TaskCompletionSource<>();
 
         firestore.collection("users")
-                .whereEqualTo("sdt", phoneNumber)
+                .whereEqualTo("sdt", phoneNumber) // Tìm document có số điện thoại khớp
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful() && !task.getResult().isEmpty()) {
+                        // Lấy document đầu tiên khớp với số điện thoại
                         String documentId = task.getResult().getDocuments().get(0).getId();
                         taskCompletionSource.setResult(documentId);
                     } else {
-                        taskCompletionSource.setException(task.getException());
+                        // Không tìm thấy user hoặc có lỗi xảy ra
+                        taskCompletionSource.setException(new Exception("Không tìm thấy người dùng với số điện thoại: " + phoneNumber));
                     }
-                });
+                })
+                .addOnFailureListener(taskCompletionSource::setException);
 
         return taskCompletionSource.getTask();
     }
+
 
 
 
@@ -153,14 +158,15 @@ public class DBHelperUsers {
     }
 
 
-    public Task<Void> updateUser(String documentId, String userName, String userPhone, String userAddress, String quan, String tinh) {
+    public Task<Void> updateUser(String documentId, String userName, String phoneNumber, String userAddress, String quan, String tinh) {
         TaskCompletionSource<Void> taskCompletionSource = new TaskCompletionSource<>();
 
+        // Cập nhật thông tin trực tiếp qua documentId
         firestore.collection("users")
                 .document(documentId)
                 .update(
                         "tenuser", userName,
-                        "sdt", userPhone,
+                        "sdt", phoneNumber,
                         "diachi", userAddress,
                         "quanhuyen", quan,
                         "tinh", tinh
@@ -171,11 +177,11 @@ public class DBHelperUsers {
                     } else {
                         taskCompletionSource.setException(updateTask.getException());
                     }
-                });
+                })
+                .addOnFailureListener(taskCompletionSource::setException);
 
         return taskCompletionSource.getTask();
     }
-
 
 
 
