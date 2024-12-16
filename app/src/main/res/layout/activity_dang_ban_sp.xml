@@ -27,7 +27,7 @@
 
         <EditText
             android:id="@+id/edtTen"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight=".85"
             android:paddingVertical="5dp"
@@ -86,7 +86,7 @@
 
         <EditText
             android:id="@+id/edtGia"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight=".9"
             android:background="@drawable/edittext_border"
@@ -148,7 +148,7 @@
 
         <EditText
             android:id="@+id/edtDVT"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight=".8"
             android:background="@drawable/edittext_border"
@@ -175,7 +175,7 @@
 
         <androidx.core.widget.NestedScrollView
             android:id="@+id/scrView"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="100pt"
             android:layout_weight=".77"
 

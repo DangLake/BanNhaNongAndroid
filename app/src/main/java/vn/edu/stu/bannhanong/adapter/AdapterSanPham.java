@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -64,33 +65,24 @@ public class AdapterSanPham extends ArrayAdapter<Sanpham> {
         }
         if (sp.getAnh() != null && !sp.getAnh().isEmpty()) {
             // Lấy URL ảnh từ Firebase Storage
-            String imagePath = sp.getAnh().get(0);  // Giả sử chỉ lấy ảnh đầu tiên trong danh sách
-            Log.d("ImagePath", "Đường dẫn ảnh: " + imagePath);
-
-            // Firebase Storage reference
+            Uri imageUri = sp.getAnh().get(0);  // Lấy Uri ảnh đầu tiên
+            Log.d("ImagePath", "Đường dẫn ảnh: " + imageUri.toString());
             StorageReference storageRef = FirebaseStorage.getInstance().getReference();
-
-            // Tạo đường dẫn tới ảnh từ Firestore
-            StorageReference imageRef = storageRef.child(imagePath); // "Pictures/taox" hoặc đường dẫn khác
-
-            // Lấy URL của ảnh và tải ảnh bằng Glide
+            StorageReference imageRef = storageRef.child(imageUri.toString()); // Sử dụng URL ảnh dưới dạng String
             imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
                 Log.d("ImageURL", "URL ảnh: " + uri.toString());
-                // Tải ảnh từ URL
                 Glide.with(context)
                         .load(uri)
                         .into(img);
             }).addOnFailureListener(e -> {
                 Log.e("ImageError", "Lỗi khi lấy URL ảnh", e);
-                // Nếu không lấy được ảnh, sử dụng ảnh mặc định
                 Glide.with(context)
-                        .load(R.drawable.logo)  // Ảnh mặc định nếu có lỗi
+                        .load(R.drawable.logo)
                         .into(img);
             });
         } else {
-            // Nếu không có ảnh, sử dụng ảnh mặc định
             Glide.with(context)
-                    .load(R.drawable.logo)  // Ảnh mặc định
+                    .load(R.drawable.logo)
                     .into(img);
         }
 

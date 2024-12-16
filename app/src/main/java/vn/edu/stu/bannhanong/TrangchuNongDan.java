@@ -24,6 +24,8 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.google.android.material.navigation.NavigationView;
 
+import vn.edu.stu.bannhanong.cloudinary.CloudinaryManager;
+
 public class TrangchuNongDan extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     DrawerLayout drawerLayout;

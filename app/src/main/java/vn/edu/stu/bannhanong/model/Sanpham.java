@@ -1,5 +1,7 @@
 package vn.edu.stu.bannhanong.model;
 
+import android.net.Uri;
+
 import java.io.Serializable;
 import java.sql.Array;
 import java.util.List;
@@ -17,7 +19,7 @@ public class Sanpham implements Serializable {
     private String donvitinh;
 
     @PropertyName("anh")
-    private List<String> anh;
+    private List<Uri> anh;
 
     @PropertyName("idloaisp")
     private int idloaisp;
@@ -25,7 +27,7 @@ public class Sanpham implements Serializable {
     @PropertyName("iduser")
     private String maDocumentuser;
 
-    public Sanpham(String documentID, String tensp, String mota, double gia, String donvitinh, List<String> anh, int idloaisp, String maDocumentuser) {
+    public Sanpham(String documentID, String tensp, String mota, double gia, String donvitinh, List<Uri> anh, int idloaisp, String maDocumentuser) {
         this.documentID = documentID;
         this.tensp = tensp;
         this.mota = mota;
@@ -36,7 +38,7 @@ public class Sanpham implements Serializable {
         this.maDocumentuser = maDocumentuser;
     }
 
-    public Sanpham(String tensp, String mota, double gia, String donvitinh, List<String> anh, int idloaisp, String maDocumentuser) {
+    public Sanpham(String tensp, String mota, double gia, String donvitinh, List<Uri> anh, int idloaisp, String maDocumentuser) {
         this.tensp = tensp;
         this.mota = mota;
         this.gia = gia;
@@ -89,11 +91,11 @@ public class Sanpham implements Serializable {
         this.donvitinh = donvitinh;
     }
 
-    public List<String> getAnh() {
+    public List<Uri> getAnh() {
         return anh;
     }
 
-    public void setAnh(List<String> anh) {
+    public void setAnh(List<Uri> anh) {
         this.anh = anh;
     }
 

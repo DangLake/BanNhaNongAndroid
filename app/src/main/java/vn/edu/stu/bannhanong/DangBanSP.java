@@ -1,7 +1,7 @@
 package vn.edu.stu.bannhanong;
 
-import android.Manifest;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -9,7 +9,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.provider.MediaStore;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
@@ -30,21 +29,25 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.cloudinary.Cloudinary;
+import com.cloudinary.android.MediaManager;
+import com.cloudinary.utils.ObjectUtils;
 import com.google.android.material.textfield.MaterialAutoCompleteTextView;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import vn.edu.stu.bannhanong.adapter.ImageAdapter;
+import vn.edu.stu.bannhanong.cloudinary.CloudinaryManager;
 import vn.edu.stu.bannhanong.dao.DBHelperSanPham;
 import vn.edu.stu.bannhanong.model.LoaiSp;
 import vn.edu.stu.bannhanong.model.Sanpham;
+import vn.edu.stu.bannhanong.util.FileUtils;
 
 public class DangBanSP extends AppCompatActivity {
     EditText edtTen, edtGia, edtDVT, edtMota;
@@ -63,6 +66,7 @@ public class DangBanSP extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        init();
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_dang_ban_sp);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -70,9 +74,20 @@ public class DangBanSP extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
         addControls();
         addEvents();
         loadLoaiSanpham();
+    }
+    public void init() {
+        // Đảm bảo bạn truyền một Context hợp lệ từ Activity hoặc Application
+        Map config = new HashMap<>();
+        config.put("cloud_name", "duthhwipq");  // Thay bằng Cloud Name của bạn
+        config.put("api_key", "735636338239818");        // Thay bằng API Key của bạn
+        config.put("api_secret", "ww3wSfsLqr047sgmPwShAii0iJ8");  // Thay bằng API Secret của bạn
+
+        // Thiết lập Cloudinary với Context và cấu hình
+        MediaManager.init(this, config);  // Truyền context và cấu hình
     }
 
 
@@ -144,26 +159,22 @@ public class DangBanSP extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPreferences("AppPrefs", MODE_PRIVATE);
         String documentId = sharedPreferences.getString("documentID", "");
 
-        List<String> uploadImg = new ArrayList<>();
+        List<Uri> uploadImg = new ArrayList<>();
         int soluong = imageList.size();
         if (soluong == 0) {
             Toast.makeText(this, "Vui lòng chọn ít nhất một ảnh", Toast.LENGTH_SHORT).show();
             return;
         }
-
-        // Lấy ID loại sản phẩm từ DBHelperSanPham
         dbHelperSanPham.getIdLoaiSpByName(tenLoai, new DBHelperSanPham.LoaiSpCallback() {
             @Override
             public void onSuccess(int idLoai) {
-                // Nếu có ID loại sản phẩm, tải ảnh và lưu sản phẩm
                 for (int i = 0; i < soluong; i++) {
                     Uri imageUri = imageList.get(i);
                     uploadImageToStorage(imageUri, new OnImageUploadCompleteListener() {
                         @Override
-                        public void onUploadSuccess(String imageUrl) {
+                        public void onUploadSuccess(Uri imageUrl) {
                             uploadImg.add(imageUrl);
                             if (uploadImg.size() == soluong) {
-                                // Sau khi tải lên tất cả ảnh, tạo đối tượng sản phẩm và lưu
                                 Sanpham sanpham = new Sanpham();
                                 sanpham.setTensp(tensp);
                                 sanpham.setMota(mota);
@@ -189,6 +200,11 @@ public class DangBanSP extends AppCompatActivity {
                         }
 
                         @Override
+                        public void onUploadSuccess(String imageUrl) {
+                            Toast.makeText(DangBanSP.this, "Sản phẩm đã được lưu!", Toast.LENGTH_SHORT).show();
+                        }
+
+                        @Override
                         public void onUploadFailure(Exception e) {
                             // Xử lý khi tải ảnh thất bại
                             Toast.makeText(DangBanSP.this, "Lỗi khi tải ảnh lên", Toast.LENGTH_SHORT).show();
@@ -207,27 +223,41 @@ public class DangBanSP extends AppCompatActivity {
 
 
     public void uploadImageToStorage(Uri imageUri, final OnImageUploadCompleteListener listener) {
-        StorageReference storageRef = FirebaseStorage.getInstance().getReference("anh");
-        StorageReference fileRef = storageRef.child(System.currentTimeMillis() + ".jpg");
+        String filePath = FileUtils.getPath(this, imageUri);
+        if (filePath == null) {
+            listener.onUploadFailure(new Exception("Không thể lấy đường dẫn tệp"));
+            return;
+        }
 
-        fileRef.putFile(imageUri)
-                .addOnSuccessListener(taskSnapshot -> {
-                    fileRef.getDownloadUrl().addOnSuccessListener(uri -> {
-                        Log.d("Upload Image", "Image uploaded successfully: " + uri.toString());
-                        listener.onUploadSuccess(uri.toString());
-                    }).addOnFailureListener(e -> {
-                        Log.e("Upload Image", "Error getting download URL: " + e.getMessage());
-                        listener.onUploadFailure(e);
-                    });
-                })
-                .addOnFailureListener(e -> {
-                    Log.e("Upload Image", "Error uploading image: " + e.getMessage());
-                    listener.onUploadFailure(e);
-                });
+        Log.d("Upload", "Đường dẫn tệp: " + filePath);  // Thêm thông báo log để kiểm tra đường dẫn tệp
+
+        // Cấu hình Cloudinary
+        Map<String, Object> config = new HashMap<>();
+        config.put("cloud_name", "duthhwipq");  // Thay "your_cloud_name" bằng tên Cloudinary của bạn
+        Cloudinary cloudinary = new Cloudinary(config);
+
+        new Thread(() -> {
+            try {
+                // Gửi tệp lên Cloudinary
+                Map<String, Object> result = cloudinary.uploader().upload(filePath, ObjectUtils.emptyMap());
+                Log.d("Upload", "Kết quả upload: " + result);  // Thêm log để kiểm tra kết quả trả về
+
+                String imageUrl = (String) result.get("secure_url");
+                if (imageUrl != null) {
+                    runOnUiThread(() -> listener.onUploadSuccess(imageUrl));
+                } else {
+                    runOnUiThread(() -> listener.onUploadFailure(new Exception("Không tìm thấy secure_url")));
+                }
+            } catch (Exception e) {
+                runOnUiThread(() -> listener.onUploadFailure(e));
+                Log.e("Upload", "Lỗi khi tải ảnh lên: ", e);  // Thêm log chi tiết về lỗi
+            }
+        }).start();
     }
 
-
     public interface OnImageUploadCompleteListener {
+        void onUploadSuccess(Uri imageUrl);
+
         void onUploadSuccess(String imageUrl);
 
         void onUploadFailure(Exception e);

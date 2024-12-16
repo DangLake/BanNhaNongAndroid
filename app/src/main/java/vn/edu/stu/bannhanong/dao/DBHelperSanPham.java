@@ -1,6 +1,9 @@
 package vn.edu.stu.bannhanong.dao;
+import android.net.Uri;
 import android.util.Log;
 
+import com.cloudinary.android.callback.ErrorInfo;
+import com.cloudinary.android.callback.UploadCallback;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -10,7 +13,9 @@ import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.DocumentReference;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import vn.edu.stu.bannhanong.cloudinary.CloudinaryManager;
 import vn.edu.stu.bannhanong.model.LoaiSp;
 import vn.edu.stu.bannhanong.model.Sanpham;
 import vn.edu.stu.bannhanong.model.Users;
@@ -56,10 +61,45 @@ public class DBHelperSanPham {
                 .addOnFailureListener(e -> callback.onFailure(e));
     }
 
-    // Thêm sản phẩm cùng với ảnh
-    public void addSanphamWithImage(Sanpham sanpham, List<String> uploadImg, FirestoreCallback callback) {
-        sanpham.setAnh(uploadImg); // Lưu danh sách URL ảnh vào sản phẩm
+    public void addSanphamWithImage(Sanpham sanpham, List<Uri> imageUris, FirestoreCallback callback) {
+        List<Uri> imageUrls = new ArrayList<>();
 
+        for (Uri imageUri : imageUris) {
+            CloudinaryManager.uploadImage(imageUri, new UploadCallback() {
+                @Override
+                public void onStart(String requestId) {
+                    Log.d("CLOUDINARY", "Upload started");
+                }
+
+                @Override
+                public void onSuccess(String requestId, Map resultData) {
+                    Uri imageUrl = Uri.parse(resultData.get("secure_url").toString());
+                    imageUrls.add(imageUrl);
+                    if (imageUrls.size() == imageUris.size()) {
+                        sanpham.setAnh(imageUrls);
+                        saveSanphamToFirestore(sanpham, callback);
+                    }
+                }
+
+                @Override
+                public void onError(String requestId, ErrorInfo error) {
+                    callback.onFailure(new Exception("Upload error: " + error.getDescription()));
+                }
+
+                @Override
+                public void onReschedule(String requestId, ErrorInfo error) {
+                    callback.onFailure(new Exception("Upload rescheduled: " + error.getDescription()));
+                }
+
+                @Override
+                public void onProgress(String requestId, long bytes, long totalBytes) {
+                    Log.d("CLOUDINARY", "Uploading... " + bytes + "/" + totalBytes);
+                }
+            });
+        }
+    }
+
+    private void saveSanphamToFirestore(Sanpham sanpham, FirestoreCallback callback) {
         db.collection("sanpham")
                 .add(sanpham)
                 .addOnSuccessListener(documentReference -> {
@@ -70,7 +110,6 @@ public class DBHelperSanPham {
                 })
                 .addOnFailureListener(e -> callback.onFailure(e));
     }
-
     // Lấy ID loại sản phẩm từ tên loại
     public void getIdLoaiSpByName(String tenLoai, final LoaiSpCallback callback) {
         db.collection("loaisanpham")
