@@ -58,34 +58,24 @@ public class AdapterSanPham extends ArrayAdapter<Sanpham> {
         if (tvGia != null) {
             DecimalFormat decimalFormat = new DecimalFormat("#,###");
             String formattedPrice = decimalFormat.format(sp.getGia());
-            tvGia.setText("Giá: " + formattedPrice + " VND /KG");
+            tvGia.setText("Giá: " + formattedPrice + " VND/"+sp.getDonvitinh());
         }
         if(tvDVT!=null){
             tvDVT.setText("Đơn vị tính:  " +sp.getDonvitinh());
         }
         if (sp.getAnh() != null && !sp.getAnh().isEmpty()) {
-            // Lấy URL ảnh từ Firebase Storage
-            String imageUri = sp.getAnh().get(0);  // Lấy Uri ảnh đầu tiên
-            Log.d("ImagePath", "Đường dẫn ảnh: " + imageUri.toString());
-            StorageReference storageRef = FirebaseStorage.getInstance().getReference();
-            StorageReference imageRef = storageRef.child(imageUri.toString()); // Sử dụng URL ảnh dưới dạng String
-            imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
-                Log.d("ImageURL", "URL ảnh: " + uri.toString());
-                Glide.with(context)
-                        .load(uri)
-                        .into(img);
-            }).addOnFailureListener(e -> {
-                Log.e("ImageError", "Lỗi khi lấy URL ảnh", e);
-                Glide.with(context)
-                        .load(R.drawable.logo)
-                        .into(img);
-            });
+            // Lấy URL ảnh từ danh sách URL đã lưu trong Firestore (URL từ Cloudinary)
+            String imageUri = sp.getAnh().get(0);  // Lấy URL ảnh đầu tiên
+            Log.d("ImagePath", "Đường dẫn ảnh: " + imageUri);
+            Glide.with(context)
+                    .load(imageUri)
+                    .into(img);
         } else {
+            // Nếu không có ảnh, load ảnh mặc định
             Glide.with(context)
                     .load(R.drawable.logo)
                     .into(img);
         }
-
         return rowView;
     }
 

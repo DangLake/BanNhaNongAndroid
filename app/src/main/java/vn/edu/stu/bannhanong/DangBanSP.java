@@ -205,7 +205,7 @@ public class DangBanSP extends AppCompatActivity {
                                     public void onCallback(List<Sanpham> sanphamList) {
                                         // Xử lý khi thêm sản phẩm thành công
                                         Toast.makeText(DangBanSP.this, "Sản phẩm đã được lưu!", Toast.LENGTH_SHORT).show();
-                                        finish();
+                                        onBackPressed();
                                     }
 
                                     @Override

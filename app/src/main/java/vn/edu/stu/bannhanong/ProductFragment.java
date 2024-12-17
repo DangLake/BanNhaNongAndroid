@@ -93,7 +93,7 @@ public class ProductFragment extends Fragment {
 
             @Override
             public void onFailure(Exception e) {
-                Toast.makeText(getActivity(), "Lỗi khi tải sản phẩm: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "Sản phẩm trống", Toast.LENGTH_SHORT).show();
             }
         });
     }
