@@ -68,7 +68,6 @@ public class DangBanSP extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        init();
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_dang_ban_sp);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -81,18 +80,6 @@ public class DangBanSP extends AppCompatActivity {
         addEvents();
         loadLoaiSanpham();
     }
-    public void init() {
-        // Đảm bảo bạn truyền một Context hợp lệ từ Activity hoặc Application
-        Map config = new HashMap<>();
-        config.put("cloud_name", "duthhwipq");  // Thay bằng Cloud Name của bạn
-        config.put("api_key", "721938926416681");        // Thay bằng API Key của bạn
-        config.put("api_secret", "ozvYw0n11KYF9LLGs4pb1muHhsI");  // Thay bằng API Secret của bạn
-
-        // Thiết lập Cloudinary với Context và cấu hình
-        MediaManager.init(this, config);  // Truyền context và cấu hình
-    }
-
-
     private void loadLoaiSanpham() {
         db = FirebaseFirestore.getInstance();
         dsLoai.clear(); // Xóa danh sách cũ trước khi tải mới
