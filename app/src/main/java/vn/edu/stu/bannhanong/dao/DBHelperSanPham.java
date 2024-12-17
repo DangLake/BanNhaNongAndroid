@@ -1,5 +1,9 @@
 package vn.edu.stu.bannhanong.dao;
+import android.content.Context;
+import android.database.Cursor;
 import android.net.Uri;
+import android.provider.DocumentsContract;
+import android.provider.MediaStore;
 import android.util.Log;
 
 import com.cloudinary.android.callback.ErrorInfo;
@@ -21,6 +25,12 @@ import vn.edu.stu.bannhanong.model.Sanpham;
 import vn.edu.stu.bannhanong.model.Users;
 
 public class DBHelperSanPham {
+    private Context context;
+
+    public DBHelperSanPham(Context context) {
+        this.db = FirebaseFirestore.getInstance();
+        this.context = context;
+    }
     private FirebaseFirestore db;
 
     public DBHelperSanPham() {
@@ -49,7 +59,6 @@ public class DBHelperSanPham {
                         List<Sanpham> sanphamList = new ArrayList<>();
                         for (DocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
                             Sanpham sanpham = documentSnapshot.toObject(Sanpham.class);
-                            sanpham.setDocumentID(documentSnapshot.getId());
                             Log.d("Sanpham", "Sản phẩm: " + sanpham.getTensp() + ", Giá: " + sanpham.getGia() + ", Ảnh: " + sanpham.getAnh() + ", DVT: " + sanpham.getDonvitinh());
                             sanphamList.add(sanpham);
                         }
@@ -61,11 +70,12 @@ public class DBHelperSanPham {
                 .addOnFailureListener(e -> callback.onFailure(e));
     }
 
-    public void addSanphamWithImage(Sanpham sanpham, List<Uri> imageUris, FirestoreCallback callback) {
-        List<Uri> imageUrls = new ArrayList<>();
+    public void addSanphamWithImage(Sanpham sanpham, List<String> imageUrls, FirestoreCallback callback) {
+        List<String> uploadedUrls = new ArrayList<>();
 
-        for (Uri imageUri : imageUris) {
-            CloudinaryManager.uploadImage(imageUri, new UploadCallback() {
+        for (String imageUrl : imageUrls) {
+            // Upload hình ảnh với đường dẫn từ Cloudinary (sử dụng URL trực tiếp nếu đã có URL)
+            CloudinaryManager.uploadImage(imageUrl, new UploadCallback() {
                 @Override
                 public void onStart(String requestId) {
                     Log.d("CLOUDINARY", "Upload started");
@@ -73,11 +83,16 @@ public class DBHelperSanPham {
 
                 @Override
                 public void onSuccess(String requestId, Map resultData) {
-                    Uri imageUrl = Uri.parse(resultData.get("secure_url").toString());
-                    imageUrls.add(imageUrl);
-                    if (imageUrls.size() == imageUris.size()) {
-                        sanpham.setAnh(imageUrls);
-                        saveSanphamToFirestore(sanpham, callback);
+                    String secureUrl = resultData.get("secure_url").toString();
+                    uploadedUrls.add(secureUrl);
+
+                    // Log đường dẫn ảnh từ Cloudinary
+                    Log.d("CLOUDINARY", "Đường dẫn ảnh từ Cloudinary: " + secureUrl);
+
+                    // Kiểm tra nếu tất cả ảnh đã được upload
+                    if (uploadedUrls.size() == imageUrls.size()) {
+                        sanpham.setAnh(uploadedUrls);  // Gán danh sách URL đã upload vào sanpham
+                        saveSanphamToFirestore(sanpham, callback);  // Lưu sản phẩm vào Firestore
                     }
                 }
 
@@ -99,17 +114,18 @@ public class DBHelperSanPham {
         }
     }
 
-    private void saveSanphamToFirestore(Sanpham sanpham, FirestoreCallback callback) {
+    public void saveSanphamToFirestore(Sanpham sanpham, FirestoreCallback callback) {
+        // Thêm sản phẩm vào Firestore và lấy documentID tự động
         db.collection("sanpham")
                 .add(sanpham)
                 .addOnSuccessListener(documentReference -> {
-                    sanpham.setDocumentID(documentReference.getId());
                     List<Sanpham> sanphamList = new ArrayList<>();
                     sanphamList.add(sanpham);
-                    callback.onCallback(sanphamList);
+                    callback.onCallback(sanphamList); // Gọi callback với danh sách sản phẩm
                 })
-                .addOnFailureListener(e -> callback.onFailure(e));
+                .addOnFailureListener(e -> callback.onFailure(e)); // Nếu thất bại, gọi callback với lỗi
     }
+
     // Lấy ID loại sản phẩm từ tên loại
     public void getIdLoaiSpByName(String tenLoai, final LoaiSpCallback callback) {
         db.collection("loaisanpham")

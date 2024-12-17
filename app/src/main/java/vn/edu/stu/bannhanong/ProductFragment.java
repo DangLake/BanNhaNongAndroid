@@ -109,4 +109,10 @@ public class ProductFragment extends Fragment {
             }
         });
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        loadSanpham();
+    }
 }
