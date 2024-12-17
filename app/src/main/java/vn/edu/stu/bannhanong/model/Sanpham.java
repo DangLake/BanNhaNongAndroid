@@ -5,10 +5,10 @@ import android.net.Uri;
 import java.io.Serializable;
 import java.sql.Array;
 import java.util.List;
+
 import com.google.firebase.firestore.PropertyName;
 
 public class Sanpham implements Serializable {
-    private String documentID;
     @PropertyName("tensp")
     private String tensp;
 
@@ -19,44 +19,25 @@ public class Sanpham implements Serializable {
     private String donvitinh;
 
     @PropertyName("anh")
-    private List<Uri> anh;
+    private List<String> anh;
 
     @PropertyName("idloaisp")
     private int idloaisp;
 
     @PropertyName("iduser")
-    private String maDocumentuser;
+    private String iduser;
 
-    public Sanpham(String documentID, String tensp, String mota, double gia, String donvitinh, List<Uri> anh, int idloaisp, String maDocumentuser) {
-        this.documentID = documentID;
+    public Sanpham(String tensp, String mota, double gia, String donvitinh, List<String> anh, int idloaisp, String iduser) {
         this.tensp = tensp;
         this.mota = mota;
         this.gia = gia;
         this.donvitinh = donvitinh;
         this.anh = anh;
         this.idloaisp = idloaisp;
-        this.maDocumentuser = maDocumentuser;
-    }
-
-    public Sanpham(String tensp, String mota, double gia, String donvitinh, List<Uri> anh, int idloaisp, String maDocumentuser) {
-        this.tensp = tensp;
-        this.mota = mota;
-        this.gia = gia;
-        this.donvitinh = donvitinh;
-        this.anh = anh;
-        this.idloaisp = idloaisp;
-        this.maDocumentuser = maDocumentuser;
+        this.iduser = iduser;
     }
 
     public Sanpham() {
-    }
-
-    public String getDocumentID() {
-        return documentID;
-    }
-
-    public void setDocumentID(String documentID) {
-        this.documentID = documentID;
     }
 
     public String getTensp() {
@@ -91,11 +72,11 @@ public class Sanpham implements Serializable {
         this.donvitinh = donvitinh;
     }
 
-    public List<Uri> getAnh() {
+    public List<String> getAnh() {
         return anh;
     }
 
-    public void setAnh(List<Uri> anh) {
+    public void setAnh(List<String> anh) {
         this.anh = anh;
     }
 
@@ -107,11 +88,11 @@ public class Sanpham implements Serializable {
         this.idloaisp = idloaisp;
     }
 
-    public String getMaDocumentuser() {
-        return maDocumentuser;
+    public String getIduser() {
+        return iduser;
     }
 
-    public void setMaDocumentuser(String maDocumentuser) {
-        this.maDocumentuser = maDocumentuser;
+    public void setIduser(String iduser) {
+        this.iduser = iduser;
     }
 }

@@ -65,7 +65,7 @@ public class AdapterSanPham extends ArrayAdapter<Sanpham> {
         }
         if (sp.getAnh() != null && !sp.getAnh().isEmpty()) {
             // Lấy URL ảnh từ Firebase Storage
-            Uri imageUri = sp.getAnh().get(0);  // Lấy Uri ảnh đầu tiên
+            String imageUri = sp.getAnh().get(0);  // Lấy Uri ảnh đầu tiên
             Log.d("ImagePath", "Đường dẫn ảnh: " + imageUri.toString());
             StorageReference storageRef = FirebaseStorage.getInstance().getReference();
             StorageReference imageRef = storageRef.child(imageUri.toString()); // Sử dụng URL ảnh dưới dạng String

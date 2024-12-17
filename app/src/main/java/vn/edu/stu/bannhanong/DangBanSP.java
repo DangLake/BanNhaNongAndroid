@@ -5,10 +5,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
@@ -83,8 +85,8 @@ public class DangBanSP extends AppCompatActivity {
         // Đảm bảo bạn truyền một Context hợp lệ từ Activity hoặc Application
         Map config = new HashMap<>();
         config.put("cloud_name", "duthhwipq");  // Thay bằng Cloud Name của bạn
-        config.put("api_key", "735636338239818");        // Thay bằng API Key của bạn
-        config.put("api_secret", "ww3wSfsLqr047sgmPwShAii0iJ8");  // Thay bằng API Secret của bạn
+        config.put("api_key", "721938926416681");        // Thay bằng API Key của bạn
+        config.put("api_secret", "ozvYw0n11KYF9LLGs4pb1muHhsI");  // Thay bằng API Secret của bạn
 
         // Thiết lập Cloudinary với Context và cấu hình
         MediaManager.init(this, config);  // Truyền context và cấu hình
@@ -159,22 +161,35 @@ public class DangBanSP extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPreferences("AppPrefs", MODE_PRIVATE);
         String documentId = sharedPreferences.getString("documentID", "");
 
-        List<Uri> uploadImg = new ArrayList<>();
+        List<String> uploadImg = new ArrayList<>();
         int soluong = imageList.size();
         if (soluong == 0) {
             Toast.makeText(this, "Vui lòng chọn ít nhất một ảnh", Toast.LENGTH_SHORT).show();
             return;
         }
+
         dbHelperSanPham.getIdLoaiSpByName(tenLoai, new DBHelperSanPham.LoaiSpCallback() {
             @Override
             public void onSuccess(int idLoai) {
+                final int[] uploadedImagesCount = {0}; // Biến đếm số ảnh đã tải lên
+
                 for (int i = 0; i < soluong; i++) {
                     Uri imageUri = imageList.get(i);
                     uploadImageToStorage(imageUri, new OnImageUploadCompleteListener() {
                         @Override
-                        public void onUploadSuccess(Uri imageUrl) {
+                        public void onUploadSuccess(String imageUrl) {
                             uploadImg.add(imageUrl);
-                            if (uploadImg.size() == soluong) {
+                            uploadedImagesCount[0]++; // Tăng số ảnh đã tải lên
+
+                            // Log đường dẫn ảnh khi upload thành công
+                            Log.d("Upload", "Đường dẫn ảnh upload thành công: " + imageUrl);
+
+                            // Kiểm tra nếu tất cả ảnh đã được tải lên
+                            if (uploadedImagesCount[0] == soluong) {
+                                // Log danh sách đường dẫn ảnh đã tải lên
+                                Log.d("Upload", "Danh sách đường dẫn ảnh: " + uploadImg);
+
+                                // Khi tất cả ảnh đã được tải lên, tạo đối tượng Sanpham
                                 Sanpham sanpham = new Sanpham();
                                 sanpham.setTensp(tensp);
                                 sanpham.setMota(mota);
@@ -182,32 +197,31 @@ public class DangBanSP extends AppCompatActivity {
                                 sanpham.setDonvitinh(donvitinh);
                                 sanpham.setAnh(uploadImg);  // Lưu danh sách URL ảnh
                                 sanpham.setIdloaisp(idLoai);  // Dùng ID loại sản phẩm
-                                sanpham.setMaDocumentuser(documentId);
-                                dbHelperSanPham.addSanphamWithImage(sanpham, uploadImg, new DBHelperSanPham.FirestoreCallback() {
+                                sanpham.setIduser(documentId);
+
+                                // Lưu sản phẩm vào Firestore
+                                dbHelperSanPham.saveSanphamToFirestore(sanpham, new DBHelperSanPham.FirestoreCallback() {
                                     @Override
                                     public void onCallback(List<Sanpham> sanphamList) {
                                         // Xử lý khi thêm sản phẩm thành công
                                         Toast.makeText(DangBanSP.this, "Sản phẩm đã được lưu!", Toast.LENGTH_SHORT).show();
+                                        finish();
                                     }
 
                                     @Override
                                     public void onFailure(Exception e) {
                                         // Xử lý khi có lỗi
-                                        Toast.makeText(DangBanSP.this, "Lỗi khi lưu sản phẩm", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(DangBanSP.this, "Lỗi khi lưu sản phẩm: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                                     }
                                 });
                             }
                         }
 
                         @Override
-                        public void onUploadSuccess(String imageUrl) {
-                            Toast.makeText(DangBanSP.this, "Sản phẩm đã được lưu!", Toast.LENGTH_SHORT).show();
-                        }
-
-                        @Override
                         public void onUploadFailure(Exception e) {
-                            // Xử lý khi tải ảnh thất bại
-                            Toast.makeText(DangBanSP.this, "Lỗi khi tải ảnh lên", Toast.LENGTH_SHORT).show();
+                            // Log lỗi nếu tải ảnh lên thất bại
+                            Log.e("Upload", "Lỗi khi tải ảnh lên: " + e.getMessage());
+                            Toast.makeText(DangBanSP.this, "Lỗi: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     });
                 }
@@ -223,24 +237,25 @@ public class DangBanSP extends AppCompatActivity {
 
 
     public void uploadImageToStorage(Uri imageUri, final OnImageUploadCompleteListener listener) {
-        String filePath = FileUtils.getPath(this, imageUri);
+        String filePath = getRealPathFromUri(this, imageUri);
         if (filePath == null) {
             listener.onUploadFailure(new Exception("Không thể lấy đường dẫn tệp"));
             return;
         }
 
-        Log.d("Upload", "Đường dẫn tệp: " + filePath);  // Thêm thông báo log để kiểm tra đường dẫn tệp
+        Log.d("Upload", "Đường dẫn tệp: " + filePath);
 
         // Cấu hình Cloudinary
         Map<String, Object> config = new HashMap<>();
-        config.put("cloud_name", "duthhwipq");  // Thay "your_cloud_name" bằng tên Cloudinary của bạn
+        config.put("cloud_name", "duthhwipq");
+        config.put("api_key", "721938926416681");
+        config.put("api_secret", "ozvYw0n11KYF9LLGs4pb1muHhsI");
         Cloudinary cloudinary = new Cloudinary(config);
 
         new Thread(() -> {
             try {
-                // Gửi tệp lên Cloudinary
-                Map<String, Object> result = cloudinary.uploader().upload(filePath, ObjectUtils.emptyMap());
-                Log.d("Upload", "Kết quả upload: " + result);  // Thêm log để kiểm tra kết quả trả về
+                Map result = cloudinary.uploader().upload(filePath, ObjectUtils.emptyMap());
+                Log.d("Upload", "Kết quả upload: " + result);
 
                 String imageUrl = (String) result.get("secure_url");
                 if (imageUrl != null) {
@@ -250,18 +265,30 @@ public class DangBanSP extends AppCompatActivity {
                 }
             } catch (Exception e) {
                 runOnUiThread(() -> listener.onUploadFailure(e));
-                Log.e("Upload", "Lỗi khi tải ảnh lên: ", e);  // Thêm log chi tiết về lỗi
+                Log.e("Upload", "Lỗi khi tải ảnh lên: ", e);
             }
         }).start();
     }
+    public String getRealPathFromUri(Context context, Uri uri) {
+        String result = null;
+        String[] proj = {MediaStore.Images.Media.DATA};
+        Cursor cursor = context.getContentResolver().query(uri, proj, null, null, null);
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+                result = cursor.getString(column_index);
+            }
+            cursor.close();
+        }
+        return result;
+    }
+
 
     public interface OnImageUploadCompleteListener {
-        void onUploadSuccess(Uri imageUrl);
-
         void onUploadSuccess(String imageUrl);
-
         void onUploadFailure(Exception e);
     }
+
 
 
     private void checkPermissions() {

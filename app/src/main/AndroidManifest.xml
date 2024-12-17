@@ -80,7 +80,7 @@
         </activity>
         <meta-data
             android:name="CLOUDINARY_URL"
-            android:value="cloudinary://735636338239818:ww3wSfsLqr047sgmPwShAii0iJ8@duthhwipq"/>
+            android:value="cloudinary://721938926416681:ozvYw0n11KYF9LLGs4pb1muHhsI@duthhwipq"/>
     </application>
 
 </manifest>
