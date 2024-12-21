@@ -16,7 +16,7 @@ public class Users implements Serializable {
     }
 
 
-    public Users(String documentID, String tenuser, String sdt, String matkhau, String diachi, String quanhuyen, String tinh, int loaiUSers) {
+    public Users(String documentID, String tenuser, String sdt, String matkhau, String diachi, String quanhuyen, String tinh, int maloai) {
         this.documentID = documentID;
         this.tenuser = tenuser;
         this.sdt = sdt;
@@ -24,17 +24,17 @@ public class Users implements Serializable {
         this.diachi = diachi;
         this.quanhuyen = quanhuyen;
         this.tinh = tinh;
-        this.maloai = loaiUSers;
+        this.maloai = maloai;
     }
 
-    public Users(String tenuser, String sdt, String matkhau, String diachi, String quanhuyen, String tinh, int loaiUSers) {
+    public Users(String tenuser, String sdt, String matkhau, String diachi, String quanhuyen, String tinh, int maloai) {
         this.tenuser = tenuser;
         this.sdt = sdt;
         this.matkhau = matkhau;
         this.diachi = diachi;
         this.quanhuyen = quanhuyen;
         this.tinh = tinh;
-        this.maloai = loaiUSers;
+        this.maloai = maloai;
     }
 
     public String getDocumentID() {
@@ -77,14 +77,6 @@ public class Users implements Serializable {
         this.diachi = diachi;
     }
 
-    public int getLoaiUSers() {
-        return maloai;
-    }
-
-    public void setLoaiUSers(int loaiUSers) {
-        this.maloai = loaiUSers;
-    }
-
     public String getQuanhuyen() {
         return quanhuyen;
     }
@@ -99,5 +91,13 @@ public class Users implements Serializable {
 
     public void setTinh(String tinh) {
         this.tinh = tinh;
+    }
+
+    public int getMaloai() {
+        return maloai;
+    }
+
+    public void setMaloai(int maloai) {
+        this.maloai = maloai;
     }
 }

@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -12,7 +11,6 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import vn.edu.stu.bannhanong.dao.DBHelperUsers;
 import vn.edu.stu.bannhanong.model.Users;
@@ -66,16 +64,21 @@ public class Login extends AppCompatActivity {
 
                                                         saveUserInfoToPreferences(user, documentId);
 
-                                                        int userType = user.getLoaiUSers();
-                                                        if (userType == 0 || userType == 1) {
+                                                        int userType = user.getMaloai();
+                                                        Log.d("DEBUG", "User type from Firestore: " + userType);
+                                                        if (userType == 0) {
+                                                            // Khách hàng
+                                                            Intent intent = new Intent(Login.this, TrangChuKhach.class);
+                                                            startActivity(intent);
+                                                        } else if (userType == 1) {
+                                                            // Doanh nghiệp
+                                                            Intent intent = new Intent(Login.this, TRangChuDoanhNghiep.class);
+                                                            startActivity(intent);
+                                                        } else if (userType == 2) {
                                                             Intent intent = new Intent(Login.this, TrangchuNongDan.class);
                                                             startActivity(intent);
-                                                            finish();
-                                                        } else {
-                                                            Intent intent = new Intent(Login.this, TrangChuDoanhNghiep.class);
-                                                            startActivity(intent);
-                                                            finish();
                                                         }
+                                                        finish();
                                                     } else {
                                                         Toast.makeText(Login.this, getString(R.string.login_failed), Toast.LENGTH_SHORT).show();
                                                     }
@@ -98,7 +101,7 @@ public class Login extends AppCompatActivity {
         editor.putString("documentID", documentId);
         editor.putString("user_name", user.getTenuser());
         editor.putString("user_phone", user.getSdt());
-        editor.putInt("user_type", user.getLoaiUSers());
+        editor.putInt("user_type", user.getMaloai());
         editor.apply();
     }
 
