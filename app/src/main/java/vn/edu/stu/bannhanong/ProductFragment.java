@@ -2,6 +2,8 @@ package vn.edu.stu.bannhanong;
 
 import static android.content.Context.MODE_PRIVATE;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -13,6 +15,7 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -108,6 +111,33 @@ public class ProductFragment extends Fragment {
                 startActivity(intent);
             }
         });
+        lvSanpham.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Sanpham sp=dsSP.get(i);
+                xulyXoa(sp);
+                return true;
+            }
+        });
+    }
+
+    private void xulyXoa(Sanpham sp) {
+        new AlertDialog.Builder(getActivity())
+                .setTitle("Xóa?")
+                .setMessage("Có chắc xóa sản phẩm này?")
+                .setCancelable(false)
+                .setPositiveButton("Xóa", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        xoaSanPham(sp);
+                    }
+                })
+                .setNegativeButton("Không",null)
+                .show();
+    }
+
+    private void xoaSanPham(Sanpham sp) {
+
     }
 
     @Override

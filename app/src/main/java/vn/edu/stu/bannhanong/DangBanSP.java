@@ -93,7 +93,6 @@ public class DangBanSP extends AppCompatActivity {
                             String tenloai = document.getString("tenloaisp");
                             dsLoai.add(new LoaiSp(maloai, tenloai));
                         }
-
                         // Tạo danh sách tên loại để đưa vào Adapter
                         List<String> tenLoaiList = new ArrayList<>();
                         for (LoaiSp loaiSp : dsLoai) {

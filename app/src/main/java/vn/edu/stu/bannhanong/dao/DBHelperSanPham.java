@@ -1,9 +1,5 @@
 package vn.edu.stu.bannhanong.dao;
 import android.content.Context;
-import android.database.Cursor;
-import android.net.Uri;
-import android.provider.DocumentsContract;
-import android.provider.MediaStore;
 import android.util.Log;
 
 import com.cloudinary.android.callback.ErrorInfo;
@@ -12,10 +8,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.firestore.ListenerRegistration;
-import com.google.firebase.firestore.DocumentReference;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -141,5 +135,19 @@ public class DBHelperSanPham {
                     }
                 })
                 .addOnFailureListener(e -> callback.onFailure(e));
+    }
+
+    public void deleteSanpham(String documentId, FirestoreCallback callback) {
+        db.collection("sanpham")
+                .document(documentId) // Xác định sản phẩm cần xóa bằng documentId
+                .delete()
+                .addOnSuccessListener(aVoid -> {
+                    Log.d("Firestore", "Xóa sản phẩm thành công với documentId: " + documentId);
+                    callback.onCallback(Collections.emptyList()); // Trả về callback với danh sách trống
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("Firestore", "Lỗi khi xóa sản phẩm: " + e.getMessage());
+                    callback.onFailure(e); // Trả về callback lỗi
+                });
     }
 }
