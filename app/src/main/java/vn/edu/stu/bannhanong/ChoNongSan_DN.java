@@ -17,13 +17,11 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-
 import com.google.android.material.navigation.NavigationBarView;
 
 import vn.edu.stu.bannhanong.databinding.ActivityChoNongSanBinding;
 
-public class ChoNongSan extends AppCompatActivity {
-
+public class ChoNongSan_DN extends AppCompatActivity {
     Toolbar toolbar;
     ActivityChoNongSanBinding binding;
 
@@ -31,6 +29,7 @@ public class ChoNongSan extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
+        //setContentView(R.layout.activity_cho_nong_san_dn);
         binding = ActivityChoNongSanBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         toolbar = findViewById(R.id.toolbar);
@@ -54,8 +53,12 @@ public class ChoNongSan extends AppCompatActivity {
             return insets;
         });
         addControls();
-        replaceFrag(new ProductFragment());
+        replaceFrag(new SanPhamFragment());
         addEvents();
+    }
+
+    private void addControls() {
+
     }
 
     private void addEvents() {
@@ -64,15 +67,13 @@ public class ChoNongSan extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 int id = item.getItemId();
                 if (id == R.id.sanpham) {
-                    replaceFrag(new ProductFragment());
+                    replaceFrag(new SanPhamFragment());
+                } else if (id == R.id.tinnhan) {
+                    replaceFrag(new MessFragment());
                 } else if (id == R.id.donhang) {
-                    replaceFrag(new OrderFragment());
-                } else if (id == R.id.doanhthu) {
-                    replaceFrag(new ThongkeFragment());
+                    replaceFrag(new AccountFragment());
                 } else if (id == R.id.taikhoan) {
                     replaceFrag(new AccountFragment());
-                }else if (id == R.id.tinnhan) {
-                    replaceFrag(new MessFragment());
                 }
                 return true;
             }
@@ -84,9 +85,5 @@ public class ChoNongSan extends AppCompatActivity {
         FragmentTransaction fragmentTransition = fragmentManager.beginTransaction();
         fragmentTransition.replace(R.id.frmMain, fragment);
         fragmentTransition.commit();
-    }
-
-    private void addControls() {
-        // Thực tế không cần xử lý gì thêm ở đây
     }
 }

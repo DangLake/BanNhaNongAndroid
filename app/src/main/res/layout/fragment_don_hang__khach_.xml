@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".OrderFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/srollview">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="10dp"
+                >
+                <TextView
+                    android:id="@+id/tvChoxacnhan"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:padding="13dp"
+                    android:text="Chờ xác nhận"/>
+                <TextView
+                    android:id="@+id/tvCholayhang"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:padding="13dp"
+
+                    android:text="Chờ lấy hàng"/>
+                <TextView
+                    android:id="@+id/tvDanggiao"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:padding="13dp"
+                    android:text="Đang giao"/>
+                <TextView
+                    android:id="@+id/tvDagiao"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:padding="13dp"
+                    android:text="Đã giao"/>
+                <TextView
+                    android:id="@+id/tvDonhuy"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:padding="13dp"
+                    android:text="Đơn hủy"/>
+                <TextView
+                    android:id="@+id/tvTrahang"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:padding="13dp"
+                    android:text="Trả hàng/hoàn tiền"/>
+                <TextView
+                    android:id="@+id/tvGiaofailed"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:padding="13dp"
+                    android:text="Giao không thành công"/>
+            </LinearLayout>
+        </HorizontalScrollView>
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/lvDonhang"/>
+    </LinearLayout>
+
+</FrameLayout>

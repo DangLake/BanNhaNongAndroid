@@ -75,7 +75,7 @@ public class TRangChuDoanhNghiep extends AppCompatActivity implements Navigation
         btnChonongsan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent=new Intent(TRangChuDoanhNghiep.this, ChoNongSan.class);
+                Intent intent=new Intent(TRangChuDoanhNghiep.this, ChoNongSan_DN.class);
                 startActivity(intent);
             }
         });
