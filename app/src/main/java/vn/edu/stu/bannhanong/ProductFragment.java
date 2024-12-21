@@ -129,15 +129,26 @@ public class ProductFragment extends Fragment {
                 .setPositiveButton("Xóa", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        xoaSanPham(sp);
+                        dbHelperSanPham.deleteSanpham(sp.getDocumentId(), new DBHelperSanPham.FirestoreCallback() {
+                            @Override
+                            public void onCallback(List<Sanpham> sanphamList) {
+                                // Cập nhật UI sau khi xóa thành công
+                                Toast.makeText(getActivity(), "Sản phẩm đã được xóa!", Toast.LENGTH_SHORT).show();
+                                // Cập nhật lại danh sách sản phẩm, ví dụ:
+                                dsSP.remove(sp); // Xóa sản phẩm khỏi danh sách
+                                adapterSanPham.notifyDataSetChanged(); // Thông báo cho adapter cập nhật lại UI
+                            }
+
+                            @Override
+                            public void onFailure(Exception e) {
+                                // Xử lý khi xóa thất bại
+                                Toast.makeText(getActivity(), "Lỗi khi xóa sản phẩm: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        });
                     }
                 })
                 .setNegativeButton("Không",null)
                 .show();
-    }
-
-    private void xoaSanPham(Sanpham sp) {
-
     }
 
     @Override

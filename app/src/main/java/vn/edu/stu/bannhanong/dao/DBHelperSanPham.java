@@ -139,20 +139,76 @@ public class DBHelperSanPham {
                 })
                 .addOnFailureListener(e -> callback.onFailure(e));
     }
-
-
-
     public void deleteSanpham(String documentId, FirestoreCallback callback) {
+        // Lấy sản phẩm từ Firestore trước khi xóa
         db.collection("sanpham")
-                .document(documentId) // Xác định sản phẩm cần xóa bằng documentId
-                .delete()
-                .addOnSuccessListener(aVoid -> {
-                    Log.d("Firestore", "Xóa sản phẩm thành công với documentId: " + documentId);
-                    callback.onCallback(Collections.emptyList()); // Trả về callback với danh sách trống
+                .document(documentId)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        Sanpham sanpham = documentSnapshot.toObject(Sanpham.class);
+                        if (sanpham != null && sanpham.getAnh() != null) {
+                            // Xóa ảnh trên Cloudinary nếu có URL ảnh
+                            for (String imageUrl : sanpham.getAnh()) {
+                                String publicId = extractPublicIdFromUrl(imageUrl);
+                                if (publicId != null) {
+                                    Log.d("PublicID", "Publicanh " + publicId);
+                                    CloudinaryManager.deleteImage(publicId, new CloudinaryManager.CloudinaryCallback() {
+                                        @Override
+                                        public void onSuccess() {
+                                            Log.d("Cloudinary", "Xóa ảnh thành công: " + imageUrl);
+                                        }
+
+                                        @Override
+                                        public void onError(String error) {
+                                            Log.e("Cloudinary", "Lỗi khi xóa ảnh: " + error);
+                                        }
+                                    });
+                                }
+                            }
+                        }
+
+                        // Xóa sản phẩm trong Firestore
+                        db.collection("sanpham")
+                                .document(documentId)
+                                .delete()
+                                .addOnSuccessListener(aVoid -> {
+                                    Log.d("Firestore", "Xóa sản phẩm thành công với documentId: " + documentId);
+                                    callback.onCallback(Collections.emptyList()); // Trả về danh sách trống
+                                })
+                                .addOnFailureListener(e -> {
+                                    Log.e("Firestore", "Lỗi khi xóa sản phẩm: " + e.getMessage());
+                                    callback.onFailure(e); // Trả về callback lỗi
+                                });
+                    } else {
+                        callback.onFailure(new Exception("Không tìm thấy sản phẩm để xóa"));
+                    }
                 })
                 .addOnFailureListener(e -> {
-                    Log.e("Firestore", "Lỗi khi xóa sản phẩm: " + e.getMessage());
-                    callback.onFailure(e); // Trả về callback lỗi
+                    Log.e("Firestore", "Lỗi khi lấy sản phẩm từ Firestore: " + e.getMessage());
+                    callback.onFailure(e);
                 });
     }
+    private String extractPublicIdFromUrl(String imageUrl) {
+        try {
+            // Kiểm tra xem URL có chứa /upload/ không
+            String[] parts = imageUrl.split("/upload/");
+            if (parts.length > 1) {
+                // Lấy phần trước dấu . là public ID
+                String[] publicIdParts = parts[1].split("\\."); // Chia phần sau /upload/ tại dấu .
+                String publicId = publicIdParts[0];  // Lấy phần trước dấu chấm
+
+                // Tiếp tục tách phần publicId nếu có dấu '/' (để lấy phần sau dấu '/')
+                String[] publicIdSubParts = publicId.split("/");
+                return publicIdSubParts[1];  // Lấy phần sau dấu '/'
+            } else {
+                Log.e("Cloudinary", "URL không hợp lệ: " + imageUrl);
+            }
+        } catch (Exception e) {
+            Log.e("Cloudinary", "Lỗi khi trích xuất public ID từ URL: " + imageUrl);
+        }
+        return null;  // Nếu không trích xuất được, trả về null
+    }
+
+
 }
