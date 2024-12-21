@@ -53,6 +53,7 @@ public class DBHelperSanPham {
                         List<Sanpham> sanphamList = new ArrayList<>();
                         for (DocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
                             Sanpham sanpham = documentSnapshot.toObject(Sanpham.class);
+                            sanpham.setDocumentId(documentSnapshot.getId());
                             Log.d("Sanpham", "Sản phẩm: " + sanpham.getTensp() + ", Giá: " + sanpham.getGia() + ", Ảnh: " + sanpham.getAnh() + ", DVT: " + sanpham.getDonvitinh());
                             sanphamList.add(sanpham);
                         }
@@ -109,18 +110,20 @@ public class DBHelperSanPham {
     }
 
     public void saveSanphamToFirestore(Sanpham sanpham, FirestoreCallback callback) {
-        // Thêm sản phẩm vào Firestore và lấy documentID tự động
         db.collection("sanpham")
                 .add(sanpham)
                 .addOnSuccessListener(documentReference -> {
+                    String documentId = documentReference.getId();
+                    sanpham.setDocumentId(documentId); // Gán documentId
                     List<Sanpham> sanphamList = new ArrayList<>();
                     sanphamList.add(sanpham);
-                    callback.onCallback(sanphamList); // Gọi callback với danh sách sản phẩm
+                    callback.onCallback(sanphamList); // Trả về danh sách sản phẩm đã lưu
                 })
-                .addOnFailureListener(e -> callback.onFailure(e)); // Nếu thất bại, gọi callback với lỗi
+                .addOnFailureListener(e -> {
+                    Log.e("Firestore", "Lỗi khi lưu sản phẩm: " + e.getMessage());
+                    callback.onFailure(e); // Nếu thất bại, trả về callback lỗi
+                });
     }
-
-    // Lấy ID loại sản phẩm từ tên loại
     public void getIdLoaiSpByName(String tenLoai, final LoaiSpCallback callback) {
         db.collection("loaisanpham")
                 .whereEqualTo("tenloaisp", tenLoai) // Tìm theo tên loại sản phẩm
@@ -136,6 +139,8 @@ public class DBHelperSanPham {
                 })
                 .addOnFailureListener(e -> callback.onFailure(e));
     }
+
+
 
     public void deleteSanpham(String documentId, FirestoreCallback callback) {
         db.collection("sanpham")

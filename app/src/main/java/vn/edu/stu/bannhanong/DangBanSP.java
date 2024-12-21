@@ -166,16 +166,7 @@ public class DangBanSP extends AppCompatActivity {
                         public void onUploadSuccess(String imageUrl) {
                             uploadImg.add(imageUrl);
                             uploadedImagesCount[0]++; // Tăng số ảnh đã tải lên
-
-                            // Log đường dẫn ảnh khi upload thành công
-                            Log.d("Upload", "Đường dẫn ảnh upload thành công: " + imageUrl);
-
-                            // Kiểm tra nếu tất cả ảnh đã được tải lên
                             if (uploadedImagesCount[0] == soluong) {
-                                // Log danh sách đường dẫn ảnh đã tải lên
-                                Log.d("Upload", "Danh sách đường dẫn ảnh: " + uploadImg);
-
-                                // Khi tất cả ảnh đã được tải lên, tạo đối tượng Sanpham
                                 Sanpham sanpham = new Sanpham();
                                 sanpham.setTensp(tensp);
                                 sanpham.setMota(mota);
@@ -189,6 +180,20 @@ public class DangBanSP extends AppCompatActivity {
                                 dbHelperSanPham.saveSanphamToFirestore(sanpham, new DBHelperSanPham.FirestoreCallback() {
                                     @Override
                                     public void onCallback(List<Sanpham> sanphamList) {
+                                        if (!sanphamList.isEmpty()) {
+                                            Sanpham savedSanpham = sanphamList.get(0); // Lấy sản phẩm vừa lưu
+                                            if (savedSanpham.getDocumentId() != null) {
+                                                Log.d("Firestore", "Document ID được gán: " + savedSanpham.getDocumentId());
+                                                sanpham.setDocumentId(savedSanpham.getDocumentId());
+                                                FirebaseFirestore db = FirebaseFirestore.getInstance();
+                                                db.collection("sanpham").document(savedSanpham.getDocumentId())
+                                                        .update(
+                                                                "documentId", savedSanpham.getDocumentId()
+                                                        );
+                                            } else {
+                                                Log.e("Firestore", "Không thể lấy Document ID sau khi lưu sản phẩm.");
+                                            }
+                                        }
                                         // Xử lý khi thêm sản phẩm thành công
                                         Toast.makeText(DangBanSP.this, "Sản phẩm đã được lưu!", Toast.LENGTH_SHORT).show();
                                         onBackPressed();
@@ -228,9 +233,6 @@ public class DangBanSP extends AppCompatActivity {
             listener.onUploadFailure(new Exception("Không thể lấy đường dẫn tệp"));
             return;
         }
-
-        Log.d("Upload", "Đường dẫn tệp: " + filePath);
-
         // Cấu hình Cloudinary
         Map<String, Object> config = new HashMap<>();
         config.put("cloud_name", "duthhwipq");
@@ -241,8 +243,6 @@ public class DangBanSP extends AppCompatActivity {
         new Thread(() -> {
             try {
                 Map result = cloudinary.uploader().upload(filePath, ObjectUtils.emptyMap());
-                Log.d("Upload", "Kết quả upload: " + result);
-
                 String imageUrl = (String) result.get("secure_url");
                 if (imageUrl != null) {
                     runOnUiThread(() -> listener.onUploadSuccess(imageUrl));

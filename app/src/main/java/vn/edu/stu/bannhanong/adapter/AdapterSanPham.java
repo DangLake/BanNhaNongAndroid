@@ -53,7 +53,6 @@ public class AdapterSanPham extends ArrayAdapter<Sanpham> {
         Sanpham sp=dsSanPham.get(position);
         if(tvTen!=null){
             tvTen.setText(sp.getTensp());
-            Log.d("SanPham", "Tên sản phẩm: " + sp.getTensp());
         }
         if (tvGia != null) {
             DecimalFormat decimalFormat = new DecimalFormat("#,###");
@@ -66,7 +65,6 @@ public class AdapterSanPham extends ArrayAdapter<Sanpham> {
         if (sp.getAnh() != null && !sp.getAnh().isEmpty()) {
             // Lấy URL ảnh từ danh sách URL đã lưu trong Firestore (URL từ Cloudinary)
             String imageUri = sp.getAnh().get(0);  // Lấy URL ảnh đầu tiên
-            Log.d("ImagePath", "Đường dẫn ảnh: " + imageUri);
             Glide.with(context)
                     .load(imageUri)
                     .into(img);

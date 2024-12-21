@@ -9,6 +9,7 @@ import java.util.List;
 import com.google.firebase.firestore.PropertyName;
 
 public class Sanpham implements Serializable {
+    private String documentId;
     @PropertyName("tensp")
     private String tensp;
 
@@ -28,6 +29,17 @@ public class Sanpham implements Serializable {
     private String iduser;
 
     public Sanpham(String tensp, String mota, double gia, String donvitinh, List<String> anh, int idloaisp, String iduser) {
+        this.tensp = tensp;
+        this.mota = mota;
+        this.gia = gia;
+        this.donvitinh = donvitinh;
+        this.anh = anh;
+        this.idloaisp = idloaisp;
+        this.iduser = iduser;
+    }
+
+    public Sanpham(String documentId, String tensp, String mota, double gia, String donvitinh, List<String> anh, int idloaisp, String iduser) {
+        this.documentId = documentId;
         this.tensp = tensp;
         this.mota = mota;
         this.gia = gia;
@@ -94,5 +106,13 @@ public class Sanpham implements Serializable {
 
     public void setIduser(String iduser) {
         this.iduser = iduser;
+    }
+
+    public String getDocumentId() {
+        return documentId;
+    }
+
+    public void setDocumentId(String documentId) {
+        this.documentId = documentId;
     }
 }
