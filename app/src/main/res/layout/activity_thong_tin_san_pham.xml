@@ -55,7 +55,7 @@
                 android:padding="16dp"
                 android:text="Gia sản phẩm"
                 android:textColor="#ff0000"
-                android:textSize="16sp" />
+                android:textSize="17sp" />
 
             <TextView
                 android:id="@+id/tvTen"
@@ -63,7 +63,7 @@
                 android:layout_height="wrap_content"
                 android:paddingHorizontal="16dp"
                 android:text="Tên sản phẩm"
-                android:textSize="16sp" />
+                android:textSize="17sp" />
 
             <View
                 android:layout_width="match_parent"
