@@ -19,18 +19,19 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.navigation.NavigationBarView;
 
+import vn.edu.stu.bannhanong.databinding.ActivityChoNngSanKhachBinding;
 import vn.edu.stu.bannhanong.databinding.ActivityChoNongSanBinding;
 
 public class ChoNngSan_Khach extends AppCompatActivity {
     Toolbar toolbar;
-    ActivityChoNongSanBinding binding;
+    ActivityChoNngSanKhachBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         //setContentView(R.layout.activity_cho_nng_san_khach);
-        binding = ActivityChoNongSanBinding.inflate(getLayoutInflater());
+        binding = ActivityChoNngSanKhachBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
