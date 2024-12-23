@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/menu_cart"
+        android:icon="@drawable/cart_white"
+        android:title="Cart"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/trangchu"
+        android:title="Quay về trang chủ"
+        android:icon="@drawable/baseline_home_24"
+        app:showAsAction="never" />  <!-- Hiển thị trong menu 3 chấm -->
+
+    <item
+        android:id="@+id/chiase"
+        android:title="Chia sẻ"
+        android:icon="@drawable/baseline_share_24"
+        app:showAsAction="never" />
+</menu>

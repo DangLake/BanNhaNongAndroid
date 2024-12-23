@@ -32,6 +32,26 @@ public class DBHelperSanPhamBuy {
                     tvDiachi.setText("Địa chỉ: Không tải được");
                 });
     }
+    public void getUserName(String userID, TextView tvTenND,TextView tvDiachi) {
+        db.collection("users") // Tên collection chứa thông tin user
+                .document(userID)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        String diachi = documentSnapshot.getString("tinh");
+                        String ten = documentSnapshot.getString("tenuser");
+                        tvTenND.setText(ten);
+                        tvDiachi.setText(diachi);
+                    } else {
+                        tvDiachi.setText("Địa chỉ: Không có thông tin");
+                        tvTenND.setText("null");
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    tvDiachi.setText("Địa chỉ: Không tải được");
+                    tvTenND.setText("khong tai duoc");
+                });
+    }
     public void getAllProducts(ProductCallback callback) {
         db.collection("sanpham") // Tên collection chứa thông tin sản phẩm
                 .get()
@@ -50,6 +70,7 @@ public class DBHelperSanPhamBuy {
                     callback.onFailure(e); // Trả về lỗi qua callback
                 });
     }
+
 
     public interface ProductCallback {
         void onSuccess(List<Sanpham> productList); // Khi dữ liệu được tải thành công
