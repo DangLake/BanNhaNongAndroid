@@ -38,7 +38,6 @@ public class ThongTinSanPham extends AppCompatActivity {
     Toolbar toolbar;
     ActivityThongTinSanPhamBinding binding;
     private ViewPager viewPager;
-    private CircleIndicator indicator;
     private AdapterImageSlide adapterImageSlide;
     TextView tvTen,tvGia,tvMota,tvTenND,tvDiachi;
     DBHelperSanPhamBuy dbHelperSanPhamBuy;
@@ -85,6 +84,7 @@ public class ThongTinSanPham extends AppCompatActivity {
                 String formattedPrice = decimalFormat.format(sanpham.getGia());
                 tvGia.setText("Giá: " + formattedPrice + " VND/"+sanpham.getDonvitinh());
                 tvMota.setText("Mô tả sản phẩm"+"\n"+"\n"+sanpham.getMota());
+                Log.d("Image URLs", "Danh sách URL: " + sanpham.getAnh());
                 loadProductImages(sanpham.getDocumentId());
             }
         }
@@ -97,45 +97,41 @@ public class ThongTinSanPham extends AppCompatActivity {
                 .get()
                 .addOnSuccessListener(documentSnapshot -> {
                     if (documentSnapshot.exists()) {
-                        // Lấy danh sách URL ảnh từ trường "anh"
+                        // Lấy danh sách URL ảnh từ Firestore
                         List<String> listImages = (List<String>) documentSnapshot.get("anh");
 
                         if (listImages != null && !listImages.isEmpty()) {
-                            // Chuyển đổi danh sách String sang danh sách Image
-                            List<Image> imageObjects = new ArrayList<>();
+                            List<String> imageObjects = new ArrayList<>();
                             for (String imageUrl : listImages) {
-                                imageObjects.add(new Image(imageUrl));
+                                imageObjects.add(imageUrl); // Mỗi URL là một đối tượng Image
                             }
-
-                            // Cập nhật Adapter
-                            adapterImageSlide.setImages(imageObjects);
+                            adapterImageSlide.setImages(imageObjects); // Cập nhật Adapter
                         } else {
-                            // Nếu không có ảnh, thêm ảnh mặc định
-                            List<Image> defaultImage = new ArrayList<>();
-                            defaultImage.add(new Image(String.valueOf(R.drawable.logo))); // Ảnh mặc định
-                            adapterImageSlide.setImages(defaultImage);
+                            setDefaultImage();
                         }
                     } else {
                         Log.e("ThongTinSanPham", "Không tìm thấy sản phẩm");
+                        setDefaultImage();
                     }
                 })
                 .addOnFailureListener(e -> {
                     Log.e("ThongTinSanPham", "Lỗi khi tải sản phẩm: " + e.getMessage());
-                    // Xử lý lỗi và thêm ảnh mặc định
-                    List<Image> defaultImage = new ArrayList<>();
-                    defaultImage.add(new Image(String.valueOf(R.drawable.logo))); // Ảnh mặc định
-                    adapterImageSlide.setImages(defaultImage);
+                    setDefaultImage();
                 });
+    }
+
+
+    private void setDefaultImage() {
+        List<String> defaultImage = new ArrayList<>();
+        defaultImage.add("android.resource://" + getPackageName() + "/" + R.drawable.logo);
+        adapterImageSlide.setImages(defaultImage);
     }
 
 
     private void addControls() {
         viewPager=findViewById(R.id.viewPager);
-        indicator=findViewById(R.id.circle);
         adapterImageSlide =new AdapterImageSlide(this,getListphoto());
         viewPager.setAdapter(adapterImageSlide);
-        indicator.setViewPager(viewPager);
-        adapterImageSlide.registerDataSetObserver(indicator.getDataSetObserver());
         tvTen=findViewById(R.id.tvTen);
         tvGia=findViewById(R.id.tvGia);
         tvMota=findViewById(R.id.tvMota);
@@ -144,10 +140,8 @@ public class ThongTinSanPham extends AppCompatActivity {
         dbHelperSanPhamBuy=new DBHelperSanPhamBuy();
     }
 
-    private List<Image> getListphoto() {
-        List<Image> list = new ArrayList<>();
-        // Thêm một ảnh mặc định ban đầu (có thể là logo hoặc ảnh trống)
-        list.add(new Image(String.valueOf(R.drawable.logo)));
+    private List<String> getListphoto() {
+        List<String> list = new ArrayList<>();
         return list;
     }
 

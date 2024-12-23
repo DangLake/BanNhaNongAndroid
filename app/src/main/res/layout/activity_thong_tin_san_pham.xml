@@ -48,12 +48,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="250dp" />
 
-            <me.relex.circleindicator.CircleIndicator
-                android:id="@+id/circle"
-                android:layout_width="wrap_content"
-                android:layout_height="30dp"
-                android:layout_gravity="center_horizontal" />
-
             <TextView
                 android:id="@+id/tvGia"
                 android:layout_width="match_parent"
@@ -67,7 +61,7 @@
                 android:id="@+id/tvTen"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="16dp"
+                android:paddingHorizontal="16dp"
                 android:text="Tên sản phẩm"
                 android:textSize="16sp" />
 
@@ -178,6 +172,7 @@
             android:layout_weight=".3"
             android:text="Nhắn tin"
             android:textColor="@color/black"
+            android:drawableLeft="@drawable/baseline_chat_24"
             android:textSize="5pt" />
 
         <Button

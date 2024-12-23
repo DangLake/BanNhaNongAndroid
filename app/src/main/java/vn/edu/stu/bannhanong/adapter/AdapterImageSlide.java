@@ -18,39 +18,45 @@ import vn.edu.stu.bannhanong.model.Image;
 
 public class AdapterImageSlide extends PagerAdapter {
     private Context context;
-    private List<Image> dsPhoto;
+    private List<String> dsPhoto;
 
-    public AdapterImageSlide(Context context, List<Image> listphoto) {
+    public AdapterImageSlide(Context context, List<String> listphoto) {
         this.context=context;
         this.dsPhoto=listphoto;
     }
 
-    public void setImages(List<Image> images) {
+    public void setImages(List<String> images) {
         this.dsPhoto = images;
         notifyDataSetChanged();
     }
-
-
     @NonNull
     @Override
     public Object instantiateItem(@NonNull ViewGroup container, int position) {
+        // Inflate layout
         View view = LayoutInflater.from(container.getContext()).inflate(R.layout.item_photo, container, false);
         ImageView img = view.findViewById(R.id.imgSP);
-        Image anh = dsPhoto.get(position);
 
-        if (anh != null && anh.getAnh() != null) {
+        // Lấy URL ảnh từ danh sách
+        String anhUrl = dsPhoto.get(position);
+
+        // Kiểm tra và tải ảnh
+        if (anhUrl != null && !anhUrl.isEmpty()) {
             Glide.with(context)
-                    .load(anh.getAnh())
+                    .load(anhUrl) // Tải ảnh từ URL Cloudinary
+                    .placeholder(R.drawable.logo) // Ảnh tạm trong khi tải
+                    .error(R.drawable.logo) // Ảnh lỗi nếu không tải được
                     .into(img);
         } else {
             Glide.with(context)
-                    .load(R.drawable.logo) // Ảnh mặc định
+                    .load(R.drawable.logo) // Ảnh mặc định nếu URL không hợp lệ
                     .into(img);
         }
 
+        // Thêm view vào container
         container.addView(view);
         return view;
     }
+
 
     @Override
     public int getCount() {
