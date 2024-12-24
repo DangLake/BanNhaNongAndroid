@@ -63,6 +63,7 @@
                 android:layout_height="wrap_content"
                 android:paddingHorizontal="16dp"
                 android:text="Tên sản phẩm"
+                android:paddingBottom="10dp"
                 android:textSize="17sp" />
 
             <View
@@ -100,6 +101,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:paddingHorizontal="16dp"
+                        android:textColor="#FF3333"
                         android:text="Ten nong dan"
                         android:textSize="16sp" />
 
@@ -109,6 +111,7 @@
                         android:layout_height="wrap_content"
                         android:paddingHorizontal="16dp"
                         android:text="dia chi nong dan"
+                        android:textColor="#0066FF"
                         android:textSize="16sp" />
                 </LinearLayout>
 
@@ -122,9 +125,7 @@
                     android:text="Xem nông dân"
                     android:textColor="@color/black"
                     android:textSize="5pt" />
-
             </LinearLayout>
-
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
@@ -133,9 +134,10 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerView"
                 android:layout_width="match_parent"
-                android:layout_height="150dp"
+                android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:layout_marginBottom="7dp"
+                android:paddingVertical="10dp"
                 android:orientation="horizontal" />
 
             <View

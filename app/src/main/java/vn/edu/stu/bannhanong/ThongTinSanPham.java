@@ -1,7 +1,9 @@
 package vn.edu.stu.bannhanong;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
@@ -14,11 +16,14 @@ import android.view.WindowManager;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -29,6 +34,8 @@ import java.util.List;
 
 import me.relex.circleindicator.CircleIndicator;
 import vn.edu.stu.bannhanong.adapter.AdapterImageSlide;
+import vn.edu.stu.bannhanong.adapter.AdapterSanPhamcuaNongDan;
+import vn.edu.stu.bannhanong.adapter.ImageAdapter;
 import vn.edu.stu.bannhanong.dao.DBHelperSanPhamBuy;
 import vn.edu.stu.bannhanong.databinding.ActivityThongTinSanPhamBinding;
 import vn.edu.stu.bannhanong.model.Image;
@@ -41,6 +48,9 @@ public class ThongTinSanPham extends AppCompatActivity {
     private AdapterImageSlide adapterImageSlide;
     TextView tvTen,tvGia,tvMota,tvTenND,tvDiachi;
     DBHelperSanPhamBuy dbHelperSanPhamBuy;
+    private RecyclerView recyclerView;
+    private AdapterSanPhamcuaNongDan adapterSanPhamcuaNongDan;
+    private List<Sanpham> listSP;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +81,11 @@ public class ThongTinSanPham extends AppCompatActivity {
         });
         addControls();
         getData();
+        hhienSanPhamND();
+    }
+
+    private void hhienSanPhamND() {
+
     }
 
     private void getData() {
@@ -86,6 +101,19 @@ public class ThongTinSanPham extends AppCompatActivity {
                 tvMota.setText("Mô tả sản phẩm"+"\n"+"\n"+sanpham.getMota());
                 Log.d("Image URLs", "Danh sách URL: " + sanpham.getAnh());
                 loadProductImages(sanpham.getDocumentId());
+                dbHelperSanPhamBuy.getAllProductsExcluding(sanpham.getIduser(), sanpham.getDocumentId(), new DBHelperSanPhamBuy.ProductCallback() {
+                    @Override
+                    public void onSuccess(List<Sanpham> productList) {
+                        listSP.clear();
+                        listSP.addAll(productList);
+                        adapterSanPhamcuaNongDan.notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onFailure(Exception e) {
+                        Log.e("ThongTinSanPham", "Lỗi khi tải danh sách sản phẩm: " + e.getMessage());
+                    }
+                });
             }
         }
     }
@@ -138,6 +166,13 @@ public class ThongTinSanPham extends AppCompatActivity {
         tvTenND=findViewById(R.id.tvTenND);
         tvDiachi=findViewById(R.id.tvDiachi);
         dbHelperSanPhamBuy=new DBHelperSanPhamBuy();
+        recyclerView = findViewById(R.id.recyclerView);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        recyclerView.setLayoutManager(layoutManager);
+        listSP = new ArrayList<>();
+        adapterSanPhamcuaNongDan = new AdapterSanPhamcuaNongDan(this, listSP);
+        recyclerView.setAdapter(adapterSanPhamcuaNongDan);
+
     }
 
     private List<String> getListphoto() {
@@ -155,5 +190,20 @@ public class ThongTinSanPham extends AppCompatActivity {
             menuItem.setTitle(s);
         }
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId()==R.id.chiase) {
+
+        }else if (item.getItemId()==R.id.menu_cart) {
+            SharedPreferences sharedPreferences = getSharedPreferences("AppPrefs", MODE_PRIVATE);
+            String documentIDUser = sharedPreferences.getString("documentID", "Guest");
+            Intent intent=new Intent(ThongTinSanPham.this, GiohangFragment.class);
+            intent.putExtra("documentIDUser",documentIDUser);
+            startActivity(intent);
+
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

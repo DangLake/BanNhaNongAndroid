@@ -11,7 +11,7 @@
         android:id="@+id/trangchu"
         android:title="Quay về trang chủ"
         android:icon="@drawable/baseline_home_24"
-        app:showAsAction="never" />  <!-- Hiển thị trong menu 3 chấm -->
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/chiase"

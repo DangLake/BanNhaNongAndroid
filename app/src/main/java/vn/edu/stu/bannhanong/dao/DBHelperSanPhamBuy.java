@@ -70,6 +70,27 @@ public class DBHelperSanPhamBuy {
                     callback.onFailure(e); // Trả về lỗi qua callback
                 });
     }
+    public void getAllProductsExcluding(String userID, String excludedDocumentId, ProductCallback callback) {
+        db.collection("sanpham") // Collection chứa thông tin sản phẩm
+                .whereEqualTo("iduser", userID) // Lọc theo userID
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    List<Sanpham> productList = new ArrayList<>();
+                    for (DocumentSnapshot document : queryDocumentSnapshots) {
+                        if (!document.getId().equals(excludedDocumentId)) { // Loại trừ documentId cụ thể
+                            Sanpham product = document.toObject(Sanpham.class);
+                            if (product != null) {
+                                productList.add(product);
+                            }
+                        }
+                    }
+                    callback.onSuccess(productList); // Trả về danh sách sản phẩm qua callback
+                })
+                .addOnFailureListener(e -> {
+                    callback.onFailure(e); // Trả về lỗi qua callback
+                });
+    }
+
 
 
     public interface ProductCallback {
