@@ -1,5 +1,7 @@
 package vn.edu.stu.bannhanong;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -8,12 +10,16 @@ import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -51,6 +57,7 @@ public class ThongTinSanPham extends AppCompatActivity {
     private RecyclerView recyclerView;
     private AdapterSanPhamcuaNongDan adapterSanPhamcuaNongDan;
     private List<Sanpham> listSP;
+    Button btnThemgiohang, btnTaoHopDong;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,12 +88,108 @@ public class ThongTinSanPham extends AppCompatActivity {
         });
         addControls();
         getData();
-        hhienSanPhamND();
+        addEvents();
     }
 
-    private void hhienSanPhamND() {
-
+    private void addEvents() {
+        btnThemgiohang.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = getIntent();
+                if (intent.hasExtra("SANPHAM")) {
+                    Sanpham sanpham = (Sanpham) intent.getSerializableExtra("SANPHAM");
+                    xuLyThemGioHang(sanpham);
+                }
+            }
+        });
     }
+
+    private void xuLyThemGioHang(Sanpham sanpham) {
+        // Tạo một Dialog để chọn số lượng
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Chọn số lượng");
+
+        // Tạo Layout để chứa các nút tăng và giảm số lượng
+        final LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.HORIZONTAL);
+
+        // Tạo một TextView để hiển thị số lượng
+        final TextView tvSoLuong = new TextView(this);
+        tvSoLuong.setText("1"); // Mặc định số lượng là 1
+        tvSoLuong.setPadding(20, 0, 20, 0);
+        tvSoLuong.setTextSize(18);
+        tvSoLuong.setGravity(Gravity.CENTER);
+
+        // Tạo nút giảm số lượng
+        Button btnGiam = new Button(this);
+        btnGiam.setText("-");
+        btnGiam.setTextSize(18);
+
+        // Tạo nút tăng số lượng
+        Button btnTang = new Button(this);
+        btnTang.setText("+");
+        btnTang.setTextSize(18);
+
+        // Thêm các phần tử vào layout
+        layout.addView(btnGiam);
+        layout.addView(tvSoLuong);
+        layout.addView(btnTang);
+
+        // Cài đặt Layout vào Dialog
+        builder.setView(layout);
+
+        // Sự kiện khi nhấn nút giảm số lượng
+        btnGiam.setOnClickListener(v -> {
+            int soLuong = Integer.parseInt(tvSoLuong.getText().toString());
+            if (soLuong > 1) {
+                soLuong--; // Giảm số lượng
+                tvSoLuong.setText(String.valueOf(soLuong));
+            }
+        });
+
+        // Sự kiện khi nhấn nút tăng số lượng
+        btnTang.setOnClickListener(v -> {
+            int soLuong = Integer.parseInt(tvSoLuong.getText().toString());
+            soLuong++; // Tăng số lượng
+            tvSoLuong.setText(String.valueOf(soLuong));
+        });
+
+        SharedPreferences sharedPreferences = getSharedPreferences("AppPrefs", MODE_PRIVATE);
+        String documentIdUser = sharedPreferences.getString("documentID", "Guest");
+        // Cài đặt nút "OK" để thêm sản phẩm vào giỏ hàng
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                int soLuong = Integer.parseInt(tvSoLuong.getText().toString());
+                // Gọi hàm thêm sản phẩm vào giỏ hàng với số lượng đã chọn
+                dbHelperSanPhamBuy.addToCart(documentIdUser, sanpham, soLuong, new DBHelperSanPhamBuy.CartCallback() {
+                    @Override
+                    public void onSuccess(String documentId) {
+                        // Thành công, có thể thông báo cho người dùng
+                        Toast.makeText(getApplicationContext(), "Sản phẩm đã được thêm vào giỏ hàng!", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onFailure(Exception e) {
+                        // Xử lý lỗi nếu có
+                        Toast.makeText(getApplicationContext(), "Lỗi khi thêm vào giỏ hàng!", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
+
+        // Cài đặt nút "Hủy" để đóng Dialog
+        builder.setNegativeButton("Hủy", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss(); // Đóng Dialog nếu người dùng bấm Hủy
+            }
+        });
+
+        // Hiển thị Dialog
+        builder.show();
+    }
+
 
     private void getData() {
         Intent intent = getIntent();
@@ -172,6 +275,21 @@ public class ThongTinSanPham extends AppCompatActivity {
         listSP = new ArrayList<>();
         adapterSanPhamcuaNongDan = new AdapterSanPhamcuaNongDan(this, listSP);
         recyclerView.setAdapter(adapterSanPhamcuaNongDan);
+        btnThemgiohang=findViewById(R.id.btnThemgiohang);
+        btnTaoHopDong = findViewById(R.id.btnTaohopdong); // Button tạo hợp đồng
+
+        // Kiểm tra loại người dùng (ví dụ từ SharedPreferences)
+        SharedPreferences sharedPreferences = getSharedPreferences("AppPrefs", MODE_PRIVATE);
+        int userType = sharedPreferences.getInt("user_type", 0);
+
+        // Nếu người dùng là doanh nghiệp, thay thế nút "Thêm giỏ hàng" bằng nút "Tạo hợp đồng"
+        if (userType==1) {
+            btnThemgiohang.setVisibility(View.GONE); // Ẩn nút "Thêm giỏ hàng"
+            btnTaoHopDong.setVisibility(View.VISIBLE); // Hiển thị nút "Tạo hợp đồng"
+        } else {
+            btnThemgiohang.setVisibility(View.VISIBLE); // Hiển thị nút "Thêm giỏ hàng"
+            btnTaoHopDong.setVisibility(View.GONE); // Ẩn nút "Tạo hợp đồng"
+        }
 
     }
 
@@ -179,10 +297,23 @@ public class ThongTinSanPham extends AppCompatActivity {
         List<String> list = new ArrayList<>();
         return list;
     }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_giohang, menu);
+
+        // Lấy thông tin loại người dùng từ SharedPreferences
+        SharedPreferences sharedPreferences = getSharedPreferences("AppPrefs", MODE_PRIVATE);
+        int userType = sharedPreferences.getInt("user_type", 0);
+
+        // Kiểm tra loại người dùng và ẩn giỏ hàng nếu là doanh nghiệp
+        if (userType==1) {
+            MenuItem cartMenuItem = menu.findItem(R.id.menu_cart);
+            if (cartMenuItem != null) {
+                cartMenuItem.setVisible(false); // Ẩn giỏ hàng
+            }
+        }
+
+        // Thay đổi màu sắc cho menu item
         for (int i = 0; i < menu.size(); i++) {
             MenuItem menuItem = menu.getItem(i);
             SpannableString s = new SpannableString(menuItem.getTitle());
@@ -194,16 +325,18 @@ public class ThongTinSanPham extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId()==R.id.chiase) {
-
-        }else if (item.getItemId()==R.id.menu_cart) {
+        // Xử lý khi người dùng chọn một item trong menu
+        if (item.getItemId() == R.id.chiase) {
+            // Xử lý chia sẻ
+        } else if (item.getItemId() == R.id.menu_cart) {
+            // Chuyển đến giỏ hàng nếu không phải doanh nghiệp
             SharedPreferences sharedPreferences = getSharedPreferences("AppPrefs", MODE_PRIVATE);
             String documentIDUser = sharedPreferences.getString("documentID", "Guest");
-            Intent intent=new Intent(ThongTinSanPham.this, GiohangFragment.class);
-            intent.putExtra("documentIDUser",documentIDUser);
+            Intent intent = new Intent(ThongTinSanPham.this, GiohangFragment.class);
+            intent.putExtra("documentIDUser", documentIDUser);
             startActivity(intent);
-
         }
         return super.onOptionsItemSelected(item);
     }
+
 }

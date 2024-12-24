@@ -187,6 +187,17 @@
             android:text="Thêm giỏ hàng"
             android:textColor="@color/black"
             android:textSize="5pt" />
+        <Button
+            android:id="@+id/btnTaohopdong"
+            style="@style/CustomButtonThongtin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight=".3"
+            android:text="Tạo hợp đồng"
+            android:textColor="@color/black"
+            android:visibility="gone"
+            android:textSize="5pt" />
 
         <Button
             android:id="@+id/btnMuahang"

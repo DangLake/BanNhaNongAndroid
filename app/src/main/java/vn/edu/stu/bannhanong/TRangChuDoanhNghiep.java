@@ -114,6 +114,8 @@ public class TRangChuDoanhNghiep extends AppCompatActivity implements Navigation
             Intent intent=new Intent(TRangChuDoanhNghiep.this,Login.class);
             startActivity(intent);
             finish();
+        } else if (id==R.id.nav_yeuthich) {
+            
         }
         return true;
     }
