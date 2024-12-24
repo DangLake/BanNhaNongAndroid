@@ -3,9 +3,6 @@
     <item android:title="Sản phẩm"
         android:icon="@drawable/icon_product"
         android:id="@+id/sanpham"/>
-    <item android:title="Giỏ hàng"
-        android:icon="@drawable/cart"
-        android:id="@+id/giohang"/>
     <item android:title="Tin nhắn"
         android:icon="@drawable/chat"
         android:id="@+id/tinnhan"/>

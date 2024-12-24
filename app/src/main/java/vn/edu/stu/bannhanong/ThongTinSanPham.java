@@ -332,7 +332,7 @@ public class ThongTinSanPham extends AppCompatActivity {
             // Chuyển đến giỏ hàng nếu không phải doanh nghiệp
             SharedPreferences sharedPreferences = getSharedPreferences("AppPrefs", MODE_PRIVATE);
             String documentIDUser = sharedPreferences.getString("documentID", "Guest");
-            Intent intent = new Intent(ThongTinSanPham.this, GiohangFragment.class);
+            Intent intent = new Intent(ThongTinSanPham.this, GioHang.class);
             intent.putExtra("documentIDUser", documentIDUser);
             startActivity(intent);
         }

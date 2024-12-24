@@ -31,13 +31,16 @@
         android:theme="@style/Theme.BanNhaNong.NoActionBar"
         tools:targetApi="31">
         <activity
+            android:name=".GioHang"
+            android:exported="false" />
+        <activity
             android:name=".ThongTinSanPham"
             android:exported="false" />
         <activity
             android:name=".ChoNongSan_DN"
             android:exported="false" />
         <activity
-            android:name=".ChoNngSan_Khach"
+            android:name=".ChoNongSan_Khach"
             android:exported="false" />
         <activity
             android:name=".TRangChuDoanhNghiep"

@@ -57,31 +57,32 @@
                 android:gravity="right"
                 android:orientation="horizontal">
 
-                <TextView
+                <Button
                     android:id="@+id/btnGiam"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
-                    android:gravity="center"
                     android:text="-"
-                    android:layout_marginStart="8dp" />
+                    android:gravity="center"
+                    android:textSize="18sp"
+                    android:layout_marginEnd="8dp" />
 
                 <!-- Số lượng -->
                 <TextView
                     android:id="@+id/tv_product_quantity"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:text="1"
                     android:gravity="center"
                     android:textSize="14sp"
                     android:textColor="#666666" />
 
-                <!-- Nút tăng số lượng -->
-                <TextView
+                <Button
                     android:id="@+id/btnTang"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
-                    android:gravity="center"
                     android:text="+"
+                    android:gravity="center"
+                    android:textSize="18sp"
                     android:layout_marginStart="8dp" />
             </LinearLayout>
         </LinearLayout>

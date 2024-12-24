@@ -73,7 +73,7 @@ public class TrangChuKhach extends AppCompatActivity implements NavigationView.O
         btnChonongsan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent=new Intent(TrangChuKhach.this, ChoNngSan_Khach.class);
+                Intent intent=new Intent(TrangChuKhach.this, ChoNongSan_Khach.class);
                 startActivity(intent);
             }
         });

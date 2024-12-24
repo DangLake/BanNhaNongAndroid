@@ -1,6 +1,9 @@
 package vn.edu.stu.bannhanong;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
@@ -20,9 +23,8 @@ import androidx.fragment.app.FragmentTransaction;
 import com.google.android.material.navigation.NavigationBarView;
 
 import vn.edu.stu.bannhanong.databinding.ActivityChoNngSanKhachBinding;
-import vn.edu.stu.bannhanong.databinding.ActivityChoNongSanBinding;
 
-public class ChoNngSan_Khach extends AppCompatActivity {
+public class ChoNongSan_Khach extends AppCompatActivity {
     Toolbar toolbar;
     ActivityChoNngSanKhachBinding binding;
 
@@ -69,8 +71,6 @@ public class ChoNngSan_Khach extends AppCompatActivity {
                 int id = item.getItemId();
                 if (id == R.id.sanpham) {
                     replaceFrag(new SanPhamFragment());
-                } else if (id == R.id.giohang) {
-                    replaceFrag(new GiohangFragment());
                 } else if (id == R.id.tinnhan) {
                     replaceFrag(new MessFragment());
                 } else if (id == R.id.donhang) {
@@ -81,6 +81,25 @@ public class ChoNngSan_Khach extends AppCompatActivity {
                 return true;
             }
         });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_cart, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.menu_cart) {
+            // Chuyển đến giỏ hàng nếu không phải doanh nghiệp
+            SharedPreferences sharedPreferences = getSharedPreferences("AppPrefs", MODE_PRIVATE);
+            String documentIDUser = sharedPreferences.getString("documentID", "Guest");
+            Intent intent = new Intent(ChoNongSan_Khach.this, GioHang.class);
+            intent.putExtra("documentIDUser", documentIDUser);
+            startActivity(intent);
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void replaceFrag(Fragment fragment) {
