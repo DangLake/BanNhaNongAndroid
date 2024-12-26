@@ -112,4 +112,12 @@ public class GioHang extends AppCompatActivity {
         });
         recyclerView.setAdapter(adapter);
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        SharedPreferences sharedPreferences = getSharedPreferences("AppPrefs", MODE_PRIVATE);
+        String documentIDUser = sharedPreferences.getString("documentID", "Guest");
+        getProductsInCart(documentIDUser);
+    }
 }
