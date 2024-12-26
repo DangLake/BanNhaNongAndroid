@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -21,6 +23,7 @@ import java.util.List;
 
 import vn.edu.stu.bannhanong.adapter.AdapterSanPhamcuaNongDan;
 import vn.edu.stu.bannhanong.adapter.NongDanGiohangAdapter;
+import vn.edu.stu.bannhanong.adapter.SanPhamGioHangAdapter;
 import vn.edu.stu.bannhanong.dao.DBHelperGiohang;
 import vn.edu.stu.bannhanong.databinding.ActivityChoNongSanBinding;
 import vn.edu.stu.bannhanong.databinding.ActivityGioHangBinding;
@@ -64,10 +67,15 @@ public class GioHang extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPreferences("AppPrefs", MODE_PRIVATE);
         String documentIDUser = sharedPreferences.getString("documentID", "Guest");
         getProductsInCart(documentIDUser);
+        addEvents();
+    }
+
+    private void addEvents() {
+
     }
 
     private void getProductsInCart(String documentIDUser) {
-        DBHelperGiohang dbHelperGiohang=new DBHelperGiohang();
+        DBHelperGiohang dbHelperGiohang = new DBHelperGiohang();
         dbHelperGiohang.getProductsInCart(documentIDUser, new DBHelperGiohang.OnGetCartProductsListener() {
             @Override
             public void onSuccess(List<GiohangNongdan> farmersList) {
@@ -89,7 +97,19 @@ public class GioHang extends AppCompatActivity {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(layoutManager);
         dsNongdan = new ArrayList<>();
-        adapter = new NongDanGiohangAdapter(dsNongdan);
+        SharedPreferences sharedPreferences = getSharedPreferences("AppPrefs", MODE_PRIVATE);
+        String documentIDUser = sharedPreferences.getString("documentID", "Guest");
+        adapter = new NongDanGiohangAdapter(dsNongdan, documentIDUser, new SanPhamGioHangAdapter.OnQuantityChangeListener() {
+            @Override
+            public void onIncrease(int position, int quantity) {
+
+            }
+
+            @Override
+            public void onDecrease(int position, int quantity) {
+
+            }
+        });
         recyclerView.setAdapter(adapter);
     }
 }

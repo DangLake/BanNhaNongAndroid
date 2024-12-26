@@ -4,8 +4,10 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -17,15 +19,24 @@ import java.text.DecimalFormat;
 import java.util.List;
 
 import vn.edu.stu.bannhanong.R;
+import vn.edu.stu.bannhanong.dao.DBHelperGiohang;
 import vn.edu.stu.bannhanong.model.GiohangItem;
 
 public class SanPhamGioHangAdapter extends RecyclerView.Adapter<SanPhamGioHangAdapter.ProductViewHolder> {
     private List<GiohangItem> products;
     private Context context;
+    private OnQuantityChangeListener quantityChangeListener;
+    private String userId;
 
-    public SanPhamGioHangAdapter(Context context, List<GiohangItem> products) {
+    public SanPhamGioHangAdapter(Context context, List<GiohangItem> products,String userId,OnQuantityChangeListener listener) {
         this.context = context;
         this.products = products;
+        this.quantityChangeListener = listener;
+        this.userId=userId;
+    }
+    public interface OnQuantityChangeListener {
+        void onIncrease(int position, int quantity); // Xử lý khi nhấn nút "+"
+        void onDecrease(int position, int quantity);
     }
 
     @Override
@@ -34,46 +45,88 @@ public class SanPhamGioHangAdapter extends RecyclerView.Adapter<SanPhamGioHangAd
         return new ProductViewHolder(view);
     }
 
+    @Override
     public void onBindViewHolder(ProductViewHolder holder, int position) {
         GiohangItem product = products.get(position);
 
-        // Truy vấn tên sản phẩm và ảnh từ Firestore (hoặc từ API)
+        // Truy vấn sản phẩm từ Firestore (giữ nguyên phần lấy tên, giá, ảnh)
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         DocumentReference productRef = db.collection("sanpham").document(product.getDocumentIdSanpham());
 
         productRef.get().addOnSuccessListener(documentSnapshot -> {
             if (documentSnapshot.exists()) {
-                // Lấy thông tin sản phẩm từ Firestore
-                String productName = documentSnapshot.getString("tensp");  // Tên trường phải trùng với trường trong Firestore
+                String productName = documentSnapshot.getString("tensp");
                 Long giaLong = documentSnapshot.getLong("gia");
                 String dvt = documentSnapshot.getString("donvitinh");
 
-                // Hiển thị tên sản phẩm và giá
                 holder.tvProductName.setText(productName);
                 DecimalFormat decimalFormat = new DecimalFormat("#,###");
                 String formattedPrice = decimalFormat.format(giaLong);
                 holder.tvProductPrice.setText(formattedPrice + " /" + dvt);
-                holder.tv_product_quantity.setText(product.getSoluong()+"");
+                holder.tv_product_quantity.setText(String.valueOf(product.getSoluong()));
 
-                List<String> imageUrls = (List<String>) documentSnapshot.get("anh");  // Lấy mảng ảnh
+                List<String> imageUrls = (List<String>) documentSnapshot.get("anh");
                 if (imageUrls != null && !imageUrls.isEmpty()) {
-                    String imageUri = imageUrls.get(0);  // Lấy URL ảnh đầu tiên
                     Glide.with(context)
-                            .load(imageUri)
-                            .placeholder(R.drawable.logo)  // Ảnh placeholder
-                            .error(R.drawable.logo)  // Ảnh khi tải thất bại
+                            .load(imageUrls.get(0))
+                            .placeholder(R.drawable.logo)
+                            .error(R.drawable.logo)
                             .into(holder.imgSanPham);
                 } else {
-                    // Nếu không có ảnh, hiển thị ảnh mặc định
                     holder.imgSanPham.setImageResource(R.drawable.logo);
                 }
-
             } else {
                 holder.tvProductName.setText("Không tìm thấy sản phẩm");
             }
         }).addOnFailureListener(e -> holder.tvProductName.setText("Lỗi truy vấn"));
-    }
 
+        // Thêm DBHelperGiohang để tăng/giảm số lượng
+        DBHelperGiohang dbHelper = new DBHelperGiohang();
+
+        holder.btnTang.setOnClickListener(v -> {
+            int currentPosition = holder.getAdapterPosition(); // Lấy vị trí mới nhất
+            if (currentPosition != RecyclerView.NO_POSITION) { // Kiểm tra vị trí hợp lệ
+                GiohangItem currentItem = products.get(currentPosition);
+                dbHelper.onIncrease(userId, currentItem.getDocumentIdSanpham(), currentItem.getSoluong(), new DBHelperGiohang.OnCartUpdateListener() {
+                    @Override
+                    public void onSuccess(int newQuantity) {
+                        currentItem.setSoluong(newQuantity);
+                        holder.tv_product_quantity.setText(String.valueOf(newQuantity));
+                        if (quantityChangeListener != null) {
+                            quantityChangeListener.onIncrease(currentPosition, newQuantity);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Exception e) {
+                        Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
+
+        holder.btnGiam.setOnClickListener(v -> {
+            int currentPosition = holder.getAdapterPosition(); // Lấy vị trí mới nhất
+            if (currentPosition != RecyclerView.NO_POSITION) { // Kiểm tra vị trí hợp lệ
+                GiohangItem currentItem = products.get(currentPosition);
+                dbHelper.onDecrease(userId, currentItem.getDocumentIdSanpham(), currentItem.getSoluong(), new DBHelperGiohang.OnCartUpdateListener() {
+                    @Override
+                    public void onSuccess(int newQuantity) {
+                        currentItem.setSoluong(newQuantity);
+                        holder.tv_product_quantity.setText(String.valueOf(newQuantity));
+                        if (quantityChangeListener != null) {
+                            quantityChangeListener.onDecrease(currentPosition, newQuantity);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Exception e) {
+                        Toast.makeText(context, "Lỗi khi giảm số lượng: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
+    }
 
     @Override
     public int getItemCount() {
@@ -83,6 +136,7 @@ public class SanPhamGioHangAdapter extends RecyclerView.Adapter<SanPhamGioHangAd
     public static class ProductViewHolder extends RecyclerView.ViewHolder {
         TextView tvProductName, tvProductPrice,tv_product_quantity;
         ImageView imgSanPham;
+        Button btnTang, btnGiam;
 
         public ProductViewHolder(View itemView) {
             super(itemView);
@@ -90,6 +144,8 @@ public class SanPhamGioHangAdapter extends RecyclerView.Adapter<SanPhamGioHangAd
             tvProductPrice = itemView.findViewById(R.id.tvGiaSanPham);
             imgSanPham = itemView.findViewById(R.id.imgSanPham);
             tv_product_quantity=itemView.findViewById(R.id.tv_product_quantity);
+            btnTang = itemView.findViewById(R.id.btnTang);
+            btnGiam = itemView.findViewById(R.id.btnGiam);
         }
     }
 }

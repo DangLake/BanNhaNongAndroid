@@ -15,9 +15,13 @@ import vn.edu.stu.bannhanong.model.GiohangNongdan;
 
 public class NongDanGiohangAdapter extends RecyclerView.Adapter<NongDanGiohangAdapter.FarmerViewHolder> {
     private List<GiohangNongdan> farmers;
+    private String userId;
+    private SanPhamGioHangAdapter.OnQuantityChangeListener quantityChangeListener;
 
-    public NongDanGiohangAdapter(List<GiohangNongdan> farmers) {
+    public NongDanGiohangAdapter(List<GiohangNongdan> farmers, String userId, SanPhamGioHangAdapter.OnQuantityChangeListener quantityChangeListener) {
         this.farmers = farmers;
+        this.userId = userId;
+        this.quantityChangeListener = quantityChangeListener;
     }
 
     @Override
@@ -32,7 +36,12 @@ public class NongDanGiohangAdapter extends RecyclerView.Adapter<NongDanGiohangAd
         holder.tvFarmerName.setText(farmer.getFarmerName());
 
         // Hiển thị danh sách sản phẩm của nông dân
-        SanPhamGioHangAdapter productAdapter = new SanPhamGioHangAdapter(holder.itemView.getContext(), farmer.getProductList());
+        SanPhamGioHangAdapter productAdapter = new SanPhamGioHangAdapter(
+                holder.itemView.getContext(),
+                farmer.getProductList(),
+                userId,
+                quantityChangeListener
+        );
         holder.rvProductList.setAdapter(productAdapter);
     }
 

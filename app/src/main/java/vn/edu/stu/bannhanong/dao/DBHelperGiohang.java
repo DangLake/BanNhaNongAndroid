@@ -79,9 +79,82 @@ public class DBHelperGiohang {
                 .addOnFailureListener(e -> listener.onFailure(e));
     }
 
+
     // Interface để trả kết quả lấy giỏ hàng
     public interface OnGetCartProductsListener {
         void onSuccess(List<GiohangNongdan> cartItems);
+
+        void onFailure(Exception e);
+    }
+
+    // Hàm tăng số lượng sản phẩm
+    public void onIncrease(String userId, String productId, int currentQuantity, final OnCartUpdateListener listener) {
+        int newQuantity = currentQuantity + 1;
+
+        // Cập nhật số lượng sản phẩm trong giỏ hàng
+        DocumentReference cartRef = db.collection("giohang").document(userId);
+        cartRef.get().addOnSuccessListener(documentSnapshot -> {
+            if (documentSnapshot.exists()) {
+                List<Map<String, Object>> products = (List<Map<String, Object>>) documentSnapshot.get("items");
+                if (products != null) {
+                    for (Map<String, Object> productData : products) {
+                        if (productId.equals(productData.get("documentIdSanpham"))) {
+                            productData.put("soluong", newQuantity); // Cập nhật số lượng mới
+                            break;
+                        }
+                    }
+
+                    // Lưu lại thay đổi
+                    cartRef.update("items", products)
+                            .addOnSuccessListener(aVoid -> listener.onSuccess(newQuantity))
+                            .addOnFailureListener(listener::onFailure);
+                } else {
+                    listener.onFailure(new Exception("Giỏ hàng rỗng"));
+                }
+            } else {
+                listener.onFailure(new Exception("Giỏ hàng không tồn tại"));
+            }
+        }).addOnFailureListener(listener::onFailure);
+    }
+
+    // Hàm giảm số lượng sản phẩm
+    public void onDecrease(String userId, String productId, int currentQuantity, final OnCartUpdateListener listener) {
+        if (currentQuantity <= 1) {
+            listener.onFailure(new Exception("Số lượng không thể nhỏ hơn 1"));
+            return;
+        }
+        int newQuantity = currentQuantity - 1;
+
+        // Cập nhật số lượng sản phẩm trong giỏ hàng
+        DocumentReference cartRef = db.collection("giohang").document(userId);
+        cartRef.get().addOnSuccessListener(documentSnapshot -> {
+            if (documentSnapshot.exists()) {
+                List<Map<String, Object>> products = (List<Map<String, Object>>) documentSnapshot.get("items");
+                if (products != null) {
+                    for (Map<String, Object> productData : products) {
+                        if (productId.equals(productData.get("documentIdSanpham"))) {
+                            productData.put("soluong", newQuantity); // Cập nhật số lượng mới
+                            break;
+                        }
+                    }
+
+                    // Lưu lại thay đổi
+                    cartRef.update("items", products)
+                            .addOnSuccessListener(aVoid -> listener.onSuccess(newQuantity))
+                            .addOnFailureListener(listener::onFailure);
+                } else {
+                    listener.onFailure(new Exception("Giỏ hàng rỗng"));
+                }
+            } else {
+                listener.onFailure(new Exception("Giỏ hàng không tồn tại"));
+            }
+        }).addOnFailureListener(listener::onFailure);
+    }
+
+    // Interface để trả kết quả cập nhật giỏ hàng
+    public interface OnCartUpdateListener {
+        void onSuccess(int newQuantity);
         void onFailure(Exception e);
     }
 }
+
