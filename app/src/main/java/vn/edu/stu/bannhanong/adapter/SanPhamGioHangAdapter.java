@@ -1,6 +1,8 @@
 package vn.edu.stu.bannhanong.adapter;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,26 +18,31 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 import vn.edu.stu.bannhanong.R;
 import vn.edu.stu.bannhanong.dao.DBHelperGiohang;
 import vn.edu.stu.bannhanong.model.GiohangItem;
+import vn.edu.stu.bannhanong.model.GiohangNongdan;
 
 public class SanPhamGioHangAdapter extends RecyclerView.Adapter<SanPhamGioHangAdapter.ProductViewHolder> {
     private List<GiohangItem> products;
     private Context context;
     private OnQuantityChangeListener quantityChangeListener;
     private String userId;
+    private List<GiohangNongdan> farmers = new ArrayList<>();
 
-    public SanPhamGioHangAdapter(Context context, List<GiohangItem> products,String userId,OnQuantityChangeListener listener) {
+    public SanPhamGioHangAdapter(Context context, List<GiohangItem> products, String userId, OnQuantityChangeListener listener) {
         this.context = context;
         this.products = products;
         this.quantityChangeListener = listener;
-        this.userId=userId;
+        this.userId = userId;
     }
+
     public interface OnQuantityChangeListener {
         void onIncrease(int position, int quantity); // Xử lý khi nhấn nút "+"
+
         void onDecrease(int position, int quantity);
     }
 
@@ -121,11 +128,75 @@ public class SanPhamGioHangAdapter extends RecyclerView.Adapter<SanPhamGioHangAd
 
                     @Override
                     public void onFailure(Exception e) {
-                        Toast.makeText(context, "Lỗi khi giảm số lượng: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        showDeleteDialog(currentItem, currentPosition);
                     }
                 });
             }
         });
+    }
+
+    private boolean isFarmerEmpty(GiohangNongdan farmer) {
+        // Kiểm tra nếu tất cả sản phẩm của nông dân đều có số lượng bằng 0
+        for (GiohangItem product : farmer.getProductList()) {
+            if (product.getSoluong() > 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private void showDeleteDialog(GiohangItem currentItem, int position) {
+        // Hiển thị AlertDialog để xác nhận việc xóa sản phẩm khỏi giỏ hàng
+        new AlertDialog.Builder(context)
+                .setTitle("Xóa sản phẩm")
+                .setMessage("Sản phẩm đã có số lượng bằng 0. Bạn có muốn xóa sản phẩm khỏi giỏ hàng không?")
+                .setPositiveButton("Có", (dialog, which) -> {
+                    // Xóa sản phẩm khỏi giỏ hàng khi người dùng chọn "Có"
+                    DBHelperGiohang dbHelperGiohang = new DBHelperGiohang();
+                    Log.d("currentItem.getDocumentIdSanpham()", currentItem.getDocumentIdSanpham());
+                    Log.d("userId", userId);
+
+                    dbHelperGiohang.removeProduct(userId, currentItem.getDocumentIdSanpham(), new DBHelperGiohang.OnCartDeleteListener() {
+                        @Override
+                        public void onSuccess() {
+                            // Cập nhật lại danh sách sản phẩm sau khi xóa
+                            products.remove(position);
+                            notifyItemRemoved(position);
+
+                            // Tìm nông dân của sản phẩm này
+                            GiohangNongdan farmer = findFarmerByProduct(currentItem);
+
+                            if (farmer != null && isFarmerEmpty(farmer)) {
+                                // Nếu không còn sản phẩm, xóa nông dân khỏi danh sách
+                                farmers.remove(farmer);
+                                notifyItemRemoved(farmers.indexOf(farmer));
+                                notifyDataSetChanged();
+                            }
+
+                            notifyItemRangeChanged(position, products.size()); // Cập nhật danh sách sản phẩm
+                            Toast.makeText(context, "Sản phẩm đã bị xóa khỏi giỏ hàng.", Toast.LENGTH_SHORT).show();
+                        }
+
+                        @Override
+                        public void onFailure(Exception e) {
+                            Toast.makeText(context, "Lỗi khi xóa sản phẩm: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                })
+                .setNegativeButton("Không", null)
+                .show();
+    }
+
+    private GiohangNongdan findFarmerByProduct(GiohangItem product) {
+        for (GiohangNongdan farmer : farmers) {
+            // Duyệt qua tất cả các sản phẩm của nông dân để tìm sản phẩm
+            for (GiohangItem item : farmer.getProductList()) {
+                if (item.getDocumentIdSanpham().equals(product.getDocumentIdSanpham())) {
+                    return farmer;
+                }
+            }
+        }
+        return null; // Nếu không tìm thấy nông dân liên quan
     }
 
     @Override
@@ -134,7 +205,7 @@ public class SanPhamGioHangAdapter extends RecyclerView.Adapter<SanPhamGioHangAd
     }
 
     public static class ProductViewHolder extends RecyclerView.ViewHolder {
-        TextView tvProductName, tvProductPrice,tv_product_quantity;
+        TextView tvProductName, tvProductPrice, tv_product_quantity;
         ImageView imgSanPham;
         Button btnTang, btnGiam;
 
@@ -143,7 +214,7 @@ public class SanPhamGioHangAdapter extends RecyclerView.Adapter<SanPhamGioHangAd
             tvProductName = itemView.findViewById(R.id.tvTenSanPham);
             tvProductPrice = itemView.findViewById(R.id.tvGiaSanPham);
             imgSanPham = itemView.findViewById(R.id.imgSanPham);
-            tv_product_quantity=itemView.findViewById(R.id.tv_product_quantity);
+            tv_product_quantity = itemView.findViewById(R.id.tv_product_quantity);
             btnTang = itemView.findViewById(R.id.btnTang);
             btnGiam = itemView.findViewById(R.id.btnGiam);
         }

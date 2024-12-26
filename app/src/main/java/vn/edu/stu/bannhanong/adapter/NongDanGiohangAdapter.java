@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 import vn.edu.stu.bannhanong.R;
+import vn.edu.stu.bannhanong.model.GiohangItem;
 import vn.edu.stu.bannhanong.model.GiohangNongdan;
 
 public class NongDanGiohangAdapter extends RecyclerView.Adapter<NongDanGiohangAdapter.FarmerViewHolder> {
@@ -42,8 +43,36 @@ public class NongDanGiohangAdapter extends RecyclerView.Adapter<NongDanGiohangAd
                 userId,
                 quantityChangeListener
         );
+        checkAndRemoveFarmerIfNoProducts(farmer, position);
         holder.rvProductList.setAdapter(productAdapter);
+
     }
+    private void checkAndRemoveFarmerIfNoProducts(GiohangNongdan farmer, int position) {
+        boolean allProductsZero = true;
+
+        // Kiểm tra tất cả các sản phẩm của nông dân
+        for (GiohangItem product : farmer.getProductList()) {
+            if (product.getSoluong() > 0) {
+                allProductsZero = false;
+                break; // Nếu tìm thấy sản phẩm có số lượng lớn hơn 0 thì không cần kiểm tra nữa
+            }
+        }
+
+        // Nếu tất cả sản phẩm đều có số lượng bằng 0, xóa nông dân khỏi danh sách
+        if (allProductsZero) {
+            // Xóa nông dân khỏi danh sách
+            farmers.remove(position);
+
+            // Thông báo RecyclerView rằng một item đã bị xóa
+            notifyItemRemoved(position);
+
+            // Cập nhật lại toàn bộ danh sách sau khi xóa
+            notifyItemRangeChanged(position, farmers.size());
+        }
+    }
+
+
+
 
     @Override
     public int getItemCount() {
