@@ -42,6 +42,23 @@ public class DBHelperUsers {
 
         return taskCompletionSource.getTask();
     }
+    public Task<Boolean> isUsernameExists(String username) {
+        TaskCompletionSource<Boolean> taskCompletionSource = new TaskCompletionSource<>();
+
+        firestore.collection("users")
+                .whereEqualTo("tenuser", username)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        boolean exists = !task.getResult().isEmpty();
+                        taskCompletionSource.setResult(exists);
+                    } else {
+                        taskCompletionSource.setException(task.getException());
+                    }
+                });
+
+        return taskCompletionSource.getTask();
+    }
 
 
     public void insertUser(String name, String phoneNumber, String password,String diachi,String quanhuyen,String tinh, int userType, OnCompleteListener<DocumentReference> listener) {
@@ -162,33 +179,6 @@ public class DBHelperUsers {
             return null;
         }
     }
-    public Task<Users> getUserByPhoneNumber(String phoneNumber) {
-        TaskCompletionSource<Users> taskCompletionSource = new TaskCompletionSource<>();
-
-        firestore.collection("users")
-                .whereEqualTo("sdt", phoneNumber)
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful() && !task.getResult().isEmpty()) {
-                        QueryDocumentSnapshot doc = task.getResult().iterator().next();
-                        Users user = new Users(
-                                doc.getString("tenuser"),
-                                doc.getString("sdt"),
-                                doc.getString("matkhau"),
-                                doc.getString("diachi"),
-                                doc.getString("quanhuyen"),
-                                doc.getString("tinh"),
-                                doc.getLong("maloai").intValue()
-                        );
-                        taskCompletionSource.setResult(user);
-                    } else {
-                        taskCompletionSource.setException(task.getException());
-                    }
-                });
-
-        return taskCompletionSource.getTask();
-    }
-
 
     public Task<Void> updateUser(String documentId, String userName, String phoneNumber, String userAddress, String quan, String tinh) {
         TaskCompletionSource<Void> taskCompletionSource = new TaskCompletionSource<>();

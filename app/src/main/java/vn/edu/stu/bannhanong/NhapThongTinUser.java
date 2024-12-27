@@ -89,17 +89,15 @@ public class NhapThongTinUser extends AppCompatActivity {
         } else {
             userType = 2;
         }
-
-        // Kiểm tra nếu số điện thoại đã tồn tại trong Firestore
         DBHelperUsers dbHelper = new DBHelperUsers();
-        dbHelper.isPhoneNumberExists(phoneNumber)
+        dbHelper.isUsernameExists(name)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful() && task.getResult()) {
-                        // Nếu số điện thoại đã tồn tại, thông báo lỗi
-                        Toast.makeText(this, "Số điện thoại đã tồn tại", Toast.LENGTH_SHORT).show();
+                        // Nếu tên người dùng đã tồn tại, thông báo lỗi
+                        Toast.makeText(this, "Tên người dùng đã tồn tại", Toast.LENGTH_SHORT).show();
                     } else {
-                        // Nếu số điện thoại chưa tồn tại, thêm người dùng vào Firestore
-                        dbHelper.insertUser(name, phoneNumber, hashedPassword,null,null,null, userType, new OnCompleteListener<DocumentReference>() {
+                        // Nếu tên người dùng chưa tồn tại, thêm người dùng vào Firestore
+                        dbHelper.insertUser(name, phoneNumber, hashedPassword, null, null, null, userType, new OnCompleteListener<DocumentReference>() {
                             @Override
                             public void onComplete(@NonNull Task<DocumentReference> task) {
                                 if (task.isSuccessful()) {
@@ -117,8 +115,8 @@ public class NhapThongTinUser extends AppCompatActivity {
                     }
                 })
                 .addOnFailureListener(e -> {
-                    // Lỗi khi kiểm tra số điện thoại
-                    Toast.makeText(this, "Kiểm tra số điện thoại lỗi", Toast.LENGTH_SHORT).show();
+                    // Lỗi khi kiểm tra tên người dùng
+                    Toast.makeText(this, "Kiểm tra tên người dùng lỗi", Toast.LENGTH_SHORT).show();
                 });
     }
     private String hashPassword(String password) {
