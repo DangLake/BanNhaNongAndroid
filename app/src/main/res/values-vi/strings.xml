@@ -19,7 +19,7 @@
     <string name="verify_otp">Xác nhận OTP</string>
     <string name="permission_send_otp">Bạn cần cấp quyền để gửi OTP!</string>
     <string name="sdt_error">Số điện thoại không hợp lệ!</string>
-    <string name="opt_sent_success">Đã gửi OTP tới </string>
+    <string name="opt_sent_success">Đã gửi OTP tới: </string>
     <string name="otp_sent_failed">Gửi OTP thất bại: </string>
     <string name="otp_you">Mã OTP của bạn là: </string>
     <string name="otp_new_resend">Mã OTP mới đã được gửi!</string>
