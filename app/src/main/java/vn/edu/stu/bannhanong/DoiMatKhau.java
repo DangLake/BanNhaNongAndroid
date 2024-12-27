@@ -13,6 +13,9 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
 import vn.edu.stu.bannhanong.dao.DBHelperUsers;
 
 public class DoiMatKhau extends AppCompatActivity {
@@ -57,10 +60,15 @@ public class DoiMatKhau extends AppCompatActivity {
             Toast.makeText(this, getString(R.string.dk_mk_khop), Toast.LENGTH_SHORT).show();
             return;
         }
+        String hashedPassword = hashPassword(password);
 
+        if (hashedPassword == null) {
+            Toast.makeText(this, getString(R.string.update_failed), Toast.LENGTH_SHORT).show();
+            return;
+        }
         // Gọi hàm doiMatKhau từ DBHelperUsers
         DBHelperUsers dbHelper = new DBHelperUsers();
-        dbHelper.doiMatKhau(phoneNumber, password)
+        dbHelper.doiMatKhau(phoneNumber, hashedPassword)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         Toast.makeText(DoiMatKhau.this, getString(R.string.update_success), Toast.LENGTH_SHORT).show();
@@ -73,7 +81,30 @@ public class DoiMatKhau extends AppCompatActivity {
                 })
                 .addOnFailureListener(e -> Toast.makeText(DoiMatKhau.this, getString(R.string.update_failed), Toast.LENGTH_SHORT).show());
     }
+    private String hashPassword(String password) {
+        try {
+            // Tạo đối tượng MessageDigest với thuật toán SHA-256
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
 
+            // Chuyển mật khẩu thành mảng byte và băm nó
+            byte[] hash = md.digest(password.getBytes());
+
+            // Chuyển kết quả băm thành chuỗi hex
+            StringBuilder hexString = new StringBuilder();
+            for (byte b : hash) {
+                String hex = Integer.toHexString(0xff & b);
+                if (hex.length() == 1) {
+                    hexString.append('0');
+                }
+                hexString.append(hex);
+            }
+
+            return hexString.toString();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
     private void addControls() {
         edtMatkhau=findViewById(R.id.edtMatkhau);
         edtCheckMatkhau=findViewById(R.id.edtCheckMatkhau);

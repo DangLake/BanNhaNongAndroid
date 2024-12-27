@@ -1,15 +1,19 @@
 package vn.edu.stu.bannhanong.dao;
 
 import android.content.SharedPreferences;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.TaskCompletionSource;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.android.gms.tasks.Task;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 import vn.edu.stu.bannhanong.model.Users;
@@ -114,10 +118,14 @@ public class DBHelperUsers {
 
     public Task<Boolean> isValidLogin(String phoneNumber, String password) {
         TaskCompletionSource<Boolean> taskCompletionSource = new TaskCompletionSource<>();
+        String hashPassword = hashPassword(password);
+        if (hashPassword == null) {
+            return Tasks.forException(new Exception("Lỗi mã hóa mật khẩu"));
+        }
 
         firestore.collection("users")
                 .whereEqualTo("sdt", phoneNumber)
-                .whereEqualTo("matkhau", password)
+                .whereEqualTo("matkhau", hashPassword)
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
@@ -129,6 +137,30 @@ public class DBHelperUsers {
                 });
 
         return taskCompletionSource.getTask();
+    }
+    private String hashPassword(String password) {
+        try {
+            // Tạo đối tượng MessageDigest với thuật toán SHA-256
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+
+            // Chuyển mật khẩu thành mảng byte và băm nó
+            byte[] hash = md.digest(password.getBytes());
+
+            // Chuyển kết quả băm thành chuỗi hex
+            StringBuilder hexString = new StringBuilder();
+            for (byte b : hash) {
+                String hex = Integer.toHexString(0xff & b);
+                if (hex.length() == 1) {
+                    hexString.append('0');
+                }
+                hexString.append(hex);
+            }
+
+            return hexString.toString();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
     public Task<Users> getUserByPhoneNumber(String phoneNumber) {
         TaskCompletionSource<Users> taskCompletionSource = new TaskCompletionSource<>();

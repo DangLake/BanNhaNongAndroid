@@ -19,6 +19,9 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
 import vn.edu.stu.bannhanong.dao.DBHelperUsers;
 
 public class NhapThongTinUser extends AppCompatActivity {
@@ -70,6 +73,12 @@ public class NhapThongTinUser extends AppCompatActivity {
             Toast.makeText(this, getString(R.string.dk_mk_khop), Toast.LENGTH_SHORT).show();
             return;
         }
+        String hashedPassword = hashPassword(password);
+
+        if (hashedPassword == null) {
+            Toast.makeText(this, getString(R.string.update_failed), Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         // Xác định loại người dùng
         int userType; // Giá trị mặc định cho Nông dân
@@ -90,7 +99,7 @@ public class NhapThongTinUser extends AppCompatActivity {
                         Toast.makeText(this, "Số điện thoại đã tồn tại", Toast.LENGTH_SHORT).show();
                     } else {
                         // Nếu số điện thoại chưa tồn tại, thêm người dùng vào Firestore
-                        dbHelper.insertUser(name, phoneNumber, password,null,null,null, userType, new OnCompleteListener<DocumentReference>() {
+                        dbHelper.insertUser(name, phoneNumber, hashedPassword,null,null,null, userType, new OnCompleteListener<DocumentReference>() {
                             @Override
                             public void onComplete(@NonNull Task<DocumentReference> task) {
                                 if (task.isSuccessful()) {
@@ -111,6 +120,30 @@ public class NhapThongTinUser extends AppCompatActivity {
                     // Lỗi khi kiểm tra số điện thoại
                     Toast.makeText(this, "Kiểm tra số điện thoại lỗi", Toast.LENGTH_SHORT).show();
                 });
+    }
+    private String hashPassword(String password) {
+        try {
+            // Tạo đối tượng MessageDigest với thuật toán SHA-256
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+
+            // Chuyển mật khẩu thành mảng byte và băm nó
+            byte[] hash = md.digest(password.getBytes());
+
+            // Chuyển kết quả băm thành chuỗi hex
+            StringBuilder hexString = new StringBuilder();
+            for (byte b : hash) {
+                String hex = Integer.toHexString(0xff & b);
+                if (hex.length() == 1) {
+                    hexString.append('0');
+                }
+                hexString.append(hex);
+            }
+
+            return hexString.toString();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     private void addControls() {
