@@ -62,13 +62,6 @@
                     android:textSize="16sp"
                     android:padding="13dp"
                     android:text="Trả hàng/hoàn tiền"/>
-                <TextView
-                    android:id="@+id/tvGiaofailed"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="16sp"
-                    android:padding="13dp"
-                    android:text="Giao không thành công"/>
             </LinearLayout>
         </HorizontalScrollView>
         <FrameLayout

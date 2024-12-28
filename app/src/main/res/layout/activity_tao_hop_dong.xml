@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".TaoHopDong">
+
+    <LinearLayout
+        android:id="@+id/linear"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#006600"
+            android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"
+            app:navigationIcon="@drawable/baseline_arrow_back_24"
+            app:navigationIconTint="@android:color/white"
+            app:subtitleTextColor="@android:color/white"
+            app:title="Hợp đồng"
+            app:titleTextColor="@android:color/white" />
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linear">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linear">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="7dp"
+                android:orientation="horizontal"
+                android:weightSum="1">
+
+                <TextView
+                    android:id="@+id/tvMosothue"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".3"
+                    android:text="Mã số thuế: "
+                    android:textSize="7pt" />
+
+                <EditText
+                    android:id="@+id/edtThue"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".7"
+                    android:background="@drawable/edittext_border"
+                    android:hint="Nhập mã số thuế"
+                    android:inputType="number"
+                    android:padding="10dp"
+                    android:paddingVertical="5dp"
+                    android:textSize="7pt" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="7dp"
+                android:orientation="horizontal"
+                android:weightSum="1">
+
+                <TextView
+                    android:id="@+id/tvTenND"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".3"
+                    android:text="Tên nông dân: "
+                    android:textSize="7pt" />
+
+                <AutoCompleteTextView
+                    android:id="@+id/autoCompleteNongDan"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".7"
+                    android:background="@drawable/edittext_border"
+                    android:dropDownWidth="match_parent"
+                    android:dropDownHeight="wrap_content"
+                    android:hint="Nhập tên nông dân"
+                    android:inputType="text"
+                    android:padding="10dp"
+                    android:textSize="7pt" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="7dp"
+                android:orientation="horizontal"
+                android:weightSum="1">
+
+                <TextView
+                    android:id="@+id/tvTenHD"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".3"
+                    android:text="Tên hợp đồng: "
+                    android:textSize="7pt" />
+
+                <EditText
+                    android:id="@+id/edtTenHopdong"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".7"
+                    android:background="@drawable/edittext_border"
+                    android:hint="Nhập tên hợp đồng"
+                    android:inputType="number"
+                    android:padding="10dp"
+                    android:paddingVertical="5dp"
+                    android:textSize="7pt" />
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_marginBottom="7dp"
+                android:orientation="horizontal"
+                android:paddingVertical="10dp" />
+
+            <ListView
+                android:id="@+id/dsSanphamHD"
+                android:layout_width="match_parent"
+                android:layout_height="0dp" />
+
+            <TextView
+                android:id="@+id/tvDiachi"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingVertical="10dp"
+                android:text="Địa chỉ giao: "
+                android:textSize="7pt" />
+
+            <RadioGroup
+                android:id="@+id/groupRD"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <RadioButton
+                    android:id="@+id/riachiAccount"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Sử dụng địa chỉ thông tin"
+                    android:textSize="6pt" />
+
+                <RadioButton
+                    android:id="@+id/rđiachiKhac"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Địa chỉ khác"
+                    android:textSize="6pt" />
+            </RadioGroup>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="7dp"
+                android:orientation="horizontal"
+                android:weightSum="1">
+
+                <TextView
+                    android:id="@+id/tvGiaohang"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".3"
+                    android:text="Giao hàng: "
+                    android:textSize="7pt" />
+
+                <EditText
+                    android:id="@+id/edtGiaohang"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".7"
+                    android:background="@drawable/edittext_border"
+                    android:hint="dd/MM/yyyy hoặc hàng tháng"
+                    android:inputType="number"
+                    android:padding="10dp"
+                    android:paddingVertical="5dp"
+                    android:textSize="7pt" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btnThoat"
+                style="@style/CustomButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Tạo hợp đồng"
+                android:textColor="@android:color/black"
+                android:textSize="8pt" />
+        </LinearLayout>
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -72,7 +72,7 @@ public class ChoNongSan_DN extends AppCompatActivity {
                 } else if (id == R.id.tinnhan) {
                     replaceFrag(new MessFragment());
                 } else if (id == R.id.donhang) {
-                    replaceFrag(new AccountFragment());
+                    replaceFrag(new DonHang_Khach_Fragment());
                 } else if (id == R.id.taikhoan) {
                     replaceFrag(new AccountFragment());
                 }
