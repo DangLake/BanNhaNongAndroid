@@ -58,6 +58,7 @@ public class ThongTinSanPham extends AppCompatActivity {
     private AdapterSanPhamcuaNongDan adapterSanPhamcuaNongDan;
     private List<Sanpham> listSP;
     Button btnThemgiohang, btnTaoHopDong;
+    Sanpham sanpham;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,7 +107,8 @@ public class ThongTinSanPham extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent=new Intent(ThongTinSanPham.this, TaoHopDong.class);
-
+                intent.putExtra("SP",sanpham);
+                startActivityForResult(intent,1);
             }
         });
     }
@@ -201,7 +203,7 @@ public class ThongTinSanPham extends AppCompatActivity {
     private void getData() {
         Intent intent = getIntent();
         if (intent.hasExtra("SANPHAM")) {
-            Sanpham sanpham = (Sanpham) intent.getSerializableExtra("SANPHAM");
+            sanpham = (Sanpham) intent.getSerializableExtra("SANPHAM");
             if (sanpham != null) {
                 dbHelperSanPhamBuy.getUserName(sanpham.getIduser(),tvTenND,tvDiachi);
                 tvTen.setText(sanpham.getTensp());
