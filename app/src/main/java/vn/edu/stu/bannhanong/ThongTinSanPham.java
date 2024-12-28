@@ -102,6 +102,13 @@ public class ThongTinSanPham extends AppCompatActivity {
                 }
             }
         });
+        btnTaoHopDong.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent=new Intent(ThongTinSanPham.this, TaoHopDong.class);
+
+            }
+        });
     }
 
     private void xuLyThemGioHang(Sanpham sanpham) {
