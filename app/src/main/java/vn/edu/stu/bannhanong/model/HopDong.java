@@ -165,4 +165,12 @@ public class HopDong {
     public void setTrangthai(int trangthai) {
         this.trangthai = trangthai;
     }
+
+    @Override
+    public String toString() {
+        return "Tên doanh nghiệp: " + tenDN + '\n' +
+                "Địa chỉ: " + diachiDN + '\n' +
+                "Ngày kết thúc: " + ngayKT + '\n' +
+                "Trạng thái: " + trangthai;
+    }
 }

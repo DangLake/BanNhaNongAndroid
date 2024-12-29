@@ -115,6 +115,7 @@ public class TaoHopDong extends AppCompatActivity {
                 hopdong.setNgayKT(ngayKT);
                 hopdong.setSdtDN(sdt);
                 hopdong.setEmailDN(mail);
+                hopdong.setTrangthai(0);
             }
         });
         edtNgaykt.setOnClickListener(new View.OnClickListener() {
