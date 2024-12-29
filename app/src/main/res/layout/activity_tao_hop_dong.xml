@@ -113,7 +113,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight=".3"
-                    android:text="Tên hợp đồng: "
+                    android:text="Người đại diện: "
                     android:textSize="7pt" />
 
                 <EditText
@@ -122,7 +122,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight=".7"
                     android:background="@drawable/edittext_border"
-                    android:hint="Nhập tên hợp đồng"
+                    android:hint="Nhập người đại diện"
                     android:inputType="number"
                     android:padding="10dp"
                     android:paddingVertical="5dp"
@@ -177,7 +177,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingVertical="10dp"
-                android:text="Địa chỉ giao: "
+                android:text="Địa chỉ: "
                 android:textSize="7pt" />
 
             <RadioGroup
@@ -208,10 +208,65 @@
                 android:weightSum="1">
 
                 <TextView
+                    android:id="@+id/tvNgaybatdau"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".5"
+                    android:text="Ngày băt đầu hợp đồng: "
+                    android:textSize="7pt" />
+
+                <EditText
+                    android:id="@+id/edtNgaybd"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".5"
+                    android:background="@drawable/edittext_border"
+                    android:hint="dd/MM/yyyy"
+                    android:inputType="number"
+                    android:padding="10dp"
+                    android:paddingVertical="5dp"
+                    android:textSize="7pt" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="7dp"
+                android:orientation="horizontal"
+                android:weightSum="1">
+
+                <TextView
+                    android:id="@+id/tvNgaykt"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".5"
+                    android:text="Ngày kết thúc hợp đồng: "
+                    android:textSize="7pt" />
+
+                <EditText
+                    android:id="@+id/edtNgaykt"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".5"
+                    android:background="@drawable/edittext_border"
+                    android:hint="dd/MM/yyyy"
+                    android:inputType="number"
+                    android:padding="10dp"
+                    android:paddingVertical="5dp"
+                    android:textSize="7pt" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="7dp"
+                android:orientation="horizontal"
+                android:weightSum="1">
+
+                <TextView
                     android:id="@+id/tvGiaohang"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight=".3"
+                    android:layout_weight=".5"
                     android:text="Giao hàng: "
                     android:textSize="7pt" />
 
@@ -219,7 +274,7 @@
                     android:id="@+id/edtGiaohang"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight=".7"
+                    android:layout_weight=".5"
                     android:background="@drawable/edittext_border"
                     android:hint="dd/MM/yyyy hoặc hàng tháng"
                     android:inputType="number"
@@ -236,6 +291,7 @@
                 android:layout_gravity="center"
                 android:text="Tạo hợp đồng"
                 android:textColor="@android:color/black"
+                android:layout_marginTop="10dp"
                 android:textSize="8pt" />
         </LinearLayout>
     </ScrollView>
