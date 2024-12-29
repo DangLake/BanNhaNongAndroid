@@ -36,29 +36,32 @@
         android:gravity="center"
         app:layout_constraintTop_toBottomOf="@+id/linear"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/view"
         app:layout_constraintStart_toStartOf="parent">
         <Button
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight=".4"
+            android:layout_weight="0.4"
             android:text="Đang tiến hành"
-            android:background="null"
+            android:background="@android:color/transparent"
             android:textColor="#000000"
             android:id="@+id/btnDangtienhanh"/>
+
         <Button
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight=".4"
+            android:layout_weight="0.4"
             android:text="Chờ xác nhận"
-            android:background="null"
+            android:background="@android:color/transparent"
             android:textColor="#000000"
             android:id="@+id/btnChoxacnhan"/>
+
         <Button
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight=".4"
+            android:layout_weight="0.4"
             android:text="Đã kết thúc"
-            android:background="null"
+            android:background="@android:color/transparent"
             android:textColor="#000000"
             android:id="@+id/btnDaketthuc"/>
     </LinearLayout>

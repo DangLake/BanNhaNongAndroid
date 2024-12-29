@@ -1,6 +1,8 @@
 package vn.edu.stu.bannhanong.adapter;
 
 import android.content.Context;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -49,11 +51,13 @@ public class AdapterSanPhamHDND extends RecyclerView.Adapter<AdapterSanPhamHDND.
 
     @Override
     public void onBindViewHolder(@NonNull SanPhamViewHolder holder, int position) {
-        if (position >= objects.size()) {
-            return;
+        // Lấy vị trí hiện tại của item
+        int currentPosition = holder.getAdapterPosition();
+        if (currentPosition == RecyclerView.NO_POSITION) {
+            return; // Nếu vị trí không hợp lệ, thoát sớm
         }
 
-        Sanpham sp = objects.get(position);
+        Sanpham sp = objects.get(currentPosition);
 
         if (holder.tvTen != null) {
             holder.tvTen.setText(sp.getTensp());
@@ -67,24 +71,56 @@ public class AdapterSanPhamHDND extends RecyclerView.Adapter<AdapterSanPhamHDND.
 
         // Đảm bảo không gây lỗi khi truy cập vào isSelected
         holder.checkBox.setOnCheckedChangeListener(null); // Hủy sự kiện cũ
-        holder.checkBox.setChecked(isSelected.get(position)); // Cập nhật trạng thái checkbox
-        holder.checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> isSelected.set(position, isChecked));
+        holder.checkBox.setChecked(isSelected.get(currentPosition)); // Cập nhật trạng thái checkbox
+        holder.checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> isSelected.set(currentPosition, isChecked));
 
-        holder.tvSoLuong.setText(String.valueOf(quantities.get(position)));
+        holder.tvSoLuong.setText(String.valueOf(quantities.get(currentPosition)));
+
+        // Thêm TextWatcher chỉ một lần duy nhất cho mỗi item
+        holder.tvSoLuong.removeTextChangedListener(holder.tvSoLuong.getTag() != null ? (TextWatcher) holder.tvSoLuong.getTag() : null); // Xóa TextWatcher cũ
+        TextWatcher textWatcher = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int start, int before, int after) {
+                try {
+                    // Cập nhật số lượng trong quantities khi người dùng nhập
+                    int newQuantity = Integer.parseInt(charSequence.toString());
+                    if (newQuantity >= 1) {
+                        quantities.set(currentPosition, newQuantity); // Cập nhật lại số lượng
+                    }
+                } catch (NumberFormatException e) {
+                    // Nếu không phải số hợp lệ, giữ nguyên số lượng cũ
+                    quantities.set(currentPosition, 1);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {}
+        };
+
+        // Lưu TextWatcher vào tag của EditText để tránh thêm lại TextWatcher nhiều lần
+        holder.tvSoLuong.setTag(textWatcher);
+        holder.tvSoLuong.addTextChangedListener(textWatcher);
+
         holder.btnTang.setOnClickListener(v -> {
-            int currentQuantity = quantities.get(position);
-            quantities.set(position, currentQuantity + 1);
-            holder.tvSoLuong.setText(String.valueOf(quantities.get(position)));
+            int currentQuantity = quantities.get(currentPosition);
+            quantities.set(currentPosition, currentQuantity + 1);
+            holder.tvSoLuong.setText(String.valueOf(quantities.get(currentPosition)));
+            notifyItemChanged(currentPosition);
         });
 
         holder.btnGiam.setOnClickListener(v -> {
-            int currentQuantity = quantities.get(position);
+            int currentQuantity = quantities.get(currentPosition);
             if (currentQuantity > 1) { // Không giảm xuống dưới 1
-                quantities.set(position, currentQuantity - 1);
-                holder.tvSoLuong.setText(String.valueOf(quantities.get(position)));
+                quantities.set(currentPosition, currentQuantity - 1);
+                holder.tvSoLuong.setText(String.valueOf(quantities.get(currentPosition)));
+                notifyItemChanged(currentPosition);
             }
         });
     }
+
 
     public List<Pair<Sanpham, Integer>> getSelectedProductsWithQuantities() {
         List<Pair<Sanpham, Integer>> selectedProducts = new ArrayList<>();
