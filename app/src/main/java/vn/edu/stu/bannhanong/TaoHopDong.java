@@ -38,10 +38,11 @@ import vn.edu.stu.bannhanong.dao.DBHelperHopDong;
 import vn.edu.stu.bannhanong.dao.DBHelperSanPhamBuy;
 import vn.edu.stu.bannhanong.databinding.ActivityChoNongSanBinding;
 import vn.edu.stu.bannhanong.databinding.ActivityTaoHopDongBinding;
+import vn.edu.stu.bannhanong.model.HopDong;
 import vn.edu.stu.bannhanong.model.Sanpham;
 
 public class TaoHopDong extends AppCompatActivity {
-    EditText edtTenDN, edtThue, edtDaidien, edtNgaykt, edtGiaohang, edtDiachi;
+    EditText edtTenDN, edtThue, edtDaidien, edtNgaykt, edtGiaohang, edtDiachi,edtsdtDN,edtMailDN;
     AutoCompleteTextView edtTenND;
     DBHelperHopDong dbHelperHopDong;
     DBHelperSanPhamBuy dbHelperSanPhamBuy;
@@ -93,7 +94,9 @@ public class TaoHopDong extends AppCompatActivity {
                 String tenND = edtTenND.getText().toString().trim();
                 String ngayKT = edtNgaykt.getText().toString().trim();
                 String giaohang = edtGiaohang.getText().toString().trim();
-                if (tenDN.isEmpty() || maThue.isEmpty() || diachi.isEmpty() || nguoiDD.isEmpty() || tenND.isEmpty() || ngayKT.isEmpty() || giaohang.isEmpty()) {
+                String sdt=edtsdtDN.getText().toString().trim();
+                String mail=edtMailDN.getText().toString().trim();
+                if (tenDN.isEmpty() || maThue.isEmpty() || diachi.isEmpty() || nguoiDD.isEmpty() || tenND.isEmpty() || ngayKT.isEmpty() || giaohang.isEmpty()||sdt.isEmpty()||mail.isEmpty()) {
                     Toast.makeText(TaoHopDong.this, "Vui lòng nhập đủ thông tin", Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -103,6 +106,15 @@ public class TaoHopDong extends AppCompatActivity {
                     int quantity = entry.second;
                     Log.d("SelectedProduct", "Tên: " + sp.getTensp() + ", Số lượng: " + quantity);
                 }
+                HopDong hopdong=new HopDong();
+                hopdong.setTenDN(tenDN);
+                hopdong.setMathue(maThue);
+                hopdong.setDiachiDN(diachi);
+                hopdong.setNguoiDaidien(nguoiDD);
+                hopdong.setTenND(tenND);
+                hopdong.setNgayKT(ngayKT);
+                hopdong.setSdtDN(sdt);
+                hopdong.setEmailDN(mail);
             }
         });
         edtNgaykt.setOnClickListener(new View.OnClickListener() {
@@ -204,10 +216,12 @@ public class TaoHopDong extends AppCompatActivity {
         SharedPreferences sharedPreferences = this.getSharedPreferences("AppPrefs", MODE_PRIVATE);
         String ten = sharedPreferences.getString("user_name", "");
         String diachi = sharedPreferences.getString("diachi", "");
+        String sdt = sharedPreferences.getString("user_phone", "");
         String tinh = sharedPreferences.getString("tinh", "");
         String quan = sharedPreferences.getString("quan", "");
         edtDiachi.setText(diachi + " ," + quan + " ," + tinh);
         edtTenDN.setText(ten);
+        edtsdtDN.setText(sdt);
         if (intent.hasExtra("SP")) {
             Sanpham sp = (Sanpham) intent.getSerializableExtra("SP");
             if (sp != null) {
@@ -222,10 +236,12 @@ public class TaoHopDong extends AppCompatActivity {
         edtGiaohang = findViewById(R.id.edtGiaohang);
         edtTenDN = findViewById(R.id.edtTenDN);
         edtThue = findViewById(R.id.edtThue);
+        edtsdtDN=findViewById(R.id.edtsdtDN);
         edtDaidien = findViewById(R.id.edtDaidien);
         edtNgaykt = findViewById(R.id.edtNgaykt);
         edtTenND = findViewById(R.id.autoCompleteNongDan);
         edtDiachi = findViewById(R.id.edtDiachi);
+        edtMailDN=findViewById(R.id.edtMailDN);
         dsSP = new ArrayList<>();
         recyclerView = findViewById(R.id.dsSanphamHD);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));

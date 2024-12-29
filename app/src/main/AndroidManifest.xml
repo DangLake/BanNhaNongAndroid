@@ -32,6 +32,9 @@
         android:theme="@style/Theme.BanNhaNong.NoActionBar"
         tools:targetApi="31">
         <activity
+            android:name=".HopdongNongDan"
+            android:exported="false" />
+        <activity
             android:name=".TaoHopDong"
             android:exported="false" />
         <activity

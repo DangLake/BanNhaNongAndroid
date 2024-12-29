@@ -69,7 +69,6 @@
                     android:layout_weight=".7"
                     android:background="@drawable/edittext_border"
                     android:hint="Nhập tên"
-                    android:inputType="number"
                     android:padding="10dp"
                     android:paddingVertical="5dp"
                     android:textSize="7pt" />
@@ -123,7 +122,6 @@
                     android:layout_weight=".7"
                     android:background="@drawable/edittext_border"
                     android:hint="Nhập địa chỉ"
-                    android:inputType="number"
                     android:padding="10dp"
                     android:paddingVertical="5dp"
                     android:textSize="7pt" />
@@ -150,7 +148,6 @@
                     android:layout_weight=".7"
                     android:background="@drawable/edittext_border"
                     android:hint="Nhập người đại diện"
-                    android:inputType="number"
                     android:padding="10dp"
                     android:paddingVertical="5dp"
                     android:textSize="7pt" />
@@ -201,8 +198,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight=".7"
                     android:background="@drawable/edittext_border"
-                    android:hint="Nhập email: "
-                    android:inputType="number"
+                    android:hint="Nhập email "
                     android:padding="10dp"
                     android:paddingVertical="5dp"
                     android:textSize="7pt" />
@@ -264,15 +260,15 @@
                     android:id="@+id/tvNgaykt"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight=".5"
-                    android:text="Ngày kết thúc hợp đồng: "
+                    android:layout_weight=".3"
+                    android:text="Ngày kết thúc: "
                     android:textSize="7pt" />
 
                 <EditText
                     android:id="@+id/edtNgaykt"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight=".5"
+                    android:layout_weight=".7"
                     android:background="@drawable/edittext_border"
                     android:hint="dd/MM/yyyy"
                     android:inputType="none"
@@ -293,7 +289,7 @@
                     android:id="@+id/tvGiaohang"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight=".5"
+                    android:layout_weight=".3"
                     android:text="Giao hàng: "
                     android:textSize="7pt" />
 
@@ -301,10 +297,9 @@
                     android:id="@+id/edtGiaohang"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight=".5"
+                    android:layout_weight=".7"
                     android:background="@drawable/edittext_border"
                     android:hint="dd/MM/yyyy hoặc hàng tháng"
-                    android:inputType="number"
                     android:padding="10dp"
                     android:paddingVertical="5dp"
                     android:textSize="7pt" />
