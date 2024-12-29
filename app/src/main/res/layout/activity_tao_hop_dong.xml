@@ -29,7 +29,7 @@
             app:titleTextColor="@android:color/white" />
     </LinearLayout>
 
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:fillViewport="true"
@@ -109,6 +109,33 @@
                 android:weightSum="1">
 
                 <TextView
+                    android:id="@+id/tvDiachi"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".3"
+                    android:text="Địa chỉ: "
+                    android:textSize="7pt" />
+
+                <EditText
+                    android:id="@+id/edtDiachi"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".7"
+                    android:background="@drawable/edittext_border"
+                    android:hint="Nhập địa chỉ"
+                    android:inputType="number"
+                    android:padding="10dp"
+                    android:paddingVertical="5dp"
+                    android:textSize="7pt" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="7dp"
+                android:orientation="horizontal"
+                android:weightSum="1">
+
+                <TextView
                     android:id="@+id/tvTenHD"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -158,75 +185,22 @@
                     android:textSize="7pt" />
             </LinearLayout>
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:layout_marginBottom="7dp"
-                android:orientation="horizontal"
-                android:paddingVertical="10dp" />
-
-            <ListView
-                android:id="@+id/dsSanphamHD"
-                android:layout_width="match_parent"
-                android:layout_height="0dp" />
-
-            <TextView
-                android:id="@+id/tvDiachi"
+            <Button
+                android:id="@+id/btnLayds"
+                style="@style/CustomButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingVertical="10dp"
-                android:text="Địa chỉ: "
-                android:textSize="7pt" />
-
-            <RadioGroup
-                android:id="@+id/groupRD"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <RadioButton
-                    android:id="@+id/riachiAccount"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Sử dụng địa chỉ thông tin"
-                    android:textSize="6pt" />
-
-                <RadioButton
-                    android:id="@+id/rđiachiKhac"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Địa chỉ khác"
-                    android:textSize="6pt" />
-            </RadioGroup>
-
-            <LinearLayout
+                android:layout_gravity="center"
+                android:text="Danh sách sản phẩm"
+                android:textColor="@android:color/black"
+                android:layout_marginTop="10dp"
+                android:textSize="5pt" />
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/dsSanphamHD"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="7dp"
-                android:orientation="horizontal"
-                android:weightSum="1">
+                android:paddingVertical="10dp"/>
 
-                <TextView
-                    android:id="@+id/tvNgaybatdau"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight=".5"
-                    android:text="Ngày băt đầu hợp đồng: "
-                    android:textSize="7pt" />
-
-                <EditText
-                    android:id="@+id/edtNgaybd"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight=".5"
-                    android:background="@drawable/edittext_border"
-                    android:hint="dd/MM/yyyy"
-                    android:inputType="number"
-                    android:padding="10dp"
-                    android:paddingVertical="5dp"
-                    android:textSize="7pt" />
-            </LinearLayout>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -249,7 +223,8 @@
                     android:layout_weight=".5"
                     android:background="@drawable/edittext_border"
                     android:hint="dd/MM/yyyy"
-                    android:inputType="number"
+                    android:inputType="none"
+                    android:focusable="false"
                     android:padding="10dp"
                     android:paddingVertical="5dp"
                     android:textSize="7pt" />
@@ -292,8 +267,9 @@
                 android:text="Tạo hợp đồng"
                 android:textColor="@android:color/black"
                 android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
                 android:textSize="8pt" />
         </LinearLayout>
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

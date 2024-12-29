@@ -77,7 +77,6 @@ public class ProductFragment extends Fragment {
         adapterSanPham=new AdapterSanPham(getActivity(),R.layout.item_sanpham,dsSP);
         lvSanpham.setAdapter(adapterSanPham);
         dbHelperSanPham=new DBHelperSanPham();
-
         addEvents();
         loadSanpham();
     }

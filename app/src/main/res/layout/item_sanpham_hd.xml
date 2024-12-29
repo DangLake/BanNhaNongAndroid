@@ -1,48 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="10dp">
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:padding="8dp">
+
     <CheckBox
-        android:id="@+id/chkSelect"
+        android:id="@+id/checkbox_product"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentTop="true"
-        android:padding="5dp" />
+        android:layout_marginEnd="8dp" />
+
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingHorizontal="10dp"
-        android:layout_marginTop="20dp">
-
-        <ImageView
-            android:layout_width="130dp"
-            android:layout_height="130dp"
-            android:id="@+id/imgAnh" />
+        android:orientation="vertical">
 
         <TextView
-            android:layout_width="match_parent"
+            android:id="@+id/tvTenSanPham"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/tvTenSp"
-            android:textSize="15sp"
-            android:paddingVertical="5dp"
-            android:text="Ten san pham" />
+            android:text="Tên sản phẩm"
+            android:textColor="#000000"
+            android:textSize="7pt"
+            android:textStyle="bold" />
 
         <TextView
-            android:layout_width="match_parent"
+            android:id="@+id/tvGiaSanPham"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Gia"
-            android:paddingVertical="5dp"
-            android:textColor="#ff0000"
-            android:id="@+id/tvGia" />
+            android:layout_marginTop="4dp"
+            android:text="Giá:"
+            android:textColor="#FF5722"
+            android:textSize="7pt" />
 
-        <TextView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="danh gia"
-            android:paddingVertical="5dp"
-            android:id="@+id/tvDanhgia" />
+            android:gravity="right"
+            android:weightSum="1"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnGiam"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:gravity="center"
+                android:text="-"
+                android:layout_weight=".3"
+                android:backgroundTint="#00000000"
+                android:textColor="#000000"
+                android:textSize="20sp" />
+
+            <!-- Số lượng -->
+            <EditText
+                android:id="@+id/tvSoluong"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="1"
+                android:layout_weight=".4"
+                android:background="@null"
+                android:textSize="7pt" />
+
+            <Button
+                android:id="@+id/btnTang"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:gravity="center"
+                android:text="+"
+                android:layout_weight=".3"
+                android:backgroundTint="#00000000"
+                android:textColor="#000000"
+                android:textSize="20sp" />
+        </LinearLayout>
     </LinearLayout>
-</RelativeLayout>
+</LinearLayout>

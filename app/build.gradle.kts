@@ -83,6 +83,6 @@ dependencies {
     annotationProcessor ("com.github.bumptech.glide:compiler:4.16.0")
     implementation ("com.cloudinary:cloudinary-android:2.4.0")
     implementation ("me.relex:circleindicator:2.1.6")
-
+    implementation ("com.itextpdf:itext7-core:7.2.3")
     implementation(kotlin("script-runtime"))
 }
