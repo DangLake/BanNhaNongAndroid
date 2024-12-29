@@ -144,12 +144,64 @@
                     android:textSize="7pt" />
 
                 <EditText
-                    android:id="@+id/edtTenHopdong"
+                    android:id="@+id/edtDaidien"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight=".7"
                     android:background="@drawable/edittext_border"
                     android:hint="Nhập người đại diện"
+                    android:inputType="number"
+                    android:padding="10dp"
+                    android:paddingVertical="5dp"
+                    android:textSize="7pt" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="7dp"
+                android:orientation="horizontal"
+                android:weightSum="1">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".3"
+                    android:text="Số điện thoại: "
+                    android:textSize="7pt" />
+
+                <EditText
+                    android:id="@+id/edtsdtDN"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".7"
+                    android:background="@drawable/edittext_border"
+                    android:hint="Nhập số điện thoại"
+                    android:inputType="number"
+                    android:padding="10dp"
+                    android:paddingVertical="5dp"
+                    android:textSize="7pt" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="7dp"
+                android:orientation="horizontal"
+                android:weightSum="1">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".3"
+                    android:text="Email: "
+                    android:textSize="7pt" />
+
+                <EditText
+                    android:id="@+id/edtMailDN"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".7"
+                    android:background="@drawable/edittext_border"
+                    android:hint="Nhập email: "
                     android:inputType="number"
                     android:padding="10dp"
                     android:paddingVertical="5dp"
@@ -264,11 +316,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="Tạo hợp đồng"
+                android:text="Gửi yêu cầu ký hợp đồng"
                 android:textColor="@android:color/black"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
-                android:textSize="8pt" />
+                android:textSize="6pt" />
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
